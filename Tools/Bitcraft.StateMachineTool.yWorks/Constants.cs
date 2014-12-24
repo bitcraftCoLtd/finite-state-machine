@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Bitcraft.StateMachineTool.yWorks
+{
+    public static class Constants
+    {
+        public static readonly string YWorksXmlGraphmlNamespaceLocal = "y";
+
+        public static readonly string IsInitialStatePropertyName = "IsInitialState";
+        public static readonly string IsFinalStatePropertyName = "IsFinalState";
+    }
+}

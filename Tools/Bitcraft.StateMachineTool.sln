@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2013 for Windows Desktop
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcraft.StateMachineTool", "Bitcraft.StateMachineTool\Bitcraft.StateMachineTool.csproj", "{794F456B-7DED-49BB-81CA-6F5164C79E3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcraft.StateMachineTool.yWorks", "Bitcraft.StateMachineTool.yWorks\Bitcraft.StateMachineTool.yWorks.csproj", "{0AA9B9F7-01C2-4493-8877-424D203B5C1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcraft.StateMachineTool.CodeGenerators", "Bitcraft.StateMachineTool.CodeGenerators\Bitcraft.StateMachineTool.CodeGenerators.csproj", "{83F3E723-811A-46AB-B48A-540F6E0AC263}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcraft.ToolKit.CodeGeneration", "Bitcraft.ToolKit.CodeGeneration\Bitcraft.ToolKit.CodeGeneration.csproj", "{E7BD071A-2441-4213-B427-FFA7AECB7DF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcraft.StateMachineTool.Core", "Bitcraft.StateMachineTool.Core\Bitcraft.StateMachineTool.Core.csproj", "{0B04F94E-08F3-416C-BD97-DD7943ED15E1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{794F456B-7DED-49BB-81CA-6F5164C79E3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{794F456B-7DED-49BB-81CA-6F5164C79E3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{794F456B-7DED-49BB-81CA-6F5164C79E3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{794F456B-7DED-49BB-81CA-6F5164C79E3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AA9B9F7-01C2-4493-8877-424D203B5C1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AA9B9F7-01C2-4493-8877-424D203B5C1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AA9B9F7-01C2-4493-8877-424D203B5C1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AA9B9F7-01C2-4493-8877-424D203B5C1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83F3E723-811A-46AB-B48A-540F6E0AC263}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83F3E723-811A-46AB-B48A-540F6E0AC263}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83F3E723-811A-46AB-B48A-540F6E0AC263}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83F3E723-811A-46AB-B48A-540F6E0AC263}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7BD071A-2441-4213-B427-FFA7AECB7DF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7BD071A-2441-4213-B427-FFA7AECB7DF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7BD071A-2441-4213-B427-FFA7AECB7DF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7BD071A-2441-4213-B427-FFA7AECB7DF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B04F94E-08F3-416C-BD97-DD7943ED15E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B04F94E-08F3-416C-BD97-DD7943ED15E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B04F94E-08F3-416C-BD97-DD7943ED15E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B04F94E-08F3-416C-BD97-DD7943ED15E1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
