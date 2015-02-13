@@ -130,7 +130,7 @@ namespace Bitcraft.StateMachine
                 if (CurrentState == null)
                     return false;
 
-                return CurrentState.IsHandlingAsync;
+                return CurrentState.IsHandlingAsync == false;
             }
         }
 

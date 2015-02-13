@@ -362,7 +362,7 @@ fsm.StateManager.prototype.canPerformAction = function () {
     if (!this._currentState) {
         return false;
     }
-    return this._currentState.isHandlingAsync();
+    return this._currentState.isHandlingAsync() === false;
 };
 
 //noinspection JSUnusedGlobalSymbols
