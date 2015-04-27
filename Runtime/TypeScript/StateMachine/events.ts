@@ -41,6 +41,36 @@ export class StateEnterEventArgs {
     }
 }
 
+export class StateExitEventArgs {
+
+    private _to: token.StateToken;
+    private _data: any;
+
+    /// <summary>
+    /// Gets the target state token.
+    /// </summary>
+    getTo(): token.StateToken {
+        return this._to;
+    }
+
+    /// <summary>
+    /// Gets the data provided to the target.
+    /// </summary>
+    getData(): any {
+        return this._data;
+    }
+
+    /// <summary>
+    /// Initializes the StateExitEventArgs instance.
+    /// </summary>
+    /// <param name="from">The target state of the transition.</param>
+    /// <param name="data">The data provided to the target state.</param>
+    constructor(to: token.StateToken, data: any) {
+        this._to = to;
+        this._data = data;
+    }
+}
+
 export class StateChangedEventArgs {
 
     private _oldState: stateBase.StateBase;

@@ -33,7 +33,7 @@ export class StateBase {
 
     onInitialized(): void { }
     onEnter(e: events.StateEnterEventArgs): void { }
-    onExit(): void { }
+    onExit(e: events.StateExitEventArgs): void { }
 
     /* internal */ __initialize(parent: stateManager.StateManager): void {
         this._stateManager = parent;

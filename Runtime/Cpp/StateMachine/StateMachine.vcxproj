@@ -17,6 +17,7 @@
     <ClInclude Include="state_changed_event_args.h" />
     <ClInclude Include="state_data.h" />
     <ClInclude Include="state_enter_event_args.h" />
+    <ClInclude Include="state_exit_event_args.h" />
     <ClInclude Include="state_machine.h" />
     <ClInclude Include="state_manager.h" />
     <ClInclude Include="state_token.h" />
@@ -28,6 +29,7 @@
     <ClCompile Include="state_base.cpp" />
     <ClCompile Include="state_changed_event_args.cpp" />
     <ClCompile Include="state_enter_event_args.cpp" />
+    <ClCompile Include="state_exit_event_args.cpp" />
     <ClCompile Include="state_manager.cpp" />
     <ClCompile Include="token.cpp" />
   </ItemGroup>

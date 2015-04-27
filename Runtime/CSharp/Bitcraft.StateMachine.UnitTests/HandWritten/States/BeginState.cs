@@ -29,9 +29,9 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
             context.TestStatus++;
         }
 
-        protected override void OnExit()
+        protected override void OnExit(StateExitEventArgs e)
         {
-            base.OnExit();
+            base.OnExit(e);
 
             var context = (StateMachineTestContext)Context;
 

@@ -17,7 +17,7 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
         {
             base.OnInitialized();
 
-            RegisterActionHandler(HandWrittenActionTokens.FinalizeAction, (d, cb) => cb(null as TransitionInfo));
+            RegisterActionHandler(HandWrittenActionTokens.FinalizeAction, (d, cb) => cb(null));
         }
 
         protected override void OnEnter(StateEnterEventArgs e)
@@ -30,9 +30,9 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
             context.TestStatus++;
         }
 
-        protected override void OnExit()
+        protected override void OnExit(StateExitEventArgs e)
         {
-            base.OnExit();
+            base.OnExit(e);
 
             var context = (StateMachineTestContext)Context;
 

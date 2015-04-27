@@ -51,6 +51,13 @@ fsm = fsm || {};
  */
 
 /**
+ * A state exit event argument
+ * @typedef {Object} StateExitEventArgs
+ * @property {Token} to
+ * @property {*} data
+ */
+
+/**
  * An event subscription
  * @typedef {Object} EventSubscription
  * @property {Function} unregister
@@ -222,7 +229,14 @@ fsm.StateManager.prototype._transitionTo = function (stateToken, data) {
     // check whether the current state has defined a function named 'onExit'
     // and call it if available, providing the said state as execution context
     if (this._currentState && typeof this._currentState.onExit === 'function') {
-        this._currentState.onExit();
+
+        // create enter state event argument
+        var exitEventArgs = {
+            to: stateToken,
+            data: data
+        };
+
+        this._currentState.onExit(exitEventArgs);
     }
 
     // keep reference to previous state

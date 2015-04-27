@@ -3,6 +3,7 @@
 
 #include "state_manager.h"
 #include "state_enter_event_args.h"
+#include "state_exit_event_args.h"
 #include "state_changed_event_args.h"
 #include "token.h"
 #include "action_token.h"

@@ -106,17 +106,20 @@ namespace Bitcraft.StateMachine
                 throw new UnknownStateException(CurrentStateToken, stateToken);
 
             if (CurrentState != null)
-                CurrentState.OnExit();
+            {
+                var stateExitEventArgs = new StateExitEventArgs(stateToken, data);
+                CurrentState.OnExit(stateExitEventArgs);
+            }
 
             var oldState = CurrentState;
             CurrentState = state;
 
-            var e = new StateEnterEventArgs(oldState != null ? oldState.Token : null, data);
-            CurrentState.OnEnter(e);
+            var stateEnterEventArgs = new StateEnterEventArgs(oldState != null ? oldState.Token : null, data);
+            CurrentState.OnEnter(stateEnterEventArgs);
 
             OnStateChanged(new StateChangedEventArgs(oldState, CurrentState));
 
-            return e.Redirect;
+            return stateEnterEventArgs.Redirect;
         }
 
         /// <summary>
@@ -160,17 +163,17 @@ namespace Bitcraft.StateMachine
             if (CurrentState == null)
                 throw new InvalidOperationException("State machine not yet initialized or has reached its final state.");
 
-            return CurrentState.Handle(action, data, transitionInfo =>
+            return CurrentState.Handle(action, data, (st, d) =>
             {
-                if (transitionInfo == null || transitionInfo.TargetStateToken == null)
+                if (st == null)
                 {
                     CurrentState = null;
                     OnCompleted();
                     return;
                 }
 
-                if (CurrentState.Token != transitionInfo.TargetStateToken)
-                    PerformTransitionTo(transitionInfo.TargetStateToken, transitionInfo.TargetStateData);
+                if (CurrentState.Token != st)
+                    PerformTransitionTo(st, d);
             });
         }
 

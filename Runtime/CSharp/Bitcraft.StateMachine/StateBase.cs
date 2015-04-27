@@ -10,7 +10,7 @@ namespace Bitcraft.StateMachine
     public abstract class StateBase
     {
         private Dictionary<ActionToken, Action<object, Action<StateToken>>> handlers = new Dictionary<ActionToken, Action<object, Action<StateToken>>>();
-        private Dictionary<ActionToken, Action<object, Action<TransitionInfo>>> dataHandlers = new Dictionary<ActionToken, Action<object, Action<TransitionInfo>>>();
+        private Dictionary<ActionToken, Action<object, Action<StateToken, object>>> dataHandlers = new Dictionary<ActionToken, Action<object, Action<StateToken, object>>>();
 
         /// <summary>
         /// Gets the token that identifies the current state.
@@ -130,7 +130,8 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Called when the state machine exits the current state.
         /// </summary>
-        protected internal virtual void OnExit()
+        /// <param name="e">Custem event arguments.</param>
+        protected internal virtual void OnExit(StateExitEventArgs e)
         {
             var handler = Exit;
             if (handler != null)
@@ -146,9 +147,9 @@ namespace Bitcraft.StateMachine
             RegisterActionHandler(action, NoopHandler);
         }
 
-        private void NoopHandler(object data, Action<TransitionInfo> callback)
+        private void NoopHandler(object data, Action<StateToken, object> callback)
         {
-            callback(new TransitionInfo { TargetStateToken = this.Token, TargetStateData = data });
+            callback(this.Token, data);
         }
 
         /// <summary>
@@ -169,7 +170,7 @@ namespace Bitcraft.StateMachine
         /// </summary>
         /// <param name="action">The action that makes the handler to be evaluated.</param>
         /// <param name="handler">The handler that evaluate and possibly performs the state transition.</param>
-        protected void RegisterActionHandler(ActionToken action, Action<object, Action<TransitionInfo>> handler)
+        protected void RegisterActionHandler(ActionToken action, Action<object, Action<StateToken, object>> handler)
         {
             if (dataHandlers.ContainsKey(action))
                 throw new InvalidOperationException(string.Format("Action '{0}' already registered.", action));
@@ -190,7 +191,7 @@ namespace Bitcraft.StateMachine
         /// <param name="action">The action that makes the handler to be evaluated.</param>
         /// <param name="data">A custom data related to the action performed.</param>
         /// <param name="callback">When called, performs the state transition.</param>
-        internal ActionResultType Handle(ActionToken action, object data, Action<TransitionInfo> callback)
+        internal ActionResultType Handle(ActionToken action, object data, Action<StateToken, object> callback)
         {
             if (isHandlingAsync)
                 return ActionResultType.ErrorAlreadyPerformingAction;
@@ -199,7 +200,7 @@ namespace Bitcraft.StateMachine
                 throw new ArgumentNullException("action");
 
             Action<object, Action<StateToken>> handler1 = null;
-            Action<object, Action<TransitionInfo>> handler2 = null;
+            Action<object, Action<StateToken, object>> handler2 = null;
             if (handlers.TryGetValue(action, out handler1) || dataHandlers.TryGetValue(action, out handler2))
             {
                 isHandlingAsync = true;
@@ -214,18 +215,18 @@ namespace Bitcraft.StateMachine
                             {
                                 if (callFlag)
                                     return;
-                                RunCallback(callback, new TransitionInfo { TargetStateToken = st, TargetStateData = data });
+                                RunCallback(callback, st, data);
                                 callFlag = true;
                             });
                         return ActionResultType.Success;
                     }
                     else if (handler2 != null)
                     {
-                        handler2(data, ti =>
+                        handler2(data, (st, d) =>
                             {
                                 if (callFlag)
                                     return;
-                                RunCallback(callback, ti);
+                                RunCallback(callback, st, d);
                                 callFlag = true;
                             });
                         return ActionResultType.Success;
@@ -247,11 +248,11 @@ namespace Bitcraft.StateMachine
             return ActionResultType.ErrorUnknownAction;
         }
 
-        private void RunCallback(Action<TransitionInfo> callback, TransitionInfo ti)
+        private void RunCallback(Action<StateToken, object> callback, StateToken stateToken, object data)
         {
             try
             {
-                callback(ti);
+                callback(stateToken, data);
             }
             finally
             {

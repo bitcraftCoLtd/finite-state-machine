@@ -36,6 +36,33 @@ namespace Bitcraft.StateMachine
     }
 
     /// <summary>
+    /// Represents event arguments when exiting a state.
+    /// </summary>
+    public class StateExitEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Gets the target state token.
+        /// </summary>
+        public StateToken To { get; private set; }
+
+        /// <summary>
+        /// Gets the data provided to the target.
+        /// </summary>
+        public object Data { get; private set; }
+
+        /// <summary>
+        /// Initializes the StateExitEventArgs instance.
+        /// </summary>
+        /// <param name="to">The target state of the transition.</param>
+        /// <param name="data">The data provided to the target state.</param>
+        public StateExitEventArgs(StateToken to, object data)
+        {
+            To = to;
+            Data = data;
+        }
+    }
+
+    /// <summary>
     /// Represents a state transition event arguments.
     /// </summary>
     public class StateChangedEventArgs : EventArgs

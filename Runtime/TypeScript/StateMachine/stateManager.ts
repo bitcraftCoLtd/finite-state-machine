@@ -62,18 +62,19 @@ export class StateManager {
         }
 
         if (!this._currentState) {
-            this._currentState.onExit();
+            var stateExitEventArgs = new events.StateExitEventArgs(stateToken, data);
+            this._currentState.onExit(stateExitEventArgs);
         }
 
         var oldState = this._currentState;
         this._currentState = filteredStates[0];
 
-        var e = new events.StateEnterEventArgs(!oldState ? oldState.getToken() : null, data);
-        this._currentState.onEnter(e);
+        var stateEnterEventArgs = new events.StateEnterEventArgs(!oldState ? oldState.getToken() : null, data);
+        this._currentState.onEnter(stateEnterEventArgs);
 
         this.onStateChanged(new events.StateChangedEventArgs(oldState, this._currentState));
 
-        return e.getRedirect();
+        return stateEnterEventArgs.getRedirect();
     }
 
     onStateChanged(e: events.StateChangedEventArgs): void {
