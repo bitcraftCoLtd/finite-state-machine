@@ -2,10 +2,9 @@
 
 ## Information
 
-Last update: 2014/12/24
+Last update: 2015/04/27
 
-All the solutions and projects in this repository are made with Microsoft Visual Studio Express 2013 for Windows Desktop.
-It should work seamlessly with Community edition of Visual Studio.
+All the solutions and projects in this repository are made with Microsoft Visual Studio 2013 Community Edition.
 
 ## Overview
 
@@ -39,7 +38,7 @@ Once all that is done, you are good to go and can call *PerformAction* method on
 The C# runtime library is created using .NET 3.5 in order to run on a wide range of platforms.
 It builds with Any CPU configuration, so it is totally architecture independent.
 
-The runtime is in the folder Runtime\CSharp and tools are in the folder Tools. 
+The runtime is in the folder Runtime\CSharp and tools are in the folder Tools.
 
 ### C++
 
@@ -49,7 +48,7 @@ The runtime is in the folder Runtime\Cpp.
 
 ### JavaScript
 
-The JavaScript implementation uses only one module.exports, so commenting it out make the state machine ready for browsers or embedded JavaScript engines.
+The JavaScript implementation uses only one module.exports, so commenting it out makes the state machine ready for browsers or embedded JavaScript engines.
 
 The runtime is in the folder Runtime\JavaScript. 
 
@@ -63,7 +62,7 @@ The runtime is in the folder Runtime\TypeScript.
 
 This section focuses on the C# runtime, but the same (almost) applies to the other runtime libraries.
 The C++ and JavaScript runtime libraries have a simple sample that demonstrate how they work.
-Specific cases for C++ and JavaScript runtime are described briefly in the annex section at the end of this document. 
+Specific cases for C++ and JavaScript runtimes are described briefly in the annex section at the end of this document.
 
 ### The creation process
 
@@ -78,6 +77,7 @@ All the runtime types are located in the namespace *Bitcraft.StateMachine*.
 #### StateManager
 
 First, you need a *StateManager* class.
+
 The *StateManager* class is a concrete class, so it is not necessary to create a child class that inherit from it, however it is recommended to do so because soon or late you may need to enrich it.
 
 #### Tokens
@@ -96,7 +96,8 @@ The recommended way is to use separated containers, and named matching the relat
 		...
 	}
 
-The string provided to the *Token* constructor is purely informative, this is a display name and absolutely not the *Token*'s identity. *Token*s are based on *Guid* structures.
+The string provided to the *Token* constructor is purely informative, this is a display name and absolutely not the *Token*'s identity. *Token*s identities are based on *Guid* structures.
+
 The constructor of *ActionToken* can also take an informative string as parameter.
 
 	public static class BasketActionTokens
@@ -113,7 +114,7 @@ The constructor of *ActionToken* can also take an informative string as paramete
 
 Eventually you need states, represented by the *StateBase* abstract class. Our recommendation is to create another abstract base class inheriting from *StateBase* that will contain the common code for all states related to a given state machine. Then to create concrete specific states based on that common base state instead of directly inheriting from *StateBase*.
 
-For a state machine that implement a shopping basket, you may create the following class hierarchy:
+For a state machine that implements a shopping basket, you may create the following class hierarchy:
 
     public abstract class BasketStateBase : StateBase
 	{
@@ -173,12 +174,12 @@ A state have to register action handlers, they tell the state machine of which a
 		protected override void OnInitialized()
 		{
         	base.OnInitialized();
-	        RegisterHandler(BasketActionTokens.GoToConfirmation, OnGoToConfirmationAction);
-    	} //                                                     |
-          //         +-------------------------------------------+
+	        RegisterActionHandler(BasketActionTokens.GoToConfirmation, OnGoToConfirmationAction);
+    	} //                                                           |
+          //         +-------------------------------------------------+
           //         |
           //         V
-	    private void OnGoToConfirmationAction(IStateData data, Action<StateToken> callback)
+	    private void OnGoToConfirmationAction(object data, Action<StateToken> callback)
 	    {
         	callback(BasketStateTokens.Confirmation);
     	}
@@ -186,12 +187,28 @@ A state have to register action handlers, they tell the state machine of which a
 		...
 	}
 
-Two things here. First the *OnInitialize()* virtual method overridden with registration of action handler. This registration says "if you ask me to go to confirmation screen, I know *what to do*, otherwise you will not go any further".
+Two things here. First the *OnInitialize()* virtual method overridden with registration of an action handler. This registration says "if you ask me to go to confirmation screen, I know *what to do*, otherwise you will not go any further".
+
 The second thing is the "what to do" from the previous sentence. The method *OnGoToConfirmationAction* is called when the *PerformAction()* method of the state machine is called with *BasketActionTokens.GoToConfirmation* parameter given and when in the *PaymentBasketState* state. The method body says "OK, go to confirmation state". It could go to another state based on a condition or whatever, this is purely up to you.
 
-The *callback* provided to the handler can be called later on. During this delay phase, all subsequent calls to the *PerformAction()* method will return the *ActionResultType.ErrorAlreadyPerformingAction* value.
+The *callback* provided to the handler can be called later. During this delay phase, all subsequent calls to the *PerformAction()* method will return the *ActionResultType.ErrorAlreadyPerformingAction* value.
 
-One very very important thing here, when a handler is called, the callback **MUST** be called at least once. If you call it more than once, the subsequent calls are ignored, but if you do not call it at all, the state machine keeps waiting and thus gets locked because, I repeat, all subsequent calls to the *PerformAction()* method will return the *ActionResultType.ErrorAlreadyPerformingAction* value, and thus no other transitions will be permitted.
+One very very important thing here, when a handler is called, the callback **MUST** be called at least once. If you call it more than once, the subsequent calls are ignored, but if you do not call it at all, the state machine keeps waiting and thus gets locked because, once again, all subsequent calls to the *PerformAction()* method will return the *ActionResultType.ErrorAlreadyPerformingAction* value, and thus no other transitions will be permitted.
+
+One last thing about action handlers, it is possible to register an action handler that allow you to provide custom data to the target state, by registering the action handler as follow:
+
+	protected override void OnInitialized()
+	{
+       	base.OnInitialized();
+		RegisterActionHandler(BasketActionTokens.GoToConfirmation, OnGoToConfirmationAction);
+    }
+
+	//                                                                    ------ additional argument here
+	private void OnGoToConfirmationAction(object data, Action<StateToken, object> callback)
+	{
+		//                                       ----------------- a different custom value can be provided
+		callback(BasketStateTokens.Confirmation, anotherCustomData);
+	}
 
 #### All together
 
@@ -247,9 +264,9 @@ There are some more details you may be interested in, such as:
 
 It is possible to share a context object among all states. In some cases it it necessary for a state to give feedback to another, in a clean and contained way.
 
-The context is optional, and if used, is passed once at the constructor of the *StateManager* class. If you use a custom child *StateManager* class, you may need to expose the constructor that take a context object as parameter.
+The context is optional, and if used, is passed once at the constructor of the *StateManager* class. If you use a custom child *StateManager* class, you may need to expose the constructor that takes a context object as parameter.
 
-The context is then automatically accessible for all state through their *Context* property.
+The context is then automatically accessible to all state through their *Context* property.
 
 ##### Data
 
@@ -260,7 +277,7 @@ Be careful to not be confused between data and context, since they are both of *
 
 When you need to pass several properties, we recommend to create a specific class or structure with the required properties. If you feel lazy to do so, we then recommend using a Dictionary<TKey, TValue> instead of a Tuple, but this purely up to you.
 
-A specific data can also be provided to the state machine when calling the *SetInitialState()* method, so the data is provided to the first state.
+A specific data can also be provided to the state machine when calling the *SetInitialState()* method, so the data is provided to the initial state.
 
 Eventually, data can be provided by a state to another. When a state is given data, and that state redirects to another state, the same data is automatically forwarded to the redirected state. You can always change this behaviour if needed.
 
@@ -272,8 +289,8 @@ The *StateManager* class has the following virtual methods:
 
 - *OnStateChanged()* is called each time the state machine transition from a state to another.
 	- This method receives a *StateChangedEventArgs* argument that contains:
-		- *OldState* that represent the state that was active before the transition.
-		- *NewState* that represent the state that is active after the transaition.
+		- **OldState** that represent the state that was active before the transition.
+		- **NewState** that represent the state that is active after the transaition.
 - *OnCompleted()* is called when the state machine has reach its terminal state and is over.
 
 The *StateBase* class has the following virtual methods:
@@ -281,18 +298,21 @@ The *StateBase* class has the following virtual methods:
 - *OnInitialize()* that is called once the state has been attached to a state machine.
 - *OnEnter()* is called just after the state machine has changed its internal state to the current state.
 	- This method receives a *StateEnterEventArgs* argument that contains:
-		- *From* telling the origin state from which the transition is happening.
-		- *Data* which is an optional custom data.
-		- *Redirect* that allows immediate redirection to another state. (more information in "Fast redirection" section below)
+		- **From** telling the origin state from which the transition is happening.
+		- **Data** which is an optional custom data.
+		- **Redirect** that allows immediate redirection to another state. (more information in "Fast redirection" section below)
 - *OnExit()* is called just before the state machine changes to another state. 
+	- This method receives a *StateExitEventArgs* argument that contains:
+		- **To** telling the destination state to which the transition is happening.
+		- **Data** which is an optional custom data.
 
 You basically uses the *OnInitialize()* method to register action handlers, the *OnEnter()* method to start initializing what is needed for the current state life cycle, and *OnExit()* to clean up the current state related things.
 
 ##### Fast redirection
 
-When you need to change state to another state after you passed the *OnEnter()* method call, you get an instance of the state machine using the *StateManager* property of the base *StateBase* class, and call *PerformAction()* method on it.
+When you need to change state to another state from within the *OnEnter()* method call, you should not call *PerformAction()*.
 
-However, when the state machine enters a state, and from this state if you already know which state you need to jump to, it is useless to wait for after *OnEnter()* method call and get in trouble, you can tell the state machine to directly redirect to a given state by setting the *TargetStateToken* property of the *Redirect* property of the event given as parameter. Hereafter is an example.
+Instead, you can tell the state machine to directly redirect to a given state by setting the *TargetStateToken* property of the *Redirect* property of the event given as parameter. Hereafter is an example.
 
 	public class PaymentBasketState : BasketStateBase
 	{
@@ -317,9 +337,9 @@ However, when the state machine enters a state, and from this state if you alrea
 		...
 	}
 
-Here, when the PaymentBasketState becomes active, it checks whether the user has activated the fast buy option, and if yes, it requests the state machine to directly move to the "Thank you" screen, skipping the confirmation state.
+Here, when the *PaymentBasketState* becomes active, it checks whether the user has activated the fast buy option, and if yes, it requests the state machine to directly move to the "Thank you" screen, skipping the confirmation state.
 
-Fast redirection feature does not allow delaying state transition.
+Fast redirection feature does not allow delaying state transition, the operation can only be synchronous.
 
 ## Tools
 
@@ -430,6 +450,10 @@ Maybe only the *-ns* parameter can be a problem, because in most of cases you wa
 ### JavaScript runtime
 
 At the end of the *stateManager.js* file, remove the *module.exports = fsm;* statement if you run the code in a browser or embedded JavaScript engine. Keep the code as is if you run it in Nodejs.
+
+A sample is provided in the folder Runtime\JavaScript\Tester and can be run with Nodejs with the following command:
+
+	> node app.js
 
 #### Token
 
