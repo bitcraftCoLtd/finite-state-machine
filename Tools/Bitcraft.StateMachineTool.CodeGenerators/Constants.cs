@@ -12,7 +12,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators
 
         public static readonly string StateManagerType = "StateManager";
         public static readonly string StateBaseType = "StateBase";
-        public static readonly string StateDataType = "IStateData";
+        public static readonly string StateDataType = "object";
 
         public static readonly string StateTokensClass = "StateTokens";
         public static readonly string ActionTokensClass = "ActionTokens";
