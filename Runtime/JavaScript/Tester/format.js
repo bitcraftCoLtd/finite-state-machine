@@ -21,7 +21,7 @@ module.exports = function () {
     var replacement;
     for (i = 0; i < matches.length; i += 1) {
         replacement = '';
-        if (arguments[i + 1] !== undefined || arguments[i + 1] === null) {
+        if (arguments[i + 1] !== undefined && arguments[i + 1] === null) {
             replacement = arguments[i + 1].toString();
         }
         fmt = fmt.replace(matches[i], replacement);
