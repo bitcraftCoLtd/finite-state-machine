@@ -134,19 +134,23 @@ namespace Bitcraft.StateMachineTool
             PrintCommand(VersionArgumentKey, "Shows current version number.");
             PrintCommand(HelpArgumentKey, "Shows this help.");
             Console.WriteLine();
+
             BeginRequired();
             PrintCommand(GraphmlFilenameArgumentKey, "<file> sets the input graph description file.");
             EndRequired();
             Console.WriteLine();
+
             PrintCommand(NamespaceNameArgumentKey, "<namespace> sets the namespace of generated files.");
             PrintAdditionalInfo("If not set, the classes are generated without namespace.");
             Console.WriteLine();
+
             PrintCommand(StateMachineNameArgumentKey, "<name> sets the name of the state machine.");
             PrintAdditionalInfo("It is used to prefix some classes or other code elements.");
             PrintAdditionalInfo("If it is not set, the name defined in the graph file is used.");
             PrintAdditionalInfo("When both are not defined, an error is displayed and code");
             PrintAdditionalInfo("generation is aborted.");
             Console.WriteLine();
+
             PrintCommand(OutputFolderArgumentKey, "<folder> sets the output folder where code is generated.");
             PrintAdditionalInfo("If it is not set, the output folder is the folder where the graph");
             PrintAdditionalInfo("file is located.");
@@ -162,6 +166,11 @@ namespace Bitcraft.StateMachineTool
             PrintAdditionalInfo("      current working directory.");
             PrintAdditionalInfo(string.Format("    If {0} flag is not set, then the output folder is the", OutputRelativeToFileArgumentKey));
             PrintAdditionalInfo("      graph file directory.");
+            Console.WriteLine();
+
+            PrintCommand(InitialStateNameArgumentKey, "<state> generates the SetInitialState(<state>) call.");
+            PrintAdditionalInfo("If not set, the IsInitialState flag from");
+            PrintAdditionalInfo("the .graphml file is used, if any.");
             Console.WriteLine();
 
             PrintCommand(UseOriginalStateBaseArgumentKey, "Make all generated state classes to inherit from");

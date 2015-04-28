@@ -59,7 +59,18 @@ namespace Bitcraft.StateMachineTool
 
             IGraph graph = null;
             using (var stream = new FileStream(graphmlAbsoluteFilename, FileMode.Open, FileAccess.Read))
-                graph = parser.Parse(stream);
+            {
+                try
+                {
+                    graph = parser.Parse(stream);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Graph file parse error:");
+                    Console.WriteLine(ex);
+                    return -1;
+                }
+            }
 
             string namespaceName = args.NamespaceName;
             string stateMachineName = args.StateMachineName ?? graph.Semantic; // command line argument has priority
@@ -81,8 +92,6 @@ namespace Bitcraft.StateMachineTool
             else
             {
                 initialNode = graph.InitialNode;
-                if (initialNode == null)
-                    initialNode = graph.Nodes.First();
             }
 
             if (string.IsNullOrWhiteSpace(stateMachineName))

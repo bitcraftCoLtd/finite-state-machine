@@ -16,8 +16,6 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
         public StateMachineCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, INode initialNode, IGraph graph)
             : base(generatorsFactory, namespaceName, stateMachineName)
         {
-            if (initialNode == null)
-                throw new ArgumentNullException("initialNode");
             if (graph == null)
                 throw new ArgumentNullException("graph");
 
@@ -114,10 +112,13 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 
             writer.AppendLine();
 
-            Language.CreateMethodCallCodeGenerator(
-                Constants.SetInitialStateMethod,
-                stateMachineName + Constants.StateTokensClass + "." + initialNode.Semantic
-            ).Write(writer);
+            if (initialNode != null)
+            {
+                Language.CreateMethodCallCodeGenerator(
+                    Constants.SetInitialStateMethod,
+                    stateMachineName + Constants.StateTokensClass + "." + initialNode.Semantic
+                ).Write(writer);
+            }
         }
     }
 }
