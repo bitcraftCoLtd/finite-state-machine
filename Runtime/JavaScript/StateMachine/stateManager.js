@@ -349,7 +349,7 @@ fsm.StateManager.prototype.getCurrentStateToken = function () {
 //noinspection JSUnusedGlobalSymbols
 /**
  * Sets the initial state of the state machine
- * @param {State} initialState
+ * @param {Token} initialState
  * @param {*} [data]
  */
 fsm.StateManager.prototype.setInitialState = function (initialState, data) {
