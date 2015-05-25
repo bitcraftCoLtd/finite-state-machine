@@ -29,6 +29,9 @@ namespace Bitcraft.StateMachineTool.CodeGenerators
         public static readonly string PreHandlersRegistrationMethod = "PreHandlersRegistration";
         public static readonly string PostHandlersRegistrationMethod = "PostHandlersRegistration";
 
+        public static readonly string PreInitializedMethod = "PreInitialized";
+        public static readonly string PostInitializedMethod = "PostInitialized";
+
         public static readonly string OnInitializedMethod = "OnInitialized";
         public static readonly string OnEnterMethod = "OnEnter";
         public static readonly string OnExitMethod = "OnExit";

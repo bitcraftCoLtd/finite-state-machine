@@ -89,6 +89,26 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 
                 writer.AppendLine();
 
+                Language.CreateMethodDeclarationCodeGenerator(
+                    AccessModifier.None,
+                    false,
+                    new[] { "partial" },
+                    "void",
+                    Constants.PreInitializedMethod,
+                    null,
+                    null).Write(writer);
+
+                Language.CreateMethodDeclarationCodeGenerator(
+                    AccessModifier.None,
+                    false,
+                    new[] { "partial" },
+                    "void",
+                    Constants.PostInitializedMethod,
+                    null,
+                    null).Write(writer);
+
+                writer.AppendLine();
+
                 Language.CreateCommentCodeGenerator(new AnonymousCodeGenerator(Language, w2 =>
                     {
                         foreach (var tr in transitions.Take(transitions.Length - 1))
@@ -104,6 +124,10 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 
         private void WriteOnInitializeMethod(ITransition[] transitions, CodeWriter writer)
         {
+            Language.CreateMethodCallCodeGenerator(Constants.PreInitializedMethod).Write(writer);
+
+            writer.AppendLine();
+
             Language.CreateRawStatementCodeGenerator("base." + Constants.OnInitializedMethod + "()").Write(writer);
 
             if (transitions != null)
@@ -117,6 +141,10 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                     }).Write(writer);
                 }
             }
+
+            writer.AppendLine();
+
+            Language.CreateMethodCallCodeGenerator(Constants.PostInitializedMethod).Write(writer);
         }
 
         private bool WriteTransitionHandlerMethodCall(ITransition tr, CodeWriter writer)
