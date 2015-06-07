@@ -28,6 +28,7 @@ namespace Bitcraft
             void* _context;
             StateBase* _currentState;
             list<StateBase*> _states;
+            bool _isPerformActionLocked;
 
         private:
             void InternalInitialization(void* context);

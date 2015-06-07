@@ -1,4 +1,6 @@
-﻿/**
+﻿/* version 1.1 */
+
+/**
  * @name fsm
  * @namespace
  */
@@ -74,7 +76,9 @@ fsm.ACTION_RESULT_TYPE = {
     /** Error, the current state does not know about the given action */
     ERROR_UNKNOWN_ACTION: 1,
     /** Error, the state machine is already performing an action asynchronously */
-    ERROR_ALREADY_PERFORMING_ACTION: 2
+    ERROR_ALREADY_PERFORMING_ACTION: 2,
+    /** Error, cannot perform action from special events such as onInitialize, onEnter, onExit, onStateChanged and onCompleted. */
+    ERROR_FORBIDDEN_FROM_SPECIAL_EVENTS: 3
 };
 
 /**
@@ -87,11 +91,14 @@ fsm.ACTION_RESULT_TYPE.stringify = function (value) {
     if (value === this.SUCCESS) {
         return 'SUCCESS';
     }
+    if (value === this.ERROR_UNKNOWN_ACTION) {
+        return 'ERROR_UNKNOWN_ACTION';
+    }
     if (value === this.ERROR_ALREADY_PERFORMING_ACTION) {
         return 'ERROR_ALREADY_PERFORMING_ACTION';
     }
-    if (value === this.ERROR_UNKNOWN_ACTION) {
-        return 'ERROR_UNKNOWN_ACTION';
+    if (value === this.ERROR_FORBIDDEN_FROM_SPECIAL_EVENTS) {
+        return 'ERROR_FORBIDDEN_FROM_SPECIAL_EVENTS';
     }
     return null;
 };
@@ -111,6 +118,13 @@ fsm.StateManager = function (context) {
      * @private
      */
     this._currentState = null;
+
+    /**
+     * Call to performAction is locked because in the middle of a special event
+     * @type {boolean}
+     * @private
+    */
+    this._isPerformActionLocked = false;
 
     /**
      * A collection of registered states
@@ -236,7 +250,12 @@ fsm.StateManager.prototype._transitionTo = function (stateToken, data) {
             data: data
         };
 
-        this._currentState.onExit(exitEventArgs);
+        this._isPerformActionLocked = true;
+        try {
+            this._currentState.onExit(exitEventArgs);
+        } finally {
+            this._isPerformActionLocked = false;
+        }
     }
 
     // keep reference to previous state
@@ -255,29 +274,34 @@ fsm.StateManager.prototype._transitionTo = function (stateToken, data) {
         }
     };
 
-    // check whether the current state has defined a function named 'onEnter'
-    // and call it if available, providing the said state as execution context
-    if (typeof this._currentState.onEnter === 'function') {
-        this._currentState.onEnter(enterEventArgs);
-    }
-
-    // check if the user didn't mess up the provided event argument
-    if (!enterEventArgs.redirect) {
-        throw new Error('Illegal operation.');
-    }
-
     // create a state changed event argument
     var stateChangedEventArgs = {
         oldState: oldState,
         newState: this._currentState
     };
 
-    var i;
-    var obj;
-    // notify all registered parties of the state change
-    for (i = 0; i < this._stateChangedCallbackContainers.length; i += 1) {
-        obj = this._stateChangedCallbackContainers[i];
-        obj.cb.call(obj.context, this, stateChangedEventArgs);
+    this._isPerformActionLocked = true;
+    try {
+        var i;
+        var obj;
+        // notify all registered parties of the state change
+        for (i = 0; i < this._stateChangedCallbackContainers.length; i += 1) {
+            obj = this._stateChangedCallbackContainers[i];
+            obj.cb.call(obj.context, this, stateChangedEventArgs);
+        }
+
+        // check whether the current state has defined a function named 'onEnter'
+        // and call it if available, providing the said state as execution context
+        if (typeof this._currentState.onEnter === 'function') {
+            this._currentState.onEnter(enterEventArgs);
+        }
+    } finally {
+        this._isPerformActionLocked = false;
+    }
+
+    // check if the user didn't mess up the provided event argument
+    if (!enterEventArgs.redirect) {
+        throw new Error('Illegal operation.');
     }
 
     // return the TransitionInfo object
@@ -376,6 +400,11 @@ fsm.StateManager.prototype.canPerformAction = function () {
     if (!this._currentState) {
         return false;
     }
+
+    if (this._isPerformActionLocked) {
+        return false;
+    }
+
     return this._currentState.isHandlingAsync() === false;
 };
 
@@ -395,6 +424,10 @@ fsm.StateManager.prototype.performAction = function (action, data) {
     // check for current state validity
     if (!this._currentState) {
         throw new Error('State machine not yet initialized or has reached its final state.');
+    }
+
+    if (this._isPerformActionLocked) {
+        return fsm.ACTION_RESULT_TYPE.ERROR_FORBIDDEN_FROM_SPECIAL_EVENTS;
     }
 
     // keep track of the current execution context
@@ -418,10 +451,16 @@ fsm.StateManager.prototype.performAction = function (action, data) {
 
             var i;
             var obj;
-            // notify all registered parties that the state machine has reached its completed state
-            for (i = 0; i < self._completedCallbackContainers.length; i += 1) {
-                obj = self._completedCallbackContainers[i];
-                obj.cb.call(obj.context, self);
+
+            self._isPerformActionLocked = true;
+            try {
+                // notify all registered parties that the state machine has reached its completed state
+                for (i = 0; i < self._completedCallbackContainers.length; i += 1) {
+                    obj = self._completedCallbackContainers[i];
+                    obj.cb.call(obj.context, self);
+                }
+            } finally {
+                self._isPerformActionLocked = false;
             }
         } else {
             // ensure the action token is valid
@@ -464,7 +503,7 @@ fsm.StateManager._injectableRegisterActionHandler = function (state, action, han
     var key = action.id.toString();
     // check whether the key is already registered
     if (state._handlers[key]) {
-        throw new Error("Action already registered.");
+        throw new Error('Action already registered.');
     }
 
     // register the handler for the given action
@@ -635,9 +674,14 @@ fsm.StateManager.prototype.registerState = function (state) {
         return fsm.StateManager._injectableHandle(state, action, data, decisionCallback);
     };
 
-    // calls the onInitialize() method of the state if available
-    if (typeof state.onInitialize === 'function') {
-        state.onInitialize();
+    this._isPerformActionLocked = true;
+    try {
+        // calls the onInitialize() method of the state if available
+        if (typeof state.onInitialize === 'function') {
+            state.onInitialize();
+        }
+    } finally {
+        this._isPerformActionLocked = false;
     }
 };
 

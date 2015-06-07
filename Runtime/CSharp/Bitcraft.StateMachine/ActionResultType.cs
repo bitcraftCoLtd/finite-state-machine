@@ -20,6 +20,11 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Error, the state machine is already performing an action asynchronously.
         /// </summary>
-        ErrorAlreadyPerformingAction
+        ErrorAlreadyPerformingAction,
+
+        /// <summary>
+        /// Error, cannot perform action from special events such as OnInitialize, OnEnter and OnExit.
+        /// </summary>
+        ErrorForbiddenFromSpecialEvents,
     }
 }

@@ -42,7 +42,7 @@ The runtime is in the folder Runtime\CSharp and tools are in the folder Tools.
 
 ### C++
 
-The C++ runtime library uses the STL for map, and that's pretty much it in term of high level features. The code should be able to build on almost any platforms and architectures.
+The C++ runtime library uses the STL for map, and that's pretty much it in term of high level features. The code should build on almost any platforms and architectures.
 
 The runtime is in the folder Runtime\Cpp.
 
@@ -193,6 +193,9 @@ The second thing is the "what to do" from the previous sentence. The method *OnG
 
 The *callback* provided to the handler can be called later. During this delay phase, all subsequent calls to the *PerformAction()* method will return the *ActionResultType.ErrorAlreadyPerformingAction* value.
 
+Note that the delayed transition feature is only available in the C# and JavaScript runtimes.
+For the C++ and the TypeScript runtimes, the state machine have to be pulsed.
+
 One very very important thing here, when a handler is called, the callback **MUST** be called at least once. If you call it more than once, the subsequent calls are ignored, but if you do not call it at all, the state machine keeps waiting and thus gets locked because, once again, all subsequent calls to the *PerformAction()* method will return the *ActionResultType.ErrorAlreadyPerformingAction* value, and thus no other transitions will be permitted.
 
 One last thing about action handlers, it is possible to register an action handler that allow you to provide custom data to the target state, by registering the action handler as follow:
@@ -241,7 +244,7 @@ Calling the SetInitialState() method in the constructor is not recommended becau
 
 Once everything is in place, what remains is simply to use the state machine in order to make it do something.
 The way to use the state machine is simply to call one method, *PerformAction()* and that's it.
-When using a finite state machine, you are not telling the state machine in which state to move on or what, you just tell it what you are doing, and it is up to the state machine to tell you if you are doing things good or not.
+When using a finite state machine, you are not telling the state machine in which state to move on, you just tell it what you are doing, and it is up to the state machine to tell you if you are doing things good or not.
 
 When you call the *PerformAction()* method, you give it an *ActionToken* parameter in order to describe what you are doing. If needed you can give an additional data, this is described in a section bellow.
 
@@ -250,6 +253,7 @@ The *PerformAction()* method returns an *ActionResultType* enumeration value, wh
 - *Success* meaning the current state was aware of the action you performed and that transition happened
 - *ErrorUnknownAction* meaning the current state in unaware of what you want to do
 - *ErrorAlreadyPerformingAction* meaning a state transition is in progress and decision has been purposely delayed and still under way
+- *ErrorForbiddenFromSpecialEvents* meaning that calls to *PerformAction()* are forbidden during OnInitialize, OnEnter, OnExit, OnStateChanged and OnCompleted events.
 
 #### More details
 
@@ -310,9 +314,9 @@ You basically uses the *OnInitialize()* method to register action handlers, the 
 
 ##### Fast redirection
 
-When you need to change state to another state from within the *OnEnter()* method call, you should not call *PerformAction()*.
+When you need to change state to another state from within the *OnEnter()* method call, you cannot call *PerformAction()*.
 
-Instead, you can tell the state machine to directly redirect to a given state by setting the *TargetStateToken* property of the *Redirect* property of the event given as parameter. Hereafter is an example.
+Instead, you have to tell the state machine to directly redirect to a given state by setting the *TargetStateToken* property of the *Redirect* property of the event given as parameter. Hereafter is an example.
 
 	public class PaymentBasketState : BasketStateBase
 	{
@@ -340,6 +344,17 @@ Instead, you can tell the state machine to directly redirect to a given state by
 Here, when the *PaymentBasketState* becomes active, it checks whether the user has activated the fast buy option, and if yes, it requests the state machine to directly move to the "Thank you" screen, skipping the confirmation state.
 
 Fast redirection feature does not allow delaying state transition, the operation can only be synchronous.
+
+## Pulsing the state machine
+
+Pulsing the state machine is not a feature, it is simply a useful technique to delay state transition.
+When you need to delay a transition, hereafter are the steps to follow:
+
+1. Define a PULSE action. (or whatever name you like)
+2. Register the PULSE action handler in your state.
+3. When time has come, call the *PerformAction()* method and pass it the *PULSE* action.
+4. Call the transition callback from the *pulsed* action handler.
+5. Repeat from step 3 as much as needed.
 
 ## Tools
 

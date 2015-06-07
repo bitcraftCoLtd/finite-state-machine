@@ -39,6 +39,8 @@ namespace Bitcraft.StateMachine
 
         private List<StateBase> states = new List<StateBase>();
 
+        private bool isPerformActionLocked;
+
         /// <summary>
         /// Initializes the StateManager instance without context.
         /// </summary>
@@ -108,16 +110,34 @@ namespace Bitcraft.StateMachine
             if (CurrentState != null)
             {
                 var stateExitEventArgs = new StateExitEventArgs(stateToken, data);
-                CurrentState.OnExit(stateExitEventArgs);
+
+                isPerformActionLocked = true;
+                try
+                {
+                    CurrentState.OnExit(stateExitEventArgs);
+                }
+                finally
+                {
+                    isPerformActionLocked = false;
+                }
             }
 
             var oldState = CurrentState;
             CurrentState = state;
 
             var stateEnterEventArgs = new StateEnterEventArgs(oldState != null ? oldState.Token : null, data);
-            CurrentState.OnEnter(stateEnterEventArgs);
 
-            OnStateChanged(new StateChangedEventArgs(oldState, CurrentState));
+            isPerformActionLocked = true;
+            try
+            {
+                OnStateChanged(new StateChangedEventArgs(oldState, CurrentState));
+
+                CurrentState.OnEnter(stateEnterEventArgs);
+            }
+            finally
+            {
+                isPerformActionLocked = false;
+            }
 
             return stateEnterEventArgs.Redirect;
         }
@@ -131,6 +151,9 @@ namespace Bitcraft.StateMachine
             get
             {
                 if (CurrentState == null)
+                    return false;
+
+                if (isPerformActionLocked)
                     return false;
 
                 return CurrentState.IsHandlingAsync == false;
@@ -162,6 +185,9 @@ namespace Bitcraft.StateMachine
 
             if (CurrentState == null)
                 throw new InvalidOperationException("State machine not yet initialized or has reached its final state.");
+
+            if (isPerformActionLocked)
+                return ActionResultType.ErrorForbiddenFromSpecialEvents;
 
             return CurrentState.Handle(action, data, (st, d) =>
             {

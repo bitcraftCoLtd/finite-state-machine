@@ -38,6 +38,7 @@ namespace Bitcraft
         {
             _context = context;
             _currentState = NULL;
+            _isPerformActionLocked = false;
         }
 
         void StateManager::SetInitialState(StateToken* initialState, StateData* data)
@@ -75,16 +76,24 @@ namespace Bitcraft
                 throw new UnknownStateException(GetCurrentStateToken(), stateToken);
 
             if (_currentState != NULL)
+            {
+                _isPerformActionLocked = true;
                 _currentState->OnExit();
+                _isPerformActionLocked = false;
+            }
 
             StateBase* oldState = _currentState;
             _currentState = state;
 
-            StateEnterEventArgs stateEnterEventArgs = StateEnterEventArgs(oldState != NULL ? oldState->GetToken() : NULL, data);
-            _currentState->OnEnter(&stateEnterEventArgs);
+            _isPerformActionLocked = true;
 
             StateChangedEventArgs stateChangedEventArgs = StateChangedEventArgs(oldState, _currentState);
             OnStateChanged(&stateChangedEventArgs);
+
+            StateEnterEventArgs stateEnterEventArgs = StateEnterEventArgs(oldState != NULL ? oldState->GetToken() : NULL, data);
+            _currentState->OnEnter(&stateEnterEventArgs);
+
+            _isPerformActionLocked = false;
 
             return stateEnterEventArgs.GetRedirect();
         }
@@ -133,6 +142,9 @@ namespace Bitcraft
             if (_currentState == NULL)
                 throw new exception("State machine not yet initialized or has reached its final state.");
 
+            if (_isPerformActionLocked)
+                return; // not that good :/
+
             TransitionInfo transitionInfo;
             transitionInfo.TargetStateToken = NULL;
             transitionInfo.TargetStateData = data;
@@ -141,7 +153,9 @@ namespace Bitcraft
             if (transitionInfo.TargetStateToken == NULL)
             {
                 _currentState = NULL;
+                _isPerformActionLocked = true;
                 OnCompleted();
+                _isPerformActionLocked = false;
                 return;
             }
 
@@ -158,7 +172,10 @@ namespace Bitcraft
                 throw new invalid_argument("State already registered.");
 
             _states.push_back(state);
+
+            _isPerformActionLocked = true;
             state->Initialize(this);
+            _isPerformActionLocked = false;
         }
     }
 }
