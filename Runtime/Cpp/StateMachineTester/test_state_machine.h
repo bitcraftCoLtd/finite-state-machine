@@ -13,27 +13,27 @@ class TestStateMachine : public StateManager
 {
 public:
 
-	TestStateMachine()
-	{
-		RegisterState(new TestState1());
-		RegisterState(new TestState2());
-		RegisterState(new TestState3());
-	}
+    TestStateMachine()
+    {
+        RegisterState(new TestState1());
+        RegisterState(new TestState2());
+        RegisterState(new TestState3());
+    }
 
-	void OnStateChanged(StateChangedEventArgs* e) override
-	{
-		StateBase* oldState = e->GetOldState();
-		StateBase* newState = e->GetNewState();
+    void OnStateChanged(StateChangedEventArgs* e) override
+    {
+        StateBase* oldState = e->GetOldState();
+        StateBase* newState = e->GetNewState();
 
-		printf("TestStateMachine: OnStateChanged (from '%S' to '%S')\n",
-			oldState != NULL ? oldState->GetToken()->ToString() : L"(null)",
-			newState != NULL ? newState->GetToken()->ToString() : L"(null)");
-	}
+        printf("TestStateMachine: OnStateChanged (from '%S' to '%S')\n",
+            oldState != NULL ? oldState->GetToken()->ToString() : L"(null)",
+            newState != NULL ? newState->GetToken()->ToString() : L"(null)");
+    }
 
-	void OnCompleted() override
-	{
-		printf("TestStateMachine: OnCompleted\n");
-	}
+    void OnCompleted() override
+    {
+        printf("TestStateMachine: OnCompleted\n");
+    }
 };
 
 #endif // __TEST_STATE_MACHINE_H__

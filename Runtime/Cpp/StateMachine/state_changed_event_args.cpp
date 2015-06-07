@@ -2,22 +2,22 @@
 
 namespace Bitcraft
 {
-	namespace StateMachine
-	{
-		StateChangedEventArgs::StateChangedEventArgs(StateBase* oldState, StateBase* newState)
-		{
-			_oldState = oldState;
-			_newState = newState;
-		}
+    namespace StateMachine
+    {
+        StateChangedEventArgs::StateChangedEventArgs(StateBase* oldState, StateBase* newState)
+        {
+            _oldState = oldState;
+            _newState = newState;
+        }
 
-		StateBase* StateChangedEventArgs::GetOldState()
-		{
-			return _oldState;
-		}
+        StateBase* StateChangedEventArgs::GetOldState()
+        {
+            return _oldState;
+        }
 
-		StateBase* StateChangedEventArgs::GetNewState()
-		{
-			return _newState;
-		}
-	}
+        StateBase* StateChangedEventArgs::GetNewState()
+        {
+            return _newState;
+        }
+    }
 }

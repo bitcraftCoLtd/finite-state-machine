@@ -11,14 +11,14 @@ using namespace Bitcraft::StateMachine;
 
 int main(int argc, char* argv[])
 {
-	TestStateMachine stateMachine;
-	stateMachine.SetInitialState(TestStateTokens::StateToken1, NULL);
+    TestStateMachine stateMachine;
+    stateMachine.SetInitialState(TestStateTokens::StateToken1, NULL);
 
-	stateMachine.PerformAction(TestActionTokens::GoToState2Action);
-	stateMachine.PerformAction(TestActionTokens::GoToState3Action);
-	stateMachine.PerformAction(TestActionTokens::GoToState1Action);
+    stateMachine.PerformAction(TestActionTokens::GoToState2Action);
+    stateMachine.PerformAction(TestActionTokens::GoToState3Action);
+    stateMachine.PerformAction(TestActionTokens::GoToState1Action);
 
-	stateMachine.PerformAction(TestActionTokens::EndAction);
+    stateMachine.PerformAction(TestActionTokens::EndAction);
 
-	return 0;
+    return 0;
 }

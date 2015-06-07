@@ -11,38 +11,38 @@ class TestState2 : public StateBase
 {
 public:
 
-	TestState2()
-		: StateBase(TestStateTokens::StateToken2)
-	{
-	}
+    TestState2()
+        : StateBase(TestStateTokens::StateToken2)
+    {
+    }
 
-	void OnInitialize() override
-	{
-		RegisterActionHandler(TestActionTokens::GoToState1Action, OnGoBackToState1);
-		RegisterActionHandler(TestActionTokens::GoToState3Action, OnGoToState3);
-	}
+    void OnInitialize() override
+    {
+        RegisterActionHandler(TestActionTokens::GoToState1Action, OnGoBackToState1);
+        RegisterActionHandler(TestActionTokens::GoToState3Action, OnGoToState3);
+    }
 
-	void OnEnter(StateEnterEventArgs* e) override
-	{
-		StateToken* from = e->GetFrom();
+    void OnEnter(StateEnterEventArgs* e) override
+    {
+        StateToken* from = e->GetFrom();
 
-		printf("State '%S': OnEnter(from '%S')\n", GetToken()->ToString(), from != NULL ? from->ToString() : L"(null)");
-	}
+        printf("State '%S': OnEnter(from '%S')\n", GetToken()->ToString(), from != NULL ? from->ToString() : L"(null)");
+    }
 
-	static void OnGoBackToState1(StateBase* self, StateData* data, TransitionInfo* result)
-	{
-		result->TargetStateToken = TestStateTokens::StateToken1;
-	}
+    static void OnGoBackToState1(StateBase* self, StateData* data, TransitionInfo* result)
+    {
+        result->TargetStateToken = TestStateTokens::StateToken1;
+    }
 
-	static void OnGoToState3(StateBase* self, StateData* data, TransitionInfo* result)
-	{
-		result->TargetStateToken = TestStateTokens::StateToken3;
-	}
+    static void OnGoToState3(StateBase* self, StateData* data, TransitionInfo* result)
+    {
+        result->TargetStateToken = TestStateTokens::StateToken3;
+    }
 
-	void OnExit() override
-	{
-		printf("State '%S': OnExit()\n", GetToken()->ToString());
-	}
+    void OnExit() override
+    {
+        printf("State '%S': OnExit()\n", GetToken()->ToString());
+    }
 };
 
 #endif // __TEST_STATE_H__
