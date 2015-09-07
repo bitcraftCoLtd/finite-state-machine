@@ -1,4 +1,4 @@
-﻿/* version 1.1 */
+﻿/* version 1.1.0.1 */
 
 /**
  * @name fsm
@@ -240,23 +240,7 @@ fsm.StateManager.prototype._transitionTo = function (stateToken, data) {
         throw new Error('Unknown state [' + stateToken.name + ']');
     }
 
-    // check whether the current state has defined a function named 'onExit'
-    // and call it if available, providing the said state as execution context
-    if (this._currentState && typeof this._currentState.onExit === 'function') {
-
-        // create enter state event argument
-        var exitEventArgs = {
-            to: stateToken,
-            data: data
-        };
-
-        this._isPerformActionLocked = true;
-        try {
-            this._currentState.onExit(exitEventArgs);
-        } finally {
-            this._isPerformActionLocked = false;
-        }
-    }
+    this._raiseOnExitEvent(stateToken, data);
 
     // keep reference to previous state
     /** @type {State} */
@@ -307,6 +291,32 @@ fsm.StateManager.prototype._transitionTo = function (stateToken, data) {
     // return the TransitionInfo object
     return enterEventArgs.redirect;
 };
+
+/**
+ * Calls the onExit function on the current state, if any.
+ * @param {Token} stateToken
+ * @param {*} data
+ */
+fsm.StateManager.prototype._raiseOnExitEvent = function (stateToken, data) {
+    // check whether the current state has defined a function named 'onExit'
+    // and call it if available, providing the said state as execution context
+    if (this._currentState && typeof this._currentState.onExit === 'function') {
+        
+        // create enter state event argument
+        var exitEventArgs = {
+            to: stateToken,
+            data: data
+        };
+        
+        this._isPerformActionLocked = true;
+        try {
+            this._currentState.onExit(exitEventArgs);
+        } finally {
+            this._isPerformActionLocked = false;
+        }
+    }
+};
+
 
 /**
  * Transition from a state to another, chaining the redirections
@@ -383,6 +393,8 @@ fsm.StateManager.prototype.setInitialState = function (initialState, data) {
     if (!initialState) {
         throw new Error('Invalid \'initialState\' argument.');
     }
+    
+    this._raiseOnExitEvent(null, null);
 
     // initialize the current state to null
     this._currentState = null;

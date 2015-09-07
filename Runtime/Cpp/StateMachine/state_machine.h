@@ -1,4 +1,4 @@
-/* version 1.1 */
+/* version 1.1.0.1 */
 
 #ifndef __BITCRAFT_STATEMACHINE_STATE_MACHINE_H__
 #define __BITCRAFT_STATEMACHINE_STATE_MACHINE_H__

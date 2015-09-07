@@ -78,6 +78,8 @@ namespace Bitcraft.StateMachine
             if (initialState == null)
                 throw new ArgumentNullException("initialState");
 
+            RaiseOnExitEvent(null, null);
+
             CurrentState = null;
             PerformTransitionTo(initialState, data);
         }
@@ -107,20 +109,7 @@ namespace Bitcraft.StateMachine
             if (state == null)
                 throw new UnknownStateException(CurrentStateToken, stateToken);
 
-            if (CurrentState != null)
-            {
-                var stateExitEventArgs = new StateExitEventArgs(stateToken, data);
-
-                isPerformActionLocked = true;
-                try
-                {
-                    CurrentState.OnExit(stateExitEventArgs);
-                }
-                finally
-                {
-                    isPerformActionLocked = false;
-                }
-            }
+            RaiseOnExitEvent(stateToken, data);
 
             var oldState = CurrentState;
             CurrentState = state;
@@ -140,6 +129,24 @@ namespace Bitcraft.StateMachine
             }
 
             return stateEnterEventArgs.Redirect;
+        }
+
+        private void RaiseOnExitEvent(StateToken stateToken, object data)
+        {
+            if (CurrentState != null)
+            {
+                var stateExitEventArgs = new StateExitEventArgs(stateToken, data);
+
+                isPerformActionLocked = true;
+                try
+                {
+                    CurrentState.OnExit(stateExitEventArgs);
+                }
+                finally
+                {
+                    isPerformActionLocked = false;
+                }
+            }
         }
 
         /// <summary>

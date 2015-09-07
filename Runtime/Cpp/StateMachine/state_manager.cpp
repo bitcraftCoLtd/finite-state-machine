@@ -46,6 +46,13 @@ namespace Bitcraft
             if (initialState == NULL)
                 throw new invalid_argument("Invalid 'initialState' argument.");
 
+            if (_currentState != NULL)
+            {
+                _isPerformActionLocked = true;
+                _currentState->OnExit();
+                _isPerformActionLocked = false;
+            }
+
             _currentState = NULL;
             PerformTransitionTo(initialState, data);
         }
