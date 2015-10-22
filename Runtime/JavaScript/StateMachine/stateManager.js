@@ -1,4 +1,4 @@
-﻿/* version 1.1.0.1 */
+/* version 1.1.0.2 */
 
 /**
  * @name fsm
@@ -28,8 +28,8 @@ fsm = fsm || {};
  * @property {Token} token
  * @property {function: StateManager} getStateManager
  * @property {function} getContext
- * @property {function: State} getCurrentState
- * @property {function: Token} getCurrentStateToken
+ * @property {function: State|undefined} getCurrentState
+ * @property {function: Token|undefined} getCurrentStateToken
  * @property {function: boolean} isHandlingAsync
  * @property {function(Token, ActionHandler)} registerActionHandler
  * @property {function} onInitialize Called after the state has been initialized by its state machine
@@ -123,7 +123,7 @@ fsm.StateManager = function (context) {
      * Call to performAction is locked because in the middle of a special event
      * @type {boolean}
      * @private
-    */
+     */
     this._isPerformActionLocked = false;
 
     /**
@@ -298,16 +298,18 @@ fsm.StateManager.prototype._transitionTo = function (stateToken, data) {
  * @param {*} data
  */
 fsm.StateManager.prototype._raiseOnExitEvent = function (stateToken, data) {
+    'use strict';
+
     // check whether the current state has defined a function named 'onExit'
     // and call it if available, providing the said state as execution context
     if (this._currentState && typeof this._currentState.onExit === 'function') {
-        
+
         // create enter state event argument
         var exitEventArgs = {
             to: stateToken,
             data: data
         };
-        
+
         this._isPerformActionLocked = true;
         try {
             this._currentState.onExit(exitEventArgs);
@@ -393,7 +395,7 @@ fsm.StateManager.prototype.setInitialState = function (initialState, data) {
     if (!initialState) {
         throw new Error('Invalid \'initialState\' argument.');
     }
-    
+
     this._raiseOnExitEvent(null, null);
 
     // initialize the current state to null
@@ -439,6 +441,7 @@ fsm.StateManager.prototype.performAction = function (action, data) {
     }
 
     if (this._isPerformActionLocked) {
+        //throw new Error('illegal call to performAction from within special event');
         return fsm.ACTION_RESULT_TYPE.ERROR_FORBIDDEN_FROM_SPECIAL_EVENTS;
     }
 
@@ -449,6 +452,9 @@ fsm.StateManager.prototype.performAction = function (action, data) {
     // the custom data and the transition decision callback
     return this._currentState._handle(action, data, function (innerAction, innerData) {
 
+        var i;
+        var obj;
+
         // enforce at least the action token to be provided
         if (arguments.length === 0) {
             throw new Error('Missing state argument.');
@@ -458,14 +464,23 @@ fsm.StateManager.prototype.performAction = function (action, data) {
         if (!innerAction) {
             // in this case, the state machine has reached a final state and is done
 
+            // create a state changed event argument
+            var stateChangedEventArgs = {
+                oldState: self._currentState,
+                newState: null
+            };
+
             // clear the current state
             self._currentState = null;
 
-            var i;
-            var obj;
-
             self._isPerformActionLocked = true;
             try {
+                // notify all registered parties of the state change
+                for (i = 0; i < self._stateChangedCallbackContainers.length; i += 1) {
+                    obj = self._stateChangedCallbackContainers[i];
+                    obj.cb.call(obj.context, self, stateChangedEventArgs);
+                }
+
                 // notify all registered parties that the state machine has reached its completed state
                 for (i = 0; i < self._completedCallbackContainers.length; i += 1) {
                     obj = self._completedCallbackContainers[i];
@@ -568,6 +583,7 @@ fsm.StateManager._injectableHandle = function (state, action, data, decisionCall
 
         // call the action handler in the execution context of the state
         // providing it the custom data and the transition decision callback
+        /*jslint unparam: true */
         handler.call(state, data, function (innerAction, innerData) {
 
             // check the protection flag
@@ -575,7 +591,7 @@ fsm.StateManager._injectableHandle = function (state, action, data, decisionCall
                 return;
             }
             try {
-                // call the transition decision callback transfering the arguments as is
+                // call the transition decision callback transferring the arguments as is
                 decisionCallback.apply(this, arguments);
             } finally {
                 // ensure _isHandlingAsync flag is properly cleared
