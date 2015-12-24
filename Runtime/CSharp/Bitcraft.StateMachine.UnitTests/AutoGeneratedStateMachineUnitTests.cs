@@ -23,7 +23,7 @@ namespace Bitcraft.StateMachine.UnitTests
 
             sm.SetInitialState(TestAutoStateTokens.Begin, null);
 
-            sm.PerformAction(TestAutoActionTokens.InitDone);
+            sm.PerformAction(TestAutoActionTokens.InitDone, 51);
             sm.PerformAction(TestAutoActionTokens.Update);
             sm.PerformAction(TestAutoActionTokens.Update);
             sm.PerformAction(TestAutoActionTokens.Update);
