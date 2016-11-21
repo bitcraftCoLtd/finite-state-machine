@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Bitcraft.StateMachineTool.Core;
 using Bitcraft.ToolKit.CodeGeneration;
-using Bitcraft.StateMachineTool.Core;
+using System;
+using System.Linq;
 
 namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 {
@@ -12,8 +9,9 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
     {
         private IGraph graph;
         private INode initialNode;
+        private bool isInternal;
 
-        public StateMachineCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, INode initialNode, IGraph graph)
+        public StateMachineCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, bool isInternal, INode initialNode, IGraph graph)
             : base(generatorsFactory, namespaceName, stateMachineName)
         {
             if (graph == null)
@@ -21,6 +19,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 
             this.graph = graph;
             this.initialNode = initialNode;
+            this.isInternal = isInternal;
         }
 
         public override void Write(CodeWriter writer)
@@ -52,7 +51,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
         private void WriteClassContent(CodeWriter writer)
         {
             Language.CreateConstructorDeclarationCodeGenerator(
-                AccessModifier.Public,
+                isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 false,
                 stateMachineName + Constants.StateMachineSuffix,
                 null,
@@ -63,7 +62,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             writer.AppendLine();
 
             Language.CreateConstructorDeclarationCodeGenerator(
-                AccessModifier.Public,
+                isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 false,
                 stateMachineName + Constants.StateMachineSuffix,
                 new[] { new ArgumentInfo("object", "context") },

@@ -11,14 +11,16 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
     public class StateTokensCodeGenerator : CodeGeneratorBase
     {
         private IGraph graph;
+        private bool isInternal;
 
-        public StateTokensCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, IGraph graph)
+        public StateTokensCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, bool isInternal, IGraph graph)
             : base(generatorsFactory, namespaceName, stateMachineName)
         {
             if (graph == null)
                 throw new ArgumentNullException(nameof(graph));
 
             this.graph = graph;
+            this.isInternal = isInternal;
         }
 
         public override void Write(CodeWriter writer)
@@ -38,7 +40,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
         protected override void WriteContent(CodeWriter writer)
         {
             Language.CreateClassCodeGenerator(
-                AccessModifier.Public,
+                isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 new[] { "static" },
                 stateMachineName + Constants.StateTokensClass,
                 null).Write(writer);
@@ -58,7 +60,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             foreach (var node in nodes)
             {
                 Language.CreateVariableDeclarationCodeGenerator(
-                    AccessModifier.Public,
+                    isInternal ? AccessModifier.Internal : AccessModifier.Public,
                     new[] { "static", "readonly" },
                     Constants.StateTokenType,
                     node.Semantic,
@@ -68,7 +70,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             writer.AppendLine();
 
             Language.CreateVariableDeclarationCodeGenerator(
-                AccessModifier.Public,
+                isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 new[] { "static", "readonly" },
                 Constants.StateTokenType + "[]",
                 Constants.TokenItemsProperty,

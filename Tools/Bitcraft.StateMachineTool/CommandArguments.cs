@@ -18,6 +18,7 @@ namespace Bitcraft.StateMachineTool
         public string InitialStateName { get; private set; }
         public bool IsOutputFolderRelativeToWorkingDir { get; private set; }
         public bool UseOriginalStateBase { get; private set; }
+        public bool IsInternal { get; private set; }
 
         private string[] args;
 
@@ -30,6 +31,7 @@ namespace Bitcraft.StateMachineTool
         public const string InitialStateNameArgumentKey = "-init";
         public const string OutputRelativeToFileArgumentKey = "-fromwd";
         public const string UseOriginalStateBaseArgumentKey = "-statebase";
+        public const string InternalArgumentKey = "-internal";
 
         public bool NothingToDo { get; private set; }
 
@@ -97,6 +99,10 @@ namespace Bitcraft.StateMachineTool
                             break;
                         case UseOriginalStateBaseArgumentKey:
                             UseOriginalStateBase = true;
+                            NothingToDo = false;
+                            break;
+                        case InternalArgumentKey:
+                            IsInternal = true;
                             NothingToDo = false;
                             break;
                         case VersionArgumentKey:
@@ -173,9 +179,12 @@ namespace Bitcraft.StateMachineTool
             PrintAdditionalInfo("the .graphml file is used, if any.");
             Console.WriteLine();
 
-            PrintCommand(UseOriginalStateBaseArgumentKey, "Make all generated state classes to inherit from");
+            PrintCommand(UseOriginalStateBaseArgumentKey, "Makes all generated state classes to inherit from");
             PrintAdditionalInfo("Bitcraft.StateMachine.StateBase class instead of from");
             PrintAdditionalInfo("<name>StateBase.");
+            Console.WriteLine();
+
+            PrintCommand(InternalArgumentKey, "Makes all exposed types internal instead of public");
             Console.WriteLine();
         }
 

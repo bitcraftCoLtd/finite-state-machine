@@ -13,8 +13,9 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
         private string stateName;
         private IGraph graph;
         private bool useStateBase;
+        private bool isInternal;
 
-        public StateCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, string stateName, bool useStateBase, IGraph graph)
+        public StateCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, string stateName, bool useStateBase, bool isInternal, IGraph graph)
             : base(generatorsFactory, namespaceName, stateMachineName)
         {
             CodeGenerationUtility.CheckValidPartialIdentifierArgument(stateName, nameof(stateName));
@@ -25,6 +26,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             this.stateName = stateName;
             this.graph = graph;
             this.useStateBase = useStateBase;
+            this.isInternal = isInternal;
         }
 
         public override void Write(CodeWriter writer)
@@ -59,7 +61,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
         private void WriteClassContent(CodeWriter writer)
         {
             Language.CreateConstructorDeclarationCodeGenerator(
-                AccessModifier.Public,
+                isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 false,
                 stateMachineName + stateName + Constants.StateSuffix,
                 null,

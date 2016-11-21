@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Bitcraft.StateMachineTool.CodeGenerators;
+using Bitcraft.StateMachineTool.CodeGenerators.CSharp;
+using Bitcraft.StateMachineTool.Core;
+using Bitcraft.ToolKit.CodeGeneration;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Bitcraft.StateMachineTool.Core;
-using Bitcraft.ToolKit.CodeGeneration;
-using Bitcraft.StateMachineTool.CodeGenerators.CSharp;
 
 namespace Bitcraft.StateMachineTool
 {
@@ -74,6 +72,7 @@ namespace Bitcraft.StateMachineTool
 
             string namespaceName = args.NamespaceName;
             string stateMachineName = args.StateMachineName ?? graph.Semantic; // command line argument has priority
+            bool isInternal = args.IsInternal;
 
             var graphInitialNodeName = graph.InitialNode != null ? graph.InitialNode.Semantic : null;
 
@@ -108,9 +107,9 @@ namespace Bitcraft.StateMachineTool
 
             var generatorsFactory = new Bitcraft.ToolKit.CodeGeneration.CSharp.CSharpLanguageAbstraction();
 
-            WriteFile(new StateMachineCodeGenerator(generatorsFactory, namespaceName, stateMachineName, initialNode, graph), outputPath, fs.StateMachineFilename);
-            WriteFile(new StateTokensCodeGenerator(generatorsFactory, namespaceName, stateMachineName, graph), outputPath, fs.StateTokensFilename);
-            WriteFile(new ActionTokensCodeGenerator(generatorsFactory, namespaceName, stateMachineName, graph), outputPath, fs.ActionTokensFilename);
+            WriteFile(new StateMachineCodeGenerator(generatorsFactory, namespaceName, stateMachineName, isInternal, initialNode, graph), outputPath, fs.StateMachineFilename);
+            WriteFile(new StateTokensCodeGenerator(generatorsFactory, namespaceName, stateMachineName, isInternal, graph), outputPath, fs.StateTokensFilename);
+            WriteFile(new ActionTokensCodeGenerator(generatorsFactory, namespaceName, stateMachineName, isInternal, graph), outputPath, fs.ActionTokensFilename);
 
             foreach (var state in fs.States)
             {
@@ -121,6 +120,7 @@ namespace Bitcraft.StateMachineTool
                         stateMachineName,
                         state.Semantic,
                         args.UseOriginalStateBase,
+                        isInternal,
                         graph
                     ),
                     outputPath,

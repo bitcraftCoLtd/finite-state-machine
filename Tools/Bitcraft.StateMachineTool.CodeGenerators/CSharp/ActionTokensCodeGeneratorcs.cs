@@ -11,13 +11,15 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
     public class ActionTokensCodeGenerator : CodeGeneratorBase
     {
         private IGraph graph;
+        private bool isInternal;
 
-        public ActionTokensCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, IGraph graph)
+        public ActionTokensCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, bool isInternal, IGraph graph)
             : base(generatorsFactory, namespaceName, stateMachineName)
         {
             if (graph == null)
                 throw new ArgumentNullException(nameof(graph));
 
+            this.isInternal = isInternal;
             this.graph = graph;
         }
 
@@ -38,7 +40,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
         protected override void WriteContent(CodeWriter writer)
         {
             Language.CreateClassCodeGenerator(
-                AccessModifier.Public,
+                isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 new[] { "static" },
                 stateMachineName + Constants.ActionTokensClass,
                 null).Write(writer);
@@ -59,7 +61,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             foreach (var transition in distinctTransitions)
             {
                 Language.CreateVariableDeclarationCodeGenerator(
-                    AccessModifier.Public,
+                    isInternal ? AccessModifier.Internal : AccessModifier.Public,
                     new[] { "static", "readonly" },
                     Constants.ActionTokenType,
                     transition,
@@ -69,7 +71,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             writer.AppendLine();
 
             Language.CreateVariableDeclarationCodeGenerator(
-                AccessModifier.Public,
+                isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 new[] { "static", "readonly" },
                 Constants.ActionTokenType + "[]",
                 Constants.TokenItemsProperty,
