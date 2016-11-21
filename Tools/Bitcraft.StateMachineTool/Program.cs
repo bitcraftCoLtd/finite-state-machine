@@ -117,7 +117,7 @@ namespace Bitcraft.StateMachineTool
                 WriteFile(
                     new StateCodeGenerator(
                         generatorsFactory,
-                        namespaceName,
+                        namespaceName != null ? namespaceName + "." + Constants.StatesFolder : null,
                         stateMachineName,
                         state.Semantic,
                         args.UseOriginalStateBase,

@@ -29,7 +29,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 
             Language.CreateUsingCodeGenerator(
                 "System",
-                CSharpConstants.StateMachineNamespace
+                CSharpConstants.StateMachineNamespace,
+                namespaceName + "." + Constants.StatesFolder
             ).Write(writer);
 
             writer.AppendLine();
