@@ -8,14 +8,14 @@ namespace Bitcraft.ToolKit.CodeGeneration
 {
     public abstract class NamespaceCodeGenerator : ICodeGenerator
     {
-        public ILanguageAbstraction Language { get; private set; }
+        public ILanguageAbstraction Language { get; }
         protected readonly string namespaceName;
 
         public NamespaceCodeGenerator(ILanguageAbstraction languageAbstraction, string namespaceName)
         {
             if (languageAbstraction == null)
-                throw new ArgumentNullException("languageAbstraction");
-            CodeGenerationUtility.CheckNullOrWhitespaceArgument(namespaceName, "namespaceName");
+                throw new ArgumentNullException(nameof(languageAbstraction));
+            CodeGenerationUtility.CheckNullOrWhitespaceArgument(namespaceName, nameof(namespaceName));
 
             Language = languageAbstraction;
 

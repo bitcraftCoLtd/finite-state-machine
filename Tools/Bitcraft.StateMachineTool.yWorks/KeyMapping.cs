@@ -41,23 +41,23 @@ namespace Bitcraft.StateMachineTool.yWorks
     {
         private Key[] keys;
 
-        public string GraphDescrionId { get; private set; }
-        public string NodeDescrionId { get; private set; }
-        public string EdgeDescrionId { get; private set; }
+        public string GraphDescrionId { get; }
+        public string NodeDescrionId { get; }
+        public string EdgeDescrionId { get; }
 
-        public string NodeContentId { get; private set; }
-        public string EdgeContentId { get; private set; }
+        public string NodeContentId { get; }
+        public string EdgeContentId { get; }
 
-        public string InitialStateId { get; private set; }
-        public bool InitialStateDefaultValue { get; private set; }
+        public string InitialStateId { get; }
+        public bool InitialStateDefaultValue { get; }
 
-        public string FinalStateId { get; private set; }
-        public bool FinalStateDefaultValue { get; private set; }
+        public string FinalStateId { get; }
+        public bool FinalStateDefaultValue { get; }
 
         public KeyMapping(XElement element)
         {
             if (element == null)
-                throw new ArgumentNullException("element");
+                throw new ArgumentNullException(nameof(element));
             if (element.Name.LocalName != "graphml")
                 throw new ArgumentException("Impossible to find 'graphml' element.");
 
@@ -78,9 +78,9 @@ namespace Bitcraft.StateMachineTool.yWorks
                 var defaultElement = key.Element(XName.Get("default", element.GetDefaultNamespace().NamespaceName));
                 if (defaultElement != null && defaultElement.FirstNode != null)
                 {
-                    if (defaultElement.FirstNode.NodeType == System.Xml.XmlNodeType.CDATA)
+                    if (defaultElement.FirstNode.NodeType == XmlNodeType.CDATA)
                         defaultValue = ((XCData)defaultElement.FirstNode).Value;
-                    else if (defaultElement.FirstNode.NodeType == System.Xml.XmlNodeType.Text)
+                    else if (defaultElement.FirstNode.NodeType == XmlNodeType.Text)
                         defaultValue = ((XText)defaultElement.FirstNode).Value;
                 }
 

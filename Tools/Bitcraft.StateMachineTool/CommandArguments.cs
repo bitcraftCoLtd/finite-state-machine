@@ -34,12 +34,12 @@ namespace Bitcraft.StateMachineTool
         public bool NothingToDo { get; private set; }
 
         private List<string> errors = new List<string>();
-        public IReadOnlyCollection<string> Errors { get; private set; }
+        public IReadOnlyCollection<string> Errors { get; }
 
         public CommandArguments(string[] args)
         {
             if (args == null)
-                throw new ArgumentNullException("args");
+                throw new ArgumentNullException(nameof(args));
 
             this.args = args;
             Errors = new ReadOnlyCollection<string>(errors);

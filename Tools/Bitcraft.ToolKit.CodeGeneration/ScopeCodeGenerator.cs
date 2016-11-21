@@ -8,7 +8,7 @@ namespace Bitcraft.ToolKit.CodeGeneration
 {
     public abstract class ScopeCodeGenerator : ICodeGenerator
     {
-        public ILanguageAbstraction Language { get; private set; }
+        public ILanguageAbstraction Language { get; }
         protected readonly ICodeGenerator innerGenerator;
         protected readonly bool closeWithNewLine;
 

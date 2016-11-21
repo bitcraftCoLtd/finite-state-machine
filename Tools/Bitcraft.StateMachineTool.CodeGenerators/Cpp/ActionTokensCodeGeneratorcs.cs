@@ -16,7 +16,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
             : base(generatorsFactory, namespaceName, stateMachineName)
         {
             if (graph == null)
-                throw new ArgumentNullException("graph");
+                throw new ArgumentNullException(nameof(graph));
 
             this.graph = graph;
         }

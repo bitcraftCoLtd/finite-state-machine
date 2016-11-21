@@ -8,15 +8,15 @@ namespace Bitcraft.ToolKit.CodeGeneration
 {
     public class AnonymousCodeGenerator : ICodeGenerator
     {
-        public ILanguageAbstraction Language { get; private set; }
+        public ILanguageAbstraction Language { get; }
         private Action<CodeWriter> codeGenerator;
 
         public AnonymousCodeGenerator(ILanguageAbstraction languageAbstraction, Action<CodeWriter> codeGenerator)
         {
             if (languageAbstraction == null)
-                throw new ArgumentNullException("languageAbstraction");
+                throw new ArgumentNullException(nameof(languageAbstraction));
             if (codeGenerator == null)
-                throw new ArgumentNullException("codeGenerator");
+                throw new ArgumentNullException(nameof(codeGenerator));
 
             Language = languageAbstraction;
             this.codeGenerator = codeGenerator;

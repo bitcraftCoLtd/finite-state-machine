@@ -14,8 +14,8 @@ namespace Bitcraft.ToolKit.CodeGeneration
         protected string[] additionalModifiers { get; private set; }
         protected string type { get; private set; }
         protected string name { get; private set; }
-        protected string initializationStatement { get; private set; }
-        protected ICodeGenerator innerGenerator { get; private set; }
+        protected string initializationStatement { get; }
+        protected ICodeGenerator innerGenerator { get; }
 
         public VariableDeclarationCodeGenerator(ILanguageAbstraction languageAbstraction, AccessModifier accessModifier, string[] additionalModifiers, string type, string name, string initializationStatement)
         {
@@ -35,10 +35,10 @@ namespace Bitcraft.ToolKit.CodeGeneration
         private void Initialization(ILanguageAbstraction languageAbstraction, AccessModifier accessModifier, string[] additionalModifiers, string type, string name)
         {
             if (languageAbstraction == null)
-                throw new ArgumentNullException("languageAbstraction");
+                throw new ArgumentNullException(nameof(languageAbstraction));
 
-            CodeGenerationUtility.CheckNullOrWhitespaceArgument(type, "type");
-            CodeGenerationUtility.CheckValidIdentifierArgument(name, "name");
+            CodeGenerationUtility.CheckNullOrWhitespaceArgument(type, nameof(type));
+            CodeGenerationUtility.CheckValidIdentifierArgument(name, nameof(name));
 
             Language = languageAbstraction;
 

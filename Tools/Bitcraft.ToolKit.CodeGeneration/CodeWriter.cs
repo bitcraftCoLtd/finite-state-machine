@@ -15,7 +15,7 @@ namespace Bitcraft.ToolKit.CodeGeneration
         public CodeWriter(StringBuilder sb)
         {
             if (sb == null)
-                throw new ArgumentNullException("sb");
+                throw new ArgumentNullException(nameof(sb));
 
             this.sb = sb;
         }

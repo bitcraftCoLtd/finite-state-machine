@@ -9,18 +9,18 @@ namespace Bitcraft.StateMachineTool.CodeGenerators
 {
     public abstract class CodeGeneratorBase : ICodeGenerator
     {
-        public ILanguageAbstraction Language { get; private set; }
-        protected string namespaceName { get; private set; }
-        protected string stateMachineName { get; private set; }
+        public ILanguageAbstraction Language { get; }
+        protected string namespaceName { get; }
+        protected string stateMachineName { get; }
 
         public CodeGeneratorBase(ILanguageAbstraction languageAbstraction, string namespaceName, string stateMachineName)
         {
             if (languageAbstraction == null)
-                throw new ArgumentNullException("languageAbstraction");
+                throw new ArgumentNullException(nameof(languageAbstraction));
             if (string.IsNullOrWhiteSpace(namespaceName) == false)
                 this.namespaceName = namespaceName;
 
-            CodeGenerationUtility.CheckValidIdentifierArgument(stateMachineName, "stateMachineName");
+            CodeGenerationUtility.CheckValidIdentifierArgument(stateMachineName, nameof(stateMachineName));
 
             Language = languageAbstraction;
             this.stateMachineName = stateMachineName;

@@ -10,10 +10,10 @@ namespace Bitcraft.StateMachineTool.yWorks
 {
     internal class GraphStub : IGraph
     {
-        public INode InitialNode { get; private set; }
-        public string Semantic { get; private set; }
-        public INode[] Nodes { get; private set; }
-        public ITransition[] Transitions { get; private set; }
+        public INode InitialNode { get; }
+        public string Semantic { get; }
+        public INode[] Nodes { get; }
+        public ITransition[] Transitions { get; }
 
         public GraphStub(INode initialNode, string semantic, INode[] nodes, ITransition[] transitions)
         {
@@ -90,9 +90,9 @@ namespace Bitcraft.StateMachineTool.yWorks
         public static Graph Create(XElement element, KeyMapping keyMapping)
         {
             if (element == null)
-                throw new ArgumentNullException("element");
+                throw new ArgumentNullException(nameof(element));
             if (keyMapping == null)
-                throw new ArgumentNullException("keyMapping");
+                throw new ArgumentNullException(nameof(keyMapping));
 
             var graph = new Graph();
             graph.Load(element, keyMapping);
@@ -102,7 +102,7 @@ namespace Bitcraft.StateMachineTool.yWorks
         public static Graph CreateFromRootXml(XElement root)
         {
             if (root == null)
-                throw new ArgumentNullException("root");
+                throw new ArgumentNullException(nameof(root));
 
             var km = new KeyMapping(root);
 

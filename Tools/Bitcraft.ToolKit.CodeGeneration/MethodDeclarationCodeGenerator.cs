@@ -13,8 +13,8 @@ namespace Bitcraft.ToolKit.CodeGeneration
 
         public ArgumentInfo(string type, string name)
         {
-            CodeGenerationUtility.CheckNullOrWhitespaceArgument(type, "type");
-            CodeGenerationUtility.CheckValidIdentifierArgument(name, "name");
+            CodeGenerationUtility.CheckNullOrWhitespaceArgument(type, nameof(type));
+            CodeGenerationUtility.CheckValidIdentifierArgument(name, nameof(name));
 
             Type = type.Trim();
             Name = name;
@@ -23,7 +23,7 @@ namespace Bitcraft.ToolKit.CodeGeneration
 
     public abstract class MethodDeclarationCodeGenerator : ICodeGenerator
     {
-        public ILanguageAbstraction Language { get; private set; }
+        public ILanguageAbstraction Language { get; }
         protected readonly AccessModifier accessModifier;
         protected readonly bool isStatic;
         protected readonly string[] additionalModifiers;
@@ -35,8 +35,8 @@ namespace Bitcraft.ToolKit.CodeGeneration
         public MethodDeclarationCodeGenerator(ILanguageAbstraction languageAbstraction, AccessModifier accessModifier, bool isStatic, string[] additionalModifiers, string returnType, string name, ArgumentInfo[] arguments, ScopeCodeGenerator bodyGenerator)
         {
             if (languageAbstraction == null)
-                throw new ArgumentNullException("languageAbstraction");
-            CodeGenerationUtility.CheckValidIdentifierArgument(name, "name");
+                throw new ArgumentNullException(nameof(languageAbstraction));
+            CodeGenerationUtility.CheckValidIdentifierArgument(name, nameof(name));
 
             Language = languageAbstraction;
 

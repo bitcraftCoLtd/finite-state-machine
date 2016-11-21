@@ -18,7 +18,7 @@ namespace Bitcraft.ToolKit.CodeGeneration
 
     public abstract class ClassCodeGenerator : ICodeGenerator
     {
-        public ILanguageAbstraction Language { get; private set; }
+        public ILanguageAbstraction Language { get; }
         protected readonly AccessModifier accessModifier;
         protected readonly string[] additionalModifiers;
         protected readonly string name;

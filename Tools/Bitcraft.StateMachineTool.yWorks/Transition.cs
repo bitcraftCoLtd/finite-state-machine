@@ -10,9 +10,9 @@ namespace Bitcraft.StateMachineTool.yWorks
 {
     internal class TransitionStub : ITransition
     {
-        public string Semantic { get; private set; }
-        public INode Source { get; private set; }
-        public INode Target { get; private set; }
+        public string Semantic { get; }
+        public INode Source { get; }
+        public INode Target { get; }
 
         public TransitionStub(string semantic, INode source, INode target)
         {

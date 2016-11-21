@@ -8,7 +8,7 @@ namespace Bitcraft.ToolKit.CodeGeneration
 {
     public class AggregateCodeGenerator : ICodeGenerator
     {
-        public ILanguageAbstraction Language { get; private set; }
+        public ILanguageAbstraction Language { get; }
         private IEnumerable<ICodeGenerator> codeGenerators;
 
         public AggregateCodeGenerator(ILanguageAbstraction languageAbstraction, params ICodeGenerator[] codeGenerators)
@@ -19,9 +19,9 @@ namespace Bitcraft.ToolKit.CodeGeneration
         public AggregateCodeGenerator(ILanguageAbstraction languageAbstraction, IEnumerable<ICodeGenerator> codeGenerators)
         {
             if (languageAbstraction == null)
-                throw new ArgumentNullException("languageAbstraction");
+                throw new ArgumentNullException(nameof(languageAbstraction));
             if (codeGenerators == null)
-                throw new ArgumentNullException("codeGenerators");
+                throw new ArgumentNullException(nameof(codeGenerators));
 
             Language = languageAbstraction;
             this.codeGenerators = codeGenerators;

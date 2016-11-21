@@ -17,10 +17,10 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
         public StateCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, string stateName, bool useStateBase, IGraph graph)
             : base(generatorsFactory, namespaceName, stateMachineName)
         {
-            CodeGenerationUtility.CheckValidPartialIdentifierArgument(stateName, "stateName");
+            CodeGenerationUtility.CheckValidPartialIdentifierArgument(stateName, nameof(stateName));
 
             if (graph == null)
-                throw new ArgumentNullException("graph");
+                throw new ArgumentNullException(nameof(graph));
 
             this.stateName = stateName;
             this.graph = graph;

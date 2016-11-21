@@ -21,9 +21,9 @@ namespace Bitcraft.StateMachineTool.yWorks
         public virtual void Load(XElement element, KeyMapping keyMapping)
         {
             if (element == null)
-                throw new ArgumentNullException("element");
+                throw new ArgumentNullException(nameof(element));
             if (keyMapping == null)
-                throw new ArgumentNullException("keyMapping");
+                throw new ArgumentNullException(nameof(keyMapping));
 
             Identifier = (string)element.Attribute("id");
             if (Identifier != null)
@@ -38,9 +38,9 @@ namespace Bitcraft.StateMachineTool.yWorks
 
             if (descriptionContent != null && descriptionContent.FirstNode != null)
             {
-                if (descriptionContent.FirstNode.NodeType == System.Xml.XmlNodeType.CDATA)
+                if (descriptionContent.FirstNode.NodeType == XmlNodeType.CDATA)
                     Description = ((XCData)descriptionContent.FirstNode).Value;
-                else if (descriptionContent.FirstNode.NodeType == System.Xml.XmlNodeType.Text)
+                else if (descriptionContent.FirstNode.NodeType == XmlNodeType.Text)
                     Description = ((XText)descriptionContent.FirstNode).Value;
             }
 

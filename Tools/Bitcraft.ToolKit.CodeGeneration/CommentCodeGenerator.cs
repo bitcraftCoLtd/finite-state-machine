@@ -8,16 +8,16 @@ namespace Bitcraft.ToolKit.CodeGeneration
 {
     public abstract class CommentCodeGenerator : ICodeGenerator
     {
-        public ILanguageAbstraction Language { get; private set; }
+        public ILanguageAbstraction Language { get; }
         protected readonly ICodeGenerator innerGenerator;
         protected readonly bool isSingleLine;
 
         public CommentCodeGenerator(ILanguageAbstraction languageAbstraction, ICodeGenerator innerGenerator, bool isSingleLine)
         {
             if (languageAbstraction == null)
-                throw new ArgumentNullException("languageAbstraction");
+                throw new ArgumentNullException(nameof(languageAbstraction));
             if (innerGenerator == null)
-                throw new ArgumentNullException("innerGenerator");
+                throw new ArgumentNullException(nameof(innerGenerator));
 
             Language = languageAbstraction;
 

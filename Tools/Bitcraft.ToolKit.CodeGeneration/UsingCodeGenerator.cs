@@ -8,14 +8,14 @@ namespace Bitcraft.ToolKit.CodeGeneration
 {
     public abstract class UsingCodeGenerator : ICodeGenerator
     {
-        public ILanguageAbstraction Language { get; private set; }
+        public ILanguageAbstraction Language { get; }
 
         protected readonly string[] usings;
 
         public UsingCodeGenerator(ILanguageAbstraction languageAbstraction, params string[] usings)
         {
             if (languageAbstraction == null)
-                throw new ArgumentNullException("languageAbstraction");
+                throw new ArgumentNullException(nameof(languageAbstraction));
             this.usings = usings;
 
             Language = languageAbstraction;

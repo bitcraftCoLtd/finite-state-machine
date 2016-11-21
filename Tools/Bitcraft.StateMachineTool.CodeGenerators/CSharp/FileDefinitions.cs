@@ -15,13 +15,13 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 
     public class FileDefinitions
     {
-        public string[] Folders { get; private set; }
+        public string[] Folders { get; }
 
-        public string StateMachineFilename { get; private set; }
-        public string StateTokensFilename { get; private set; }
-        public string ActionTokensFilename { get; private set; }
+        public string StateMachineFilename { get; }
+        public string StateTokensFilename { get; }
+        public string ActionTokensFilename { get; }
 
-        public StateInfo[] States { get; private set; }
+        public StateInfo[] States { get; }
 
         public FileDefinitions(string stateMachineName, IGraph graph)
         {
