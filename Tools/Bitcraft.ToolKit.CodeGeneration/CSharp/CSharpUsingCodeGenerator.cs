@@ -15,7 +15,7 @@ namespace Bitcraft.ToolKit.CodeGeneration.CSharp
 
         public override void Write(CodeWriter writer)
         {
-            foreach (var u in usings)
+            foreach (var u in usings.Where(u => u != null))
                 writer.AppendLine(string.Format("using {0};", u));
         }
     }
