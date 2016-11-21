@@ -40,7 +40,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
         protected override void WriteContent(CodeWriter writer)
         {
             Language.CreateClassCodeGenerator(
-                AccessModifier.Public,
+                AccessModifier.None,
                 new[] { "partial" },
                 stateMachineName + Constants.StateMachineSuffix,
                 new[] { Constants.StateManagerType }).Write(writer);

@@ -48,7 +48,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                 baseClassName = stateMachineName + baseClassName;
 
             Language.CreateClassCodeGenerator(
-                AccessModifier.Public,
+                AccessModifier.None,
                 new[] { "partial" },
                 stateMachineName + stateName + Constants.StateSuffix,
                 new[] { baseClassName }).Write(writer);
