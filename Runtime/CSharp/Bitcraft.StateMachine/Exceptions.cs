@@ -10,12 +10,12 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Gets the token of the action that produced the error.
         /// </summary>
-        public ActionToken ActionToken { get; private set; }
+        public ActionToken ActionToken { get; }
 
         /// <summary>
         /// Gets the token of the state that was active when the error has been produced.
         /// </summary>
-        public StateToken StateToken { get; private set; }
+        public StateToken StateToken { get; }
 
         /// <summary>
         /// Initializes the ActionExceptionBase instance.
@@ -34,7 +34,7 @@ namespace Bitcraft.StateMachine
         /// <param name="stateToken">The token of the state that was active when the error has been produced.</param>
         /// <param name="message">Custom message explaining the error.</param>
         protected ActionExceptionBase(ActionToken actionToken, StateToken stateToken, string message)
-            : base((message ?? string.Empty) + string.Format(" (action: {0}, state: {1})", actionToken, stateToken))
+            : base((message ?? string.Empty) + $" (action: {actionToken}, state: {stateToken})")
         {
             ActionToken = actionToken;
             StateToken = stateToken;
@@ -92,12 +92,12 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Gets the token of the source state.
         /// </summary>
-        public StateToken SourceStateToken { get; private set; }
+        public StateToken SourceStateToken { get; }
 
         /// <summary>
         /// Gets the undeclared token that was targeting the new state.
         /// </summary>
-        public StateToken UnknownStateToken { get; private set; }
+        public StateToken UnknownStateToken { get; }
 
         /// <summary>
         /// Initializes the UnknownStateException instance.
@@ -105,7 +105,7 @@ namespace Bitcraft.StateMachine
         /// <param name="sourceStateToken">The token of the source state.</param>
         /// <param name="unknownStateToken">The undeclared token that was targeting the new state.</param>
         public UnknownStateException(StateToken sourceStateToken, StateToken unknownStateToken)
-            : base(string.Format("(source state: {0}, unknown state: {1})", sourceStateToken, unknownStateToken))
+            : base($"(source state: {sourceStateToken}, unknown state: {unknownStateToken})")
         {
             SourceStateToken = sourceStateToken;
             UnknownStateToken = unknownStateToken;

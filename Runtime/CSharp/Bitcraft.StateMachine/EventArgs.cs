@@ -10,17 +10,17 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Gets the source state token.
         /// </summary>
-        public StateToken From { get; private set; }
+        public StateToken From { get; }
 
         /// <summary>
         /// Gets the data provided from source, for the target.
         /// </summary>
-        public object Data { get; private set; }
+        public object Data { get; }
 
         /// <summary>
         /// Gets a TransitionInfo object used for potential redirection directly from an Enter state event.
         /// </summary>
-        public TransitionInfo Redirect { get; private set; }
+        public TransitionInfo Redirect { get; }
 
         /// <summary>
         /// Initializes the StateEnterEventArgs instance.
@@ -43,12 +43,12 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Gets the target state token.
         /// </summary>
-        public StateToken To { get; private set; }
+        public StateToken To { get; }
 
         /// <summary>
         /// Gets the data provided to the target.
         /// </summary>
-        public object Data { get; private set; }
+        public object Data { get; }
 
         /// <summary>
         /// Initializes the StateExitEventArgs instance.
@@ -70,12 +70,12 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Gets the previous state. (the state before transition)
         /// </summary>
-        public StateBase OldState { get; private set; }
+        public StateBase OldState { get; }
 
         /// <summary>
         /// Gets the new state. (the state after transition)
         /// </summary>
-        public StateBase NewState { get; private set; }
+        public StateBase NewState { get; }
 
         /// <summary>
         /// Initializes the StateChangedEventArgs instance.

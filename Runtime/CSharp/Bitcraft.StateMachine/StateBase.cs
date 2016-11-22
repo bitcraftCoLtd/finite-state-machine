@@ -15,7 +15,7 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Gets the token that identifies the current state.
         /// </summary>
-        public StateToken Token { get; private set; }
+        public StateToken Token { get; }
 
         /// <summary>
         /// Gets the state manager in which the current state is registered.
@@ -67,7 +67,7 @@ namespace Bitcraft.StateMachine
         public StateBase(StateToken token)
         {
             if (token == null)
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(token));
 
             Token = token;
         }
@@ -93,9 +93,7 @@ namespace Bitcraft.StateMachine
         /// </summary>
         protected virtual void OnInitialized()
         {
-            var handler = Initialized;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
+            Initialized?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -111,8 +109,11 @@ namespace Bitcraft.StateMachine
             if (Context is T)
                 return (T)Context;
 
-            var message = string.Format("Context is of type '{0}', impossible to cast it to '{1}'",
-                Context.GetType().FullName, typeof(T).FullName);
+            string message = string.Format(
+                "Context is of type '{0}', impossible to cast it to '{1}'",
+                Context.GetType().FullName,
+                typeof(T).FullName);
+
             throw new InvalidOperationException(message);
         }
 
@@ -122,9 +123,7 @@ namespace Bitcraft.StateMachine
         /// <param name="e">Custem event arguments.</param>
         protected internal virtual void OnEnter(StateEnterEventArgs e)
         {
-            var handler = Enter;
-            if (handler != null)
-                handler(this, e);
+            Enter?.Invoke(this, e);
         }
 
         /// <summary>
@@ -133,9 +132,7 @@ namespace Bitcraft.StateMachine
         /// <param name="e">Custem event arguments.</param>
         protected internal virtual void OnExit(StateExitEventArgs e)
         {
-            var handler = Exit;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
+            Exit?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -183,7 +180,7 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Tells whether a transition is being handled asynchronously and still underway or not.
         /// </summary>
-        internal bool IsHandlingAsync { get { return isHandlingAsync; } }
+        internal bool IsHandlingAsync => isHandlingAsync;
 
         /// <summary>
         /// Evaluates a handler that decides transition to the next state for a given action.
@@ -197,17 +194,18 @@ namespace Bitcraft.StateMachine
                 return ActionResultType.ErrorAlreadyPerformingAction;
 
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             Action<object, Action<StateToken>> handler1 = null;
             Action<object, Action<StateToken, object>> handler2 = null;
+
             if (handlers.TryGetValue(action, out handler1) || dataHandlers.TryGetValue(action, out handler2))
             {
                 isHandlingAsync = true;
 
                 try
                 {
-                    var callFlag = false;
+                    bool callFlag = false;
 
                     if (handler1 != null)
                     {
@@ -267,9 +265,7 @@ namespace Bitcraft.StateMachine
         /// <returns>Returns the string representation of the state.</returns>
         public override string ToString()
         {
-            if (Token == null)
-                return "(null token)";
-            return Token.ToString();
+            return Token?.ToString() ?? "(null token)";
         }
     }
 }

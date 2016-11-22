@@ -8,12 +8,12 @@ namespace Bitcraft.StateMachine
     public class TransitionInfo
     {
         /// <summary>
-        /// Gets the target state token. (state active before transition)
+        /// Gets or sets the target state token. (state active after transition)
         /// </summary>
         public StateToken TargetStateToken { get; set; }
 
         /// <summary>
-        /// Gets the data provided from the target state, for the source state.
+        /// Gets or sets the data to transfer from the current state to the target state.
         /// </summary>
         public object TargetStateData { get; set; }
     }

@@ -70,11 +70,11 @@ namespace Bitcraft.StateMachine
             : this()
         {
             if (name == null)
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
 
             this.name = name.Trim();
             if (this.name.Length == 0)
-                throw new ArgumentException("Invalid 'name' argument. It must not be empty.");
+                throw new ArgumentException($"Invalid '{nameof(name)}' argument. It must not be empty.");
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Bitcraft.StateMachine
         /// <returns>Returns the string representation of the token.</returns>
         public override string ToString()
         {
-            return name == null ? "(unnamed token)" : name;
+            return name ?? "(unnamed token)";
         }
 
         /// <summary>

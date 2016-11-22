@@ -14,7 +14,7 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Gets the context of the current state machine.
         /// </summary>
-        public object Context { get; private set; }
+        public object Context { get; }
 
         /// <summary>
         /// Gets the currently active state.
@@ -24,18 +24,12 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Gets the token of the currently active state. (shortcut to CurrentState.Token)
         /// </summary>
-        public StateToken CurrentStateToken
-        {
-            get
-            {
-                return CurrentState != null ? CurrentState.Token : null;
-            }
-        }
+        public StateToken CurrentStateToken => CurrentState?.Token;
 
         /// <summary>
         /// Gets the registered states.
         /// </summary>
-        public ReadOnlyCollection<StateBase> States { get; private set; }
+        public ReadOnlyCollection<StateBase> States { get; }
 
         private List<StateBase> states = new List<StateBase>();
 
@@ -76,7 +70,7 @@ namespace Bitcraft.StateMachine
         public void SetInitialState(StateToken initialState, object data)
         {
             if (initialState == null)
-                throw new ArgumentNullException("initialState");
+                throw new ArgumentNullException(nameof(initialState));
 
             RaiseOnExitEvent(null, null);
 
@@ -86,12 +80,12 @@ namespace Bitcraft.StateMachine
 
         private void PerformTransitionTo(StateToken stateToken, object data)
         {
-            var targetStateToken = stateToken;
-            var targetData = data;
+            StateToken targetStateToken = stateToken;
+            object targetData = data;
 
             while (true)
             {
-                var transition = TransitionTo(targetStateToken, targetData);
+                TransitionInfo transition = TransitionTo(targetStateToken, targetData);
                 if (transition.TargetStateToken == null)
                     break;
 
@@ -103,18 +97,18 @@ namespace Bitcraft.StateMachine
         private TransitionInfo TransitionTo(StateToken stateToken, object data)
         {
             if (stateToken == null)
-                throw new ArgumentNullException("stateToken");
+                throw new ArgumentNullException(nameof(stateToken));
 
-            var state = states.FirstOrDefault(s => s.Token == stateToken);
+            StateBase state = states.FirstOrDefault(s => s.Token == stateToken);
             if (state == null)
                 throw new UnknownStateException(CurrentStateToken, stateToken);
 
             RaiseOnExitEvent(stateToken, data);
 
-            var oldState = CurrentState;
+            StateBase oldState = CurrentState;
             CurrentState = state;
 
-            var stateEnterEventArgs = new StateEnterEventArgs(oldState != null ? oldState.Token : null, data);
+            var stateEnterEventArgs = new StateEnterEventArgs(oldState?.Token, data);
 
             isPerformActionLocked = true;
             try
@@ -188,7 +182,7 @@ namespace Bitcraft.StateMachine
         public ActionResultType PerformAction(ActionToken action, object data)
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             if (CurrentState == null)
                 throw new InvalidOperationException("State machine not yet initialized or has reached its final state.");
@@ -221,9 +215,7 @@ namespace Bitcraft.StateMachine
         /// <param name="e">Custom event arguments.</param>
         protected virtual void OnStateChanged(StateChangedEventArgs e)
         {
-            var handler = StateChanged;
-            if (handler != null)
-                handler(this, e);
+            StateChanged?.Invoke(this, e);
         }
 
         /// <summary>
@@ -236,9 +228,7 @@ namespace Bitcraft.StateMachine
         /// </summary>
         protected virtual void OnCompleted()
         {
-            var handler = Completed;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
+            Completed?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -248,10 +238,10 @@ namespace Bitcraft.StateMachine
         public void RegisterState(StateBase state)
         {
             if (state == null)
-                throw new ArgumentNullException("state");
+                throw new ArgumentNullException(nameof(state));
 
             if (states.Contains(state))
-                throw new InvalidOperationException(string.Format("State '{0}' already registered.", state.Token));
+                throw new InvalidOperationException($"State '{state.Token}' already registered.");
 
             states.Add(state);
             state.Initialize(this);
