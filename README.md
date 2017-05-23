@@ -355,8 +355,8 @@ Hereafter is an example.
 
     public class PaymentBasketState : BasketStateBase
     {
-    public PaymentBasketState()
-        : base(BasketStateTokens.Payment)
+        public PaymentBasketState()
+            : base(BasketStateTokens.Payment)
         {
         }
 
