@@ -74,7 +74,7 @@ In the following document, a shopping cart is used as sample for the purpose of 
 
 All the runtime types are located in the namespace `Bitcraft.StateMachine`.
 
-	using Bitcraft.StateMachine;
+    using Bitcraft.StateMachine;
 
 #### StateManager
 
@@ -89,29 +89,29 @@ The `StateToken` and `ActionToken` classes inherit from the `Token` class, and a
 
 The recommended way is to use separated containers, and named matching the related state machine, as follow:
 
-	public static class BasketStateTokens
-	{
-		public static readonly StateToken ProductList = new StateToken("Product List");
-		public static readonly StateToken Payment = new StateToken("Payment");
-		public static readonly StateToken Confirmation = new StateToken("Confirmation");
-		public static readonly StateToken ThankYouScreen = new StateToken("Thank you!");
-		...
-	}
+    public static class BasketStateTokens
+    {
+        public static readonly StateToken ProductList = new StateToken("Product List");
+        public static readonly StateToken Payment = new StateToken("Payment");
+        public static readonly StateToken Confirmation = new StateToken("Confirmation");
+        public static readonly StateToken ThankYouScreen = new StateToken("Thank you!");
+        ...
+    }
 
 The string provided to the `Token` constructor is purely informative, this is a display name and absolutely not the `Token`'s identity.
 `Token` identity is based on the `Guid` type.
 
 The constructor of `ActionToken` can also take an informative string as parameter.
 
-	public static class BasketActionTokens
-	{
-		public static readonly ActionToken GoToProductList = new ActionToken(); 
-		public static readonly ActionToken GoToPaymentScreen = new ActionToken(); 
-		public static readonly ActionToken GoToConfirmation = new ActionToken(); 
-		public static readonly ActionToken PurchaseConfirmed = new ActionToken(); 
-		public static readonly ActionToken PurchaseCancelled = new ActionToken();
-		... 
-	}
+    public static class BasketActionTokens
+    {
+        public static readonly ActionToken GoToProductList = new ActionToken(); 
+        public static readonly ActionToken GoToPaymentScreen = new ActionToken(); 
+        public static readonly ActionToken GoToConfirmation = new ActionToken(); 
+        public static readonly ActionToken PurchaseConfirmed = new ActionToken(); 
+        public static readonly ActionToken PurchaseCancelled = new ActionToken();
+        ... 
+    }
 
 #### States
 
@@ -122,46 +122,46 @@ Then to create concrete specific states based on that common base state instead 
 For a state machine that implements a shopping cart, you may create the following class hierarchy:
 
     public abstract class BasketStateBase : StateBase
-	{
-		protected BasketStateBase(StateToken token)
-			: base(token)
-		{
-		}
+    {
+        protected BasketStateBase(StateToken token)
+            : base(token)
+        {
+        }
 
-		...
-	}
+        ...
+    }
 
 Then:
 
-	public class ProductListBasketState : BasketStateBase
-	{
-		public ProductListBasketState()
-			: base(BasketStateTokens.ProductList)
-		{
-		}
+    public class ProductListBasketState : BasketStateBase
+    {
+        public ProductListBasketState()
+            : base(BasketStateTokens.ProductList)
+        {
+        }
 
-		...
-	}
+        ...
+    }
 
-	public class PaymentBasketState : BasketStateBase
-	{
-		public PaymentBasketState()
-			: base(BasketStateTokens.Payment)
-		{
-		}
+    public class PaymentBasketState : BasketStateBase
+    {
+        public PaymentBasketState()
+            : base(BasketStateTokens.Payment)
+        {
+        }
 
-		...
-	}
+        ...
+    }
 
-	public class ConfirmationBasketState : BasketStateBase
-	{
-		public ConfirmationBasketState()
-			: base(BasketStateTokens.Confirmation)
-		{
-		}
+    public class ConfirmationBasketState : BasketStateBase
+    {
+        public ConfirmationBasketState()
+            : base(BasketStateTokens.Confirmation)
+        {
+        }
 
-		...
-	}
+        ...
+    }
 
 With an intermediate state, you can implement the *any state* pattern easily.
 
@@ -170,28 +170,28 @@ As you can see, each specific state describes its own identity through a `StateT
 A state have to register action handlers, they tell the state machine of which actions the current state is aware of.
 This is best done in the `OnInitialize()` virtual method.
 
-	public class PaymentBasketState : BasketStateBase
-	{
-		public PaymentBasketState()
-			: base(BasketStateTokens.Payment)
-		{
-		}
+    public class PaymentBasketState : BasketStateBase
+    {
+        public PaymentBasketState()
+            : base(BasketStateTokens.Payment)
+        {
+        }
 
-		protected override void OnInitialized()
-		{
-        	base.OnInitialized();
-	        RegisterActionHandler(BasketActionTokens.GoToConfirmation, OnGoToConfirmationAction);
-    	} //                                                           |
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            RegisterActionHandler(BasketActionTokens.GoToConfirmation, OnGoToConfirmationAction);
+        } //                                                           |
           //         +-------------------------------------------------+
           //         |
           //         V
-	    private void OnGoToConfirmationAction(object data, Action<StateToken> callback)
-	    {
-        	callback(BasketStateTokens.Confirmation);
-    	}
+        private void OnGoToConfirmationAction(object data, Action<StateToken> callback)
+        {
+            callback(BasketStateTokens.Confirmation);
+        }
 
-		...
-	}
+        ...
+    }
 
 Two things here. First the `OnInitialize()` virtual method overridden with registration of an action handler.
 This registration says "if you ask me to go to confirmation screen, I know *what to do*, otherwise you will not go any further".
@@ -212,43 +212,43 @@ If you call it more than once, the subsequent calls are ignored, but if you do n
 
 One last thing about action handlers, it is possible to register an action handler that allows you to provide custom data to the target state, by registering the action handler as follow:
 
-	protected override void OnInitialized()
-	{
-       	base.OnInitialized();
-		RegisterActionHandler(BasketActionTokens.GoToConfirmation, OnGoToConfirmationAction);
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        RegisterActionHandler(BasketActionTokens.GoToConfirmation, OnGoToConfirmationAction);
     }
 
-	//                                                                    ------ additional argument here
-	private void OnGoToConfirmationAction(object data, Action<StateToken, object> callback)
-	{
-		//                                       ----------------- a different custom value can be provided
-		callback(BasketStateTokens.Confirmation, anotherCustomData);
-	}
+    //                                                                    ------ additional argument here
+    private void OnGoToConfirmationAction(object data, Action<StateToken, object> callback)
+    {
+        //                                       ----------------- a different custom value can be provided
+        callback(BasketStateTokens.Confirmation, anotherCustomData);
+    }
 
 #### All together
 
 The last step is to stick everything together.
 Instanciate a `StageManager` object, register states and set the initial state, as follow:
 
-	var fsm = new StateManager();
+    var fsm = new StateManager();
 
-	fsm.RegisterState(new ProductListBasketState());
-	fsm.RegisterState(new PaymentBasketState());
-	fsm.RegisterState(new ConfirmationBasketState());
+    fsm.RegisterState(new ProductListBasketState());
+    fsm.RegisterState(new PaymentBasketState());
+    fsm.RegisterState(new ConfirmationBasketState());
 
-	fsm.SetInitialState(BasketStateTokens.ProductList);
+    fsm.SetInitialState(BasketStateTokens.ProductList);
 
 If you opted for a custom child `StateManager` class, you can register states in the constructor:
 
-	public class BasketStateMachine : StateManager
-	{
-		public BasketStateMachine()
-		{
-			RegisterState(new ProductListBasketState());
-			RegisterState(new PaymentBasketState());
-			RegisterState(new ConfirmationBasketState());
-		}
-	}
+    public class BasketStateMachine : StateManager
+    {
+        public BasketStateMachine()
+        {
+            RegisterState(new ProductListBasketState());
+            RegisterState(new PaymentBasketState());
+            RegisterState(new ConfirmationBasketState());
+        }
+    }
 
 Calling the `SetInitialState()` method in the constructor is not recommended because you may need to set a different initial state according to some conditions, for example for testing and debugging purpose you may want to start directly from a certain state to save time.
 
@@ -310,23 +310,23 @@ The `StateManager` and `StateBase` classes have virtual methods that you can ove
 The `StateManager` class has the following virtual methods:
 
 - `OnStateChanged()` is called each time the state machine transition from a state to another.
-	- This method receives a `StateChangedEventArgs` argument that contains:
-		- `OldState` that represent the state that was active before the transition.
-		- `NewState` that represent the state that is active after the transaition.
+    - This method receives a `StateChangedEventArgs` argument that contains:
+        - `OldState` that represent the state that was active before the transition.
+        - `NewState` that represent the state that is active after the transaition.
 - `OnCompleted()` is called when the state machine has reach its terminal state and is over.
 
 The `StateBase` class has the following virtual methods:
 
 - `OnInitialize()` that is called once the state has been attached to a state machine.
 - `OnEnter()` is called just after the state machine has changed its internal state to the current state.
-	- This method receives a `StateEnterEventArgs` argument that contains:
-		- `From` telling the origin state from which the transition is happening.
-		- `Data` which is an optional custom data.
-		- `Redirect` that allows immediate redirection to another state. (more information in "Fast redirection" section below)
+    - This method receives a `StateEnterEventArgs` argument that contains:
+        - `From` telling the origin state from which the transition is happening.
+        - `Data` which is an optional custom data.
+        - `Redirect` that allows immediate redirection to another state. (more information in "Fast redirection" section below)
 - `OnExit()` is called just before the state machine changes to another state. 
-	- This method receives a `StateExitEventArgs` argument that contains:
-		- `To` telling the destination state to which the transition is happening.
-		- `Data` which is an optional custom data.
+    - This method receives a `StateExitEventArgs` argument that contains:
+        - `To` telling the destination state to which the transition is happening.
+        - `Data` which is an optional custom data.
 
 You basically uses the `OnInitialize()` method to register action handlers, the `OnEnter()` method to start initializing what is needed for the current state life cycle, and `OnExit()` to clean up the current state related things.
 
@@ -353,28 +353,28 @@ When you need to change state to another state from within the `OnEnter()` metho
 Instead, you have to tell the state machine to directly redirect to a given state by setting the `TargetStateToken` property of the `Redirect` property of the event given as parameter.
 Hereafter is an example.
 
-	public class PaymentBasketState : BasketStateBase
-	{
-		public PaymentBasketState()
-			: base(BasketStateTokens.Payment)
-		{
-		}
+    public class PaymentBasketState : BasketStateBase
+    {
+    public PaymentBasketState()
+        : base(BasketStateTokens.Payment)
+        {
+        }
 
-		...
+        ...
 
-		protected override void OnEnter(StateEnterEventArgs e)
+        protected override void OnEnter(StateEnterEventArgs e)
         {
             base.OnEnter(e);
 
-			if (isFastBuyOptionActivated)
-			{
-				e.Redirect.TargetStateToken = BasketStateTokens.ThankYouScreen;
-				// e.Redirect.TargetStateData = ... you can also optionally set a data to be forwarded
-			}
-		}
+            if (isFastBuyOptionActivated)
+            {
+                e.Redirect.TargetStateToken = BasketStateTokens.ThankYouScreen;
+                // e.Redirect.TargetStateData = ... you can also optionally set a data to be forwarded
+            }
+        }
 
-		...
-	}
+        ...
+    }
 
 Here, when the `PaymentBasketState` becomes active, it checks whether the user has activated the fast buy option, and if yes, it requests the state machine to directly move to the "Thank you" screen, skipping the confirmation state.
 
@@ -408,21 +408,21 @@ The `Tools` folder contains the code generator tool, split into several projects
 Hereafter is the description of each project:
 
 - `SampleFiles`
-	- Contains sample .graphml file that represent possibly real state machines.
+    - Contains sample .graphml file that represent possibly real state machines.
 - `Bitcraft.ToolKit.CodeGeneration`
-	- Contains high level abstraction primitives for code generation and a C# oriented implementation.
-	- Code generation has been abstracted as much as possible, but some languages have few things in common, and thus it doesn't make that much sense to try to abstract that.
-	- The [Roslyn](https://github.com/dotnet/roslyn) library could probably be used, but maybe a bit overkill for this usage, though could have been very interesting to investigate and learn.
+    - Contains high level abstraction primitives for code generation and a C# oriented implementation.
+    - Code generation has been abstracted as much as possible, but some languages have few things in common, and thus it doesn't make that much sense to try to abstract that.
+    - The [Roslyn](https://github.com/dotnet/roslyn) library could probably be used, but maybe a bit overkill for this usage, though could have been very interesting to investigate and learn.
 - `Bitcraft.StateMachineTool.Core`
-	- Contains the contracts the tool needs to parse and load oriented graphs data.
+    - Contains the contracts the tool needs to parse and load oriented graphs data.
 - `Bitcraft.StateMachineTool.CodeGenerators`
-	- Contains the classes that generate specific code from an oriented graph.
-	  This library is aware of the language (output) but not of the file format (input), because it is abstracted by the `Bitcraft.StateMachineTool.Core` library.
+    - Contains the classes that generate specific code from an oriented graph.
+      This library is aware of the language (output) but not of the file format (input), because it is abstracted by the `Bitcraft.StateMachineTool.Core` library.
 - `Bitcraft.StateMachineTool.yWorks`
-	- Contains the implementation of the contracts in `Bitcraft.StateMachineTool.Core` that support the yEd .graphml files.
+    - Contains the implementation of the contracts in `Bitcraft.StateMachineTool.Core` that support the yEd .graphml files.
 - `Bitcraft.StateMachineTool`
-	- The executable that stick everything together.
-	- Implements a simple (and dirty) command line arguments parser to take user's choices into account.
+    - The executable that stick everything together.
+    - Implements a simple (and dirty) command line arguments parser to take user's choices into account.
 
 ### Create a graph
 
@@ -527,7 +527,7 @@ Keep the code as is if you run it in NodeJS.
 
 A sample is provided in the folder `Runtime\JavaScript\Tester` and can be run with NodeJS with the following command:
 
-	> node app.js
+    > node app.js
 
 #### Token
 
