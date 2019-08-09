@@ -396,6 +396,7 @@ public class PaymentBasketState : BasketStateBase
         if (isFastBuyOptionActivated)
         {
             e.Redirect.TargetStateToken = BasketStateTokens.ThankYouScreen;
+            // e.Redirect.TriggeringAction = ... you can also optionally change the action that triggered the transition
             // e.Redirect.TargetStateData = ... you can also optionally set a data to be forwarded
         }
     }

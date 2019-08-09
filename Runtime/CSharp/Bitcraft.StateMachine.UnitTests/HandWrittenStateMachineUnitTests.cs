@@ -35,11 +35,38 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten
             sm.PerformAction(HandWrittenActionTokens.UpdateAction);
             sm.PerformAction(HandWrittenActionTokens.TerminateAction);
 
-            Assert.AreEqual(context.TestStatus, 5);
+            Assert.AreEqual(5, context.TestStatus);
 
             sm.PerformAction(HandWrittenActionTokens.FinalizeAction);
 
-            Assert.AreEqual(context.TestStatus, 6);
+            Assert.AreEqual(6, context.TestStatus);
+        }
+
+        [TestMethod]
+        public void TestMethod02()
+        {
+            var context = new StateMachineTestContext();
+
+            var sm = new StateManager(context);
+
+            sm.StateChanged += (ss, ee) => System.Diagnostics.Debug.WriteLine(string.Format("State changed from '{0}' to '{1}'", ee.OldState, ee.NewState));
+            sm.Completed += (ss, ee) => ((StateMachineTestContext)sm.Context).TestStatus++;
+
+            sm.RegisterState(new BeginState());
+            sm.RegisterState(new UpdateState());
+            sm.RegisterState(new TransitionState());
+            sm.RegisterState(new TransitionTargetState());
+
+            EndState endState = new EndState();
+            sm.RegisterState(endState);
+
+            sm.SetInitialState(HandWrittenStateTokens.BeginStateToken);
+            sm.PerformAction(HandWrittenActionTokens.InitDoneAction);
+            sm.PerformAction(HandWrittenActionTokens.UpdateAction);
+            sm.PerformAction(HandWrittenActionTokens.TransitionAction);
+            sm.PerformAction(HandWrittenActionTokens.TerminateAction);
+
+            Assert.AreEqual(endState, sm.CurrentState);
         }
     }
 }

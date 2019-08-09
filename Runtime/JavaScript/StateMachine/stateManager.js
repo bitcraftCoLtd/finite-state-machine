@@ -18,6 +18,7 @@ fsm = fsm || {};
 /**
  * Transition information container
  * @typedef {Object} TransitionInfo
+ * @property {Token} triggeringActionToken
  * @property {Token} targetStateToken
  * @property {*} targetStateData
  */
@@ -219,12 +220,13 @@ fsm.StateManager.prototype.registerOnCompleted = function (context, cb) {
 
 /**
  * Transition from a state to another
+ * @param {Token} actionToken The token that identifies the action that triggered the transition to the new state
  * @param {Token} stateToken The token that identifies the new state activate
  * @param {*} data
  * @returns {TransitionInfo}
  * @private
  */
-fsm.StateManager.prototype._transitionTo = function (stateToken, data) {
+fsm.StateManager.prototype._transitionTo = function (actionToken, stateToken, data) {
     'use strict';
 
     // check state token validity
@@ -251,8 +253,10 @@ fsm.StateManager.prototype._transitionTo = function (stateToken, data) {
     // create enter state event argument
     var enterEventArgs = {
         from: oldState ? oldState.token : null,
+        triggeringActionToken: actionToken ? actionToken : null,
         data: data,
         redirect: {
+            triggeringActionToken: null,
             targetStateToken: null,
             targetStateData: null
         }
@@ -326,27 +330,31 @@ fsm.StateManager.prototype._raiseOnExitEvent = function (stateToken, data) {
  * @param {*} data
  * @private
  */
-fsm.StateManager.prototype._performTransitionTo = function (stateToken, data) {
+fsm.StateManager.prototype._performTransitionTo = function (actionToken, stateToken, data) {
     'use strict';
 
     // checks for token validity
     fsm.StateManager.checkTokenValidity(stateToken);
 
-    // prepare current token and data
+    // prepare current tokens and data
+    /** @type {Token} */
+    var triggeringActionToken = actionToken;
     /** @type {Token} */
     var targetStateToken = stateToken;
     var targetData = data;
 
+    /** @type {TransitionInfo} */
     var transition;
     while (true) {
         // transition to the requested state, and check for a possible redirection
-        transition = this._transitionTo(targetStateToken, targetData);
+        transition = this._transitionTo(triggeringActionToken, targetStateToken, targetData);
         if (!transition || !transition.targetStateToken) {
             // no redirection any more
             break;
         }
 
-        // chain the state token and data for the next iteration
+        // chain the ction token, state token and data for the next iteration
+        triggeringActionToken = transition.triggeringActionToken;
         targetStateToken = transition.targetStateToken;
         targetData = transition.targetStateData;
     }
@@ -401,7 +409,7 @@ fsm.StateManager.prototype.setInitialState = function (initialState, data) {
     // initialize the current state to null
     this._currentState = null;
     // run transition to the initial state
-    this._performTransitionTo(initialState, data);
+    this._performTransitionTo(null, initialState, data);
 };
 
 //noinspection JSUnusedGlobalSymbols
@@ -502,7 +510,7 @@ fsm.StateManager.prototype.performAction = function (action, data) {
                 }
 
                 // transition to the targeting state, chaining the provided custom data
-                self._performTransitionTo(innerAction, innerData);
+                self._performTransitionTo(action, innerAction, innerData);
             }
         }
     });
