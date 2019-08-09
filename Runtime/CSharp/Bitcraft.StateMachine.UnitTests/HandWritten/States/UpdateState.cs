@@ -18,6 +18,7 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
             base.OnInitialized();
 
             RegisterActionHandler(HandWrittenActionTokens.UpdateAction, (d, cb) => cb(HandWrittenStateTokens.UpdateStateToken));
+            RegisterActionHandler(HandWrittenActionTokens.TransitionAction, (d, cb) => cb(HandWrittenStateTokens.TransitionStateToken));
             RegisterActionHandler(HandWrittenActionTokens.TerminateAction, (d, cb) => cb(HandWrittenStateTokens.EndStateToken));
         }
 
@@ -27,7 +28,7 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
 
             var context = (StateMachineTestContext)Context;
 
-            Assert.AreEqual(context.TestStatus, 2);
+            Assert.AreEqual(2, context.TestStatus);
             context.TestStatus++;
         }
 
@@ -37,7 +38,7 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
 
             var context = (StateMachineTestContext)Context;
 
-            Assert.AreEqual(context.TestStatus, 3);
+            Assert.AreEqual(3, context.TestStatus);
             context.TestStatus++;
         }
     }
