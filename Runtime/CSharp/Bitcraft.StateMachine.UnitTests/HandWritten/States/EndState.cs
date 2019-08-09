@@ -26,7 +26,7 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
 
             var context = (StateMachineTestContext)Context;
 
-            Assert.AreEqual(context.TestStatus, 4);
+            Assert.AreEqual(4, context.TestStatus);
             context.TestStatus++;
         }
 
@@ -36,7 +36,7 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
 
             var context = (StateMachineTestContext)Context;
 
-            Assert.AreEqual(context.TestStatus, 5);
+            Assert.AreEqual(5, context.TestStatus);
             context.TestStatus++;
         }
     }

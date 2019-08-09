@@ -75,26 +75,28 @@ namespace Bitcraft.StateMachine
             RaiseOnExitEvent(null, null);
 
             CurrentState = null;
-            PerformTransitionTo(initialState, data);
+            PerformTransitionTo(null, initialState, data);
         }
 
-        private void PerformTransitionTo(StateToken stateToken, object data)
+        private void PerformTransitionTo(ActionToken actionToken, StateToken stateToken, object data)
         {
+            ActionToken triggeringActionToken = actionToken;
             StateToken targetStateToken = stateToken;
             object targetData = data;
 
             while (true)
             {
-                TransitionInfo transition = TransitionTo(targetStateToken, targetData);
+                TransitionInfo transition = TransitionTo(triggeringActionToken, targetStateToken, targetData);
                 if (transition.TargetStateToken == null)
                     break;
 
+                triggeringActionToken = transition.TriggeringAction;
                 targetStateToken = transition.TargetStateToken;
                 targetData = transition.TargetStateData;
             }
         }
 
-        private TransitionInfo TransitionTo(StateToken stateToken, object data)
+        private TransitionInfo TransitionTo(ActionToken actionToken, StateToken stateToken, object data)
         {
             if (stateToken == null)
                 throw new ArgumentNullException(nameof(stateToken));
@@ -108,12 +110,12 @@ namespace Bitcraft.StateMachine
             StateBase oldState = CurrentState;
             CurrentState = state;
 
-            var stateEnterEventArgs = new StateEnterEventArgs(oldState?.Token, data);
+            var stateEnterEventArgs = new StateEnterEventArgs(actionToken, oldState?.Token, data);
 
             isPerformActionLocked = true;
             try
             {
-                OnStateChanged(new StateChangedEventArgs(oldState, CurrentState));
+                OnStateChanged(new StateChangedEventArgs(actionToken, oldState, CurrentState));
 
                 CurrentState.OnEnter(stateEnterEventArgs);
             }
@@ -129,7 +131,7 @@ namespace Bitcraft.StateMachine
         {
             if (CurrentState != null)
             {
-                var stateExitEventArgs = new StateExitEventArgs(stateToken, data);
+                var stateExitEventArgs = new StateExitEventArgs(null, stateToken, data);
 
                 isPerformActionLocked = true;
                 try
@@ -200,7 +202,7 @@ namespace Bitcraft.StateMachine
                 }
 
                 if (CurrentState.Token != st)
-                    PerformTransitionTo(st, d);
+                    PerformTransitionTo(action, st, d);
             });
         }
 

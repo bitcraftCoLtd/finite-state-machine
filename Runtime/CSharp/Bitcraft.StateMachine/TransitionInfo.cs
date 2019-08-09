@@ -8,6 +8,11 @@ namespace Bitcraft.StateMachine
     public class TransitionInfo
     {
         /// <summary>
+        /// Gets the action token of the action to provide to the target state.
+        /// </summary>
+        public ActionToken TriggeringAction { get; set; }
+
+        /// <summary>
         /// Gets or sets the target state token. (state active after transition)
         /// </summary>
         public StateToken TargetStateToken { get; set; }
