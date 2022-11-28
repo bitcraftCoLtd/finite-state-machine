@@ -31,11 +31,11 @@ In your action handlers, use the callback provided to tell the state machine whe
 
 Finally, instanciate a `StateManager` class, register the states using its `RegisterState` method, and call its `SetInitialState` method to provide an entry point to the state machine.
 
-Once all that is done, you are good to go and can call `PerformAction` method on the `StateManager` class to start having your state machine do its job. 
+Once all that is done, you are good to go and can call `PerformAction` method on the `StateManager` class to start having your state machine do its job.
 
 ## Runtime libraries overview
 
-### C\# 
+### C\#
 
 The C# runtime library is created using .NET 3.5 in order to run on a wide range of platforms.
 It builds with `Any CPU` configuration, so it is totally architecture independent.
@@ -52,7 +52,7 @@ The runtime is in the folder `Runtime\Cpp`.
 
 The JavaScript implementation uses only one `module.exports`, so commenting it out makes the state machine ready for browsers or embedded JavaScript engines.
 
-The runtime is in the folder `Runtime\JavaScript`. 
+The runtime is in the folder `Runtime\JavaScript`.
 
 ### TypeScript
 
@@ -70,7 +70,7 @@ Specific cases for C++ and JavaScript runtimes are described briefly in the anne
 
 In the following document, a shopping cart is used as sample for the purpose of explanation.
 
-![Sample shop state machine](https://www.bitcraft.co.jp/pub/github/finite-state-machine/shop_sample_state_machine.png "Sample shop state machine") 
+![Sample shop state machine](https://www.bitcraft.co.jp/pub/github/finite-state-machine/shop_sample_state_machine.png "Sample shop state machine")
 
 All the runtime types are located in the namespace `Bitcraft.StateMachine`.
 
@@ -105,12 +105,12 @@ The constructor of `ActionToken` can also take an informative string as paramete
 
     public static class BasketActionTokens
     {
-        public static readonly ActionToken GoToProductList = new ActionToken(); 
-        public static readonly ActionToken GoToPaymentScreen = new ActionToken(); 
-        public static readonly ActionToken GoToConfirmation = new ActionToken(); 
-        public static readonly ActionToken PurchaseConfirmed = new ActionToken(); 
+        public static readonly ActionToken GoToProductList = new ActionToken();
+        public static readonly ActionToken GoToPaymentScreen = new ActionToken();
+        public static readonly ActionToken GoToConfirmation = new ActionToken();
+        public static readonly ActionToken PurchaseConfirmed = new ActionToken();
         public static readonly ActionToken PurchaseCancelled = new ActionToken();
-        ... 
+        ...
     }
 
 #### States
@@ -292,7 +292,7 @@ The context is then automatically accessible to all state through their `Context
 It is possible to pass specific data to a state when requesting a transition.
 When calling the `PerformAction()` method, along with the action you are doing, you can pass an instance of object as custom data.
 
-Be careful to not be confused between data and context, since they are both of `object` type. 
+Be careful to not be confused between data and context, since they are both of `object` type.
 
 When you need to pass several properties, it is recommended to create a specific class or structure with the required properties.
 If you feel lazy to do so, we then recommend using a `Dictionary<TKey, TValue>` instead of a `Tuple`, but this purely up to you.
@@ -323,7 +323,7 @@ The `StateBase` class has the following virtual methods:
         - `From` telling the origin state from which the transition is happening.
         - `Data` which is an optional custom data.
         - `Redirect` that allows immediate redirection to another state. (more information in "Fast redirection" section below)
-- `OnExit()` is called just before the state machine changes to another state. 
+- `OnExit()` is called just before the state machine changes to another state.
     - This method receives a `StateExitEventArgs` argument that contains:
         - `To` telling the destination state to which the transition is happening.
         - `Data` which is an optional custom data.
@@ -427,7 +427,7 @@ Hereafter is the description of each project:
 ### Create a graph
 
 How to use the yEd graph editor tool is beyond the scope of this documentation.
-However yEd is very straightforward and intuitive to use so no need documentation in my opinion. 
+However yEd is very straightforward and intuitive to use so no need documentation in my opinion.
 
 First, in yEd you can create custom properties that you will be able to set on your nodes and transitions.
 Let's add an *IsInitialState* and *IsFinalState* properties.
@@ -475,27 +475,28 @@ Hereafter is the usage of the tool you get when providing it the *-help* argumen
 
        -version    Shows current version number.
           -help    Shows this help.
-                  
+
           -file    <file> sets the input graph description file.
-                  
+
             -ns    <namespace> sets the namespace of generated files.
                    If not set, the classes are generated without namespace.
-                  
+
           -name    <name> sets the name of the state machine.
                    It is used to prefix some classes or other code elements.
                    If it is not set, the name defined in the graph file is used.
                    When both are not defined, an error is displayed and code
                    generation is aborted.
-                  
+
            -out    <folder> sets the output folder where code is generated.
                    If it is not set, the output folder is the folder where the graph
                    file is located.
-                  
-        -fromwd    If -out parameter is used, then:
+
+        -fromwd    If -out parameter is set, then:
                        If <folder> is absolute, the flag -fromwd is ignored.
                        If <folder> is relative, then:
                            If -fromwd flag is not set, then <folder> is relative to the graph file directory.
-                   If -out parameter is not used, then:
+                           If -fromwd flag is set, then <folder> is relative to the current working directory.
+                   If -out parameter is not set, then:
                        If -fromwd flag is set, then the output folder is the current working directory.
                        If -fromwd flag is not set, then the output folder is the graph file directory.
 
@@ -504,7 +505,7 @@ Hereafter is the usage of the tool you get when providing it the *-help* argumen
 
      -statebase    Make all generated state classes to inherit from
                    Bitcraft.StateMachine.StateBase class instead of from
-                   <name>StateBase.
+                   <name>StateBase, where <name> is given by -name option.
 
       -internal    Makes all exposed types internal instead of public.
 
@@ -556,7 +557,7 @@ A state in the JavaScript runtime is represented by an object that contains at l
 Then you can add an `onInitialize` function that will be called when the state is registered in a state machine and is ready to be used.
 There are also the `onEnter` and `onExit` functions that are called when the state gets activate or inactive.
 
-The remaining functions you may need are injected into the state by the state manager when it is registered to it. 
+The remaining functions you may need are injected into the state by the state manager when it is registered to it.
 
 #### Action handlers
 
@@ -570,7 +571,7 @@ Let's see with simple examples:
     }
 
 The way the callback is used means the state machine transition to the `UPDATE` state.
-The fact you do not provide data does not mean `null` or `undefined` is passed, it means the given custom data is passed through to the next state automatically. 
+The fact you do not provide data does not mean `null` or `undefined` is passed, it means the given custom data is passed through to the next state automatically.
 
     onNext: function (data, cb) {
         'use strict';
