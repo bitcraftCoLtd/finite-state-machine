@@ -58,7 +58,7 @@ namespace Bitcraft
 
             map<ActionToken*, StateHandler>::iterator it = _handlers.find(action);
             if (it != _handlers.end())
-                it->second(this, data, result);
+                it->second(data, result);
             else
                 throw new UnknownActionException(action, GetToken());
         }

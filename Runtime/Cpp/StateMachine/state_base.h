@@ -1,7 +1,9 @@
 #ifndef __BITCRAFT_STATEMACHINE_STATE_BASE_H__
 #define __BITCRAFT_STATEMACHINE_STATE_BASE_H__
 
+#include <functional>
 #include <map>
+
 #include "state_token.h"
 #include "state_data.h"
 #include "state_enter_event_args.h"
@@ -18,7 +20,7 @@ namespace Bitcraft
         class StateBase;
 
         // action handler
-        typedef void(*StateHandler)(StateBase*, StateData*, TransitionInfo*);
+        using StateHandler = std::function<void(StateData*, TransitionInfo*)>;
 
         /// <summary>
         /// Represent a state of the state machine.
