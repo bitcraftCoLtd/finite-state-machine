@@ -5,7 +5,7 @@ namespace Bitcraft
 {
     namespace StateMachine
     {
-        unsigned long long Token::_globalId = 1;
+        uint32_t Token::_globalId = 1;
 
         Token::Token()
         {

@@ -1,6 +1,8 @@
 #ifndef __BITCRAF_STATEMACHINE_TOKEN_H__
 #define __BITCRAF_STATEMACHINE_TOKEN_H__
 
+#include <stdint.h>
+
 namespace Bitcraft
 {
     namespace StateMachine
@@ -13,9 +15,9 @@ namespace Bitcraft
             friend class StateBase;
 
         private:
-            unsigned long long _id;
+            uint32_t _id;
             const wchar_t* _name;
-            static unsigned long long _globalId;
+            static uint32_t _globalId;
 
         private:
             void Initialization(const wchar_t* name);
