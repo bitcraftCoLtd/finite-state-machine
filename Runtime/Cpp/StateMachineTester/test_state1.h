@@ -19,7 +19,9 @@ public:
 
     void OnInitialize() override
     {
-        RegisterActionHandler(TestActionTokens::GoToState2Action, OnGoToState2);
+        RegisterActionHandler(TestActionTokens::GoToState2Action, [this](StateData* data, TransitionInfo* result) {
+            result->TargetStateToken = TestStateTokens::StateToken2;
+        });
     }
 
     void OnEnter(StateEnterEventArgs* e) override
@@ -32,11 +34,6 @@ public:
             e->GetRedirect()->TargetStateToken = TestStateTokens::StateToken3;
 
         _alreadyPassed = true;
-    }
-
-    static void OnGoToState2(StateBase* self, StateData* data, TransitionInfo* result)
-    {
-        result->TargetStateToken = TestStateTokens::StateToken2;
     }
 
     void OnExit() override

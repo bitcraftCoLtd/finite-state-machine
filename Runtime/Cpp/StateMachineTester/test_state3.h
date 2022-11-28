@@ -18,8 +18,12 @@ public:
 
     void OnInitialize() override
     {
-        RegisterActionHandler(TestActionTokens::GoToState1Action, OnGotoState1);
-        RegisterActionHandler(TestActionTokens::EndAction, OnEnd);
+        RegisterActionHandler(TestActionTokens::GoToState1Action, [this](StateData* data, TransitionInfo* result) {
+            result->TargetStateToken = TestStateTokens::StateToken1;
+        });
+        RegisterActionHandler(TestActionTokens::EndAction, [this](StateData*, TransitionInfo*) {
+            // result->TargetStateToken = NULL;
+        });
     }
 
     void OnEnter(StateEnterEventArgs* e) override
@@ -27,16 +31,6 @@ public:
         const StateToken* const from = e->GetFrom();
 
         printf("State '%S': OnEnter(from '%S')\n", GetToken()->ToString(), from != NULL ? from->ToString() : L"(null)");
-    }
-
-    static void OnGotoState1(StateBase* self, StateData* data, TransitionInfo* result)
-    {
-        result->TargetStateToken = TestStateTokens::StateToken1;
-    }
-
-    static void OnEnd(StateBase* self, StateData* data, TransitionInfo* result)
-    {
-        // result->TargetStateToken = NULL;
     }
 
     void OnExit() override
