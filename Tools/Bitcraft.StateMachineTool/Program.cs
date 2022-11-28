@@ -109,8 +109,14 @@ namespace Bitcraft.StateMachineTool
                 UseOriginalStateBase = args.UseOriginalStateBase,
             };
 
-            IGenerator generator = new CSharpGenerator();
-            generator.Generate(options);
+            var generators = new IGenerator[]
+            {
+                new CSharpGenerator(),
+                new CppGenerator(),
+            };
+
+            foreach (IGenerator generator in generators)
+                generator.Generate(options);
 
             return 0;
         }
