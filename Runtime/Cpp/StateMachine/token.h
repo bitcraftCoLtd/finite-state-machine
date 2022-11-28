@@ -45,6 +45,10 @@ namespace Bitcraft
             /// <param name="other">The other token to check equality upon.</param>
             /// <returns>Returns true if both tokens are the same, false otherwise.</returns>
             bool Equals(Token* other);
+
+        public:
+            Token(const Token&) = delete;
+            Token& operator=(Token&) = delete;
         };
     }
 }
