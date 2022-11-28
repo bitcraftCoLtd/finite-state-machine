@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Bitcraft.StateMachineTool.CodeGenerators;
 using Bitcraft.StateMachineTool.Core;
 
-namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
+namespace Bitcraft.StateMachineTool.CSharp
 {
     public class StateInfo
     {

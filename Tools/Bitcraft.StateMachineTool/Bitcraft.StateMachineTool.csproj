@@ -44,6 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandArguments.cs" />
+    <Compile Include="Common.cs" />
+    <Compile Include="Cpp\CppGenerator.cs" />
+    <Compile Include="CSharp\CSharpGenerator.cs" />
+    <Compile Include="CSharp\FileDefinitions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

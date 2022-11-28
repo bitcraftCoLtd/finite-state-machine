@@ -5,13 +5,14 @@ using System.Linq;
 
 namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 {
-    public class StateMachineCodeGenerator : CodeGeneratorBase
+    public class CSharpStateMachineCodeGenerator : CodeGeneratorBase
     {
-        private IGraph graph;
-        private INode initialNode;
-        private bool isInternal;
+        private readonly IGraph graph;
+        private readonly INode initialNode;
+        private readonly bool useStateBase;
+        private readonly bool isInternal;
 
-        public StateMachineCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, bool isInternal, INode initialNode, IGraph graph)
+        public CSharpStateMachineCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, bool useStateBase, bool isInternal, INode initialNode, IGraph graph)
             : base(generatorsFactory, namespaceName, stateMachineName)
         {
             if (graph == null)
@@ -19,6 +20,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 
             this.graph = graph;
             this.initialNode = initialNode;
+            this.useStateBase = useStateBase;
             this.isInternal = isInternal;
         }
 
@@ -45,19 +47,27 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                 stateMachineName + Constants.StateMachineSuffix,
                 new[] { Constants.StateManagerType }).Write(writer);
 
-            Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), true).Write(writer);
+            Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, true).Write(writer);
         }
 
         private void WriteClassContent(CodeWriter writer)
         {
+            string baseClassName = Constants.StateBaseType;
+            if (useStateBase == false)
+                baseClassName = stateMachineName + baseClassName;
+
             Language.CreateConstructorDeclarationCodeGenerator(
                 isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 false,
                 stateMachineName + Constants.StateMachineSuffix,
                 null,
-                ParentConstructorType.This,
+                new ParentConstructorInfo
+                {
+                    BaseName = baseClassName,
+                    Type = ParentConstructorType.This,
+                },
                 new[] { "null" },
-                Language.CreateScopeCodeGenerator(null, true)).Write(writer);
+                Language.CreateScopeCodeGenerator(null, ScopeContentType.Method, true)).Write(writer);
 
             writer.AppendLine();
 
@@ -66,9 +76,13 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                 false,
                 stateMachineName + Constants.StateMachineSuffix,
                 new[] { new ArgumentInfo("object", "context") },
-                ParentConstructorType.Base,
+                new ParentConstructorInfo
+                {
+                    BaseName = baseClassName,
+                    Type = ParentConstructorType.Base,
+                },
                 new[] { "context" },
-                Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteConstructorContent), true)).Write(writer);
+                Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteConstructorContent), ScopeContentType.Method, true)).Write(writer);
 
             writer.AppendLine();
 
@@ -110,10 +124,10 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 
             Language.CreateMethodCallCodeGenerator(Constants.PostHandlersRegistrationMethod).Write(writer);
 
-            writer.AppendLine();
-
             if (initialNode != null)
             {
+                writer.AppendLine();
+
                 Language.CreateMethodCallCodeGenerator(
                     Constants.SetInitialStateMethod,
                     stateMachineName + Constants.StateTokensClass + "." + initialNode.Semantic

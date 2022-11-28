@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace Bitcraft.ToolKit.CodeGeneration
 {
+    public class ParentConstructorInfo
+    {
+        public ParentConstructorType Type;
+        public string BaseName;
+    }
+
     public enum ParentConstructorType
     {
         None,
@@ -15,7 +21,7 @@ namespace Bitcraft.ToolKit.CodeGeneration
 
     public abstract class ConstructorDeclarationCodeGenerator : MethodDeclarationCodeGenerator
     {
-        protected readonly ParentConstructorType parentConstructorType;
+        protected readonly ParentConstructorInfo parentConstructorInfo;
         protected readonly string[] parentConstructorParameters;
 
         protected ConstructorDeclarationCodeGenerator(
@@ -24,12 +30,12 @@ namespace Bitcraft.ToolKit.CodeGeneration
             bool isStatic,
             string name,
             ArgumentInfo[] arguments,
-            ParentConstructorType parentConstructorType,
+            ParentConstructorInfo parentConstructorInfo,
             string[] parentConstructorParameters,
             ScopeCodeGenerator bodyGenerator)
             : base(languageAbstraction, accessModifier, isStatic, null, null, name, arguments, bodyGenerator)
         {
-            this.parentConstructorType = parentConstructorType;
+            this.parentConstructorInfo = parentConstructorInfo;
             this.parentConstructorParameters = parentConstructorParameters ?? new string[0];
         }
 

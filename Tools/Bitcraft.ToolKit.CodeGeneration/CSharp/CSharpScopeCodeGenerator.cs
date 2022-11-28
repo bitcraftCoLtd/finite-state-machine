@@ -8,8 +8,8 @@ namespace Bitcraft.ToolKit.CodeGeneration.CSharp
 {
     public class CSharpScopeCodeGenerator : ScopeCodeGenerator
     {
-        public CSharpScopeCodeGenerator(ILanguageAbstraction languageAbstraction, ICodeGenerator innerGenerator, bool closeWithNewLine)
-            : base(languageAbstraction, innerGenerator, closeWithNewLine)
+        public CSharpScopeCodeGenerator(ILanguageAbstraction languageAbstraction, ScopeContentType scopeContentType, ICodeGenerator innerGenerator, bool closeWithNewLine)
+            : base(languageAbstraction, scopeContentType, innerGenerator, closeWithNewLine)
         {
         }
 

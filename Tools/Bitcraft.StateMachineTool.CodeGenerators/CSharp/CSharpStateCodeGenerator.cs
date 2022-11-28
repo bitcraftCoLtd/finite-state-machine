@@ -8,14 +8,14 @@ using Bitcraft.StateMachineTool.Core;
 
 namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 {
-    public class StateCodeGenerator : CodeGeneratorBase
+    public class CSharpStateCodeGenerator : CodeGeneratorBase
     {
         private string stateName;
         private IGraph graph;
         private bool useStateBase;
         private bool isInternal;
 
-        public StateCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, string stateName, bool useStateBase, bool isInternal, IGraph graph)
+        public CSharpStateCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, string stateName, bool useStateBase, bool isInternal, IGraph graph)
             : base(generatorsFactory, namespaceName, stateMachineName)
         {
             CodeGenerationUtility.CheckValidPartialIdentifierArgument(stateName, nameof(stateName));
@@ -55,19 +55,27 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                 stateMachineName + stateName + Constants.StateSuffix,
                 new[] { baseClassName }).Write(writer);
 
-            Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), true).Write(writer);
+            Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, true).Write(writer);
         }
 
         private void WriteClassContent(CodeWriter writer)
         {
+            string baseClassName = Constants.StateBaseType;
+            if (useStateBase == false)
+                baseClassName = stateMachineName + baseClassName;
+
             Language.CreateConstructorDeclarationCodeGenerator(
                 isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 false,
                 stateMachineName + stateName + Constants.StateSuffix,
                 null,
-                ParentConstructorType.Base,
+                new ParentConstructorInfo
+                {
+                    BaseName = baseClassName,
+                    Type = ParentConstructorType.Base,
+                },
                 new[] { stateMachineName + Constants.StateTokensClass + "." + stateName },
-                Language.CreateScopeCodeGenerator(null, true)).Write(writer);
+                Language.CreateScopeCodeGenerator(null, ScopeContentType.Method, true)).Write(writer);
 
             var node = graph.Nodes.FirstOrDefault(n => n.Semantic == stateName);
 
@@ -86,7 +94,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                     "void",
                     Constants.OnInitializedMethod,
                     null,
-                    Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, w => WriteOnInitializeMethod(transitions, w)), true)
+                    Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, w => WriteOnInitializeMethod(transitions, w)), ScopeContentType.Method, true)
                 ).Write(writer);
 
                 writer.AppendLine();
@@ -173,7 +181,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                     Language.CreateMethodCallCodeGenerator(
                         "callback",
                         ConstructStateTokenFullname(target)).Write(w);
-                }), true)
+                }), ScopeContentType.Method, true)
             ).Write(writer);
 
             return true;

@@ -28,9 +28,9 @@ namespace Bitcraft.ToolKit.CodeGeneration.CSharp
             return new CSharpCommentCodeGenerator(this, innerGenerator, isSingleLine);
         }
 
-        public ConstructorDeclarationCodeGenerator CreateConstructorDeclarationCodeGenerator(AccessModifier accessModifier, bool isStatic, string name, ArgumentInfo[] arguments, ParentConstructorType parentConstructorType, string[] parentConstructorParameters, ScopeCodeGenerator bodyGenerator)
+        public ConstructorDeclarationCodeGenerator CreateConstructorDeclarationCodeGenerator(AccessModifier accessModifier, bool isStatic, string name, ArgumentInfo[] arguments, ParentConstructorInfo parentConstructorInfo, string[] parentConstructorParameters, ScopeCodeGenerator bodyGenerator)
         {
-            return new CSharpConstructorDeclarationCodeGenerator(this, accessModifier, isStatic, name, arguments, parentConstructorType, parentConstructorParameters, bodyGenerator);
+            return new CSharpConstructorDeclarationCodeGenerator(this, accessModifier, isStatic, name, arguments, parentConstructorInfo, parentConstructorParameters, bodyGenerator);
         }
 
         public VariableDeclarationCodeGenerator CreateVariableDeclarationCodeGenerator(AccessModifier accessModifier, string[] additionalModifiers, string type, string name, string initializationStatement)
@@ -53,9 +53,9 @@ namespace Bitcraft.ToolKit.CodeGeneration.CSharp
             return new CSharpMethodDeclarationCodeGenerator(this, accessModifier, isStatic, additionalModifiers, returnType, name, arguments, bodyGenerator);
         }
 
-        public ScopeCodeGenerator CreateScopeCodeGenerator(ICodeGenerator innerGenerator, bool closeWithNewLine)
+        public ScopeCodeGenerator CreateScopeCodeGenerator(ICodeGenerator innerGenerator, ScopeContentType scopeContentType, bool closeWithNewLine)
         {
-            return new CSharpScopeCodeGenerator(this, innerGenerator, closeWithNewLine);
+            return new CSharpScopeCodeGenerator(this, scopeContentType, innerGenerator, closeWithNewLine);
         }
 
         public RawStatementCodeGenerator CreateRawStatementCodeGenerator(string rawStatement)

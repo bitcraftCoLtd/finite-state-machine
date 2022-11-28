@@ -14,26 +14,27 @@ namespace Bitcraft.ToolKit.CodeGeneration.CSharp
             bool isStatic,
             string name,
             ArgumentInfo[] arguments,
-            ParentConstructorType parentConstructorType,
+            ParentConstructorInfo parentConstructorInfo,
             string[] parentConstructorParameters,
             ScopeCodeGenerator bodyGenerator)
-            : base(languageAbstraction, accessModifier, isStatic, name, arguments, parentConstructorType, parentConstructorParameters, bodyGenerator)
+            : base(languageAbstraction, accessModifier, isStatic, name, arguments, parentConstructorInfo, parentConstructorParameters, bodyGenerator)
         {
         }
 
         protected virtual void ConstructModifiers(List<string> outModifiers)
         {
-            var accessModifierStr = CSharpCodeGenerationUtility.AccessModifierToString(accessModifier);
-
             if (isStatic)
                 outModifiers.Add("static");
-            else if (accessModifierStr != null)
+
+            string accessModifierStr = CSharpCodeGenerationUtility.AccessModifierToString(accessModifier);
+
+            if (accessModifierStr != null)
                 outModifiers.Add(accessModifierStr);
 
             if (additionalModifiers != null)
             {
                 foreach (var m in additionalModifiers.Where(x => string.IsNullOrWhiteSpace(x) == false))
-                    outModifiers.Add(m);
+                    outModifiers.Add(m.Trim());
             }
         }
 
@@ -50,9 +51,9 @@ namespace Bitcraft.ToolKit.CodeGeneration.CSharp
         {
             WritePrototype(writer);
 
-            if (parentConstructorType != ParentConstructorType.None)
+            if (parentConstructorInfo != null && parentConstructorInfo.Type != ParentConstructorType.None)
             {
-                var parentConstructor = parentConstructorType == ParentConstructorType.Base
+                var parentConstructor = parentConstructorInfo.Type == ParentConstructorType.Base
                     ? "base"
                     : "this";
 

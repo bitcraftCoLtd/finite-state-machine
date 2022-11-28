@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Bitcraft.ToolKit.CodeGeneration;
 using Bitcraft.StateMachineTool.Core;
+using Bitcraft.ToolKit.CodeGeneration;
 
 namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 {
-    public class ActionTokensCodeGenerator : CodeGeneratorBase
+    public class CSharpStateTokensCodeGenerator : CodeGeneratorBase
     {
         private IGraph graph;
         private bool isInternal;
 
-        public ActionTokensCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, bool isInternal, IGraph graph)
+        public CSharpStateTokensCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, bool isInternal, IGraph graph)
             : base(generatorsFactory, namespaceName, stateMachineName)
         {
             if (graph == null)
                 throw new ArgumentNullException(nameof(graph));
 
-            this.isInternal = isInternal;
             this.graph = graph;
+            this.isInternal = isInternal;
         }
 
         public override void Write(CodeWriter writer)
@@ -42,30 +42,29 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             Language.CreateClassCodeGenerator(
                 isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 new[] { "static" },
-                stateMachineName + Constants.ActionTokensClass,
+                stateMachineName + Constants.StateTokensClass,
                 null).Write(writer);
 
-            Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), true).Write(writer);
+            Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, true).Write(writer);
         }
 
         private void WriteClassContent(CodeWriter writer)
         {
-            if (graph.Transitions.Length == 0)
-                return;
-
-            var distinctTransitions = graph.Transitions
-                .Select(t => t.Semantic)
-                .Distinct()
+            var nodes = graph.Nodes
+                .Where(x => x.IsFinal == false)
                 .ToArray();
 
-            foreach (var transition in distinctTransitions)
+            if (nodes.Length == 0)
+                return;
+
+            foreach (var node in nodes)
             {
                 Language.CreateVariableDeclarationCodeGenerator(
                     isInternal ? AccessModifier.Internal : AccessModifier.Public,
                     new[] { "static", "readonly" },
-                    Constants.ActionTokenType,
-                    transition,
-                    string.Format("new " + Constants.ActionTokenType + "(\"{0}\")", transition)).Write(writer);
+                    Constants.StateTokenType,
+                    node.Semantic,
+                    string.Format("new " + Constants.StateTokenType + "(\"{0}\")", node.Semantic)).Write(writer);
             }
 
             writer.AppendLine();
@@ -73,18 +72,18 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             Language.CreateVariableDeclarationCodeGenerator(
                 isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 new[] { "static", "readonly" },
-                Constants.ActionTokenType + "[]",
+                Constants.StateTokenType + "[]",
                 Constants.TokenItemsProperty,
                 new AnonymousCodeGenerator(Language, w =>
+                {
+                    w.AppendLine();
+                    Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, w2 =>
                     {
-                        w.AppendLine();
-                        Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, w2 =>
-                            {
-                                foreach (var transition in distinctTransitions.Take(distinctTransitions.Length - 1))
-                                    w2.AppendLine(transition + ",");
-                                w2.AppendLine(distinctTransitions.Last());
-                            }), false).Write(w);
-                    })).Write(writer);
+                        foreach (var node in nodes.Take(nodes.Length - 1))
+                            w2.AppendLine(node.Semantic + ",");
+                        w2.AppendLine(nodes.Last().Semantic);
+                    }), ScopeContentType.Method, false).Write(w);
+                })).Write(writer);
         }
     }
 }

@@ -38,17 +38,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cpp\ActionTokensCodeGeneratorcs.cs" />
+    <Compile Include="Cpp\CppActionTokensCodeGeneratorcs.cs" />
     <Compile Include="Cpp\CppConstants.cs" />
-    <Compile Include="CSharp\ActionTokensCodeGeneratorcs.cs" />
+    <Compile Include="Cpp\CppStateMachineCodeGenerator.cs" />
+    <Compile Include="CSharp\CSharpActionTokensCodeGeneratorcs.cs" />
     <Compile Include="CodeGeneratorBase.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="CSharp\CSharpConstants.cs" />
-    <Compile Include="CSharp\FileDefinitions.cs" />
-    <Compile Include="CSharp\StateCodeGenerator.cs" />
+    <Compile Include="CSharp\CSharpStateCodeGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CSharp\StateMachineCodeGenerator.cs" />
-    <Compile Include="CSharp\StateTokensCodeGenerator.cs" />
+    <Compile Include="CSharp\CSharpStateMachineCodeGenerator.cs" />
+    <Compile Include="CSharp\CSharpStateTokensCodeGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Bitcraft.StateMachineTool.Core\Bitcraft.StateMachineTool.Core.csproj">

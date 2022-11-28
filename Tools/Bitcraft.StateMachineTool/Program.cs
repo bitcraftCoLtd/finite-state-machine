@@ -1,11 +1,9 @@
-﻿using Bitcraft.StateMachineTool.CodeGenerators;
-using Bitcraft.StateMachineTool.CodeGenerators.CSharp;
-using Bitcraft.StateMachineTool.Core;
-using Bitcraft.ToolKit.CodeGeneration;
+﻿using Bitcraft.StateMachineTool.Core;
+using Bitcraft.StateMachineTool.Cpp;
+using Bitcraft.StateMachineTool.CSharp;
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Bitcraft.StateMachineTool
 {
@@ -82,7 +80,7 @@ namespace Bitcraft.StateMachineTool
                 var state = graph.Nodes.SingleOrDefault(x => x.Semantic == args.InitialStateName);
                 if (state == null)
                 {
-                    Console.WriteLine("State '{0}' not found.", args.InitialStateName);
+                    Console.WriteLine($"State '{args.InitialStateName}' not found.");
                     return -1;
                 }
 
@@ -100,42 +98,21 @@ namespace Bitcraft.StateMachineTool
                 return -1;
             }
 
-            var fs = new FileDefinitions(stateMachineName, graph);
-
-            foreach (var folder in fs.Folders)
-                Directory.CreateDirectory(Path.Combine(outputPath, folder));
-
-            var generatorsFactory = new Bitcraft.ToolKit.CodeGeneration.CSharp.CSharpLanguageAbstraction();
-
-            WriteFile(new StateMachineCodeGenerator(generatorsFactory, namespaceName, stateMachineName, isInternal, initialNode, graph), outputPath, fs.StateMachineFilename);
-            WriteFile(new StateTokensCodeGenerator(generatorsFactory, namespaceName, stateMachineName, isInternal, graph), outputPath, fs.StateTokensFilename);
-            WriteFile(new ActionTokensCodeGenerator(generatorsFactory, namespaceName, stateMachineName, isInternal, graph), outputPath, fs.ActionTokensFilename);
-
-            foreach (var state in fs.States)
+            var options = new GeneratorOptions
             {
-                WriteFile(
-                    new StateCodeGenerator(
-                        generatorsFactory,
-                        namespaceName != null ? namespaceName + "." + Constants.StatesFolder : null,
-                        stateMachineName,
-                        state.Semantic,
-                        args.UseOriginalStateBase,
-                        isInternal,
-                        graph
-                    ),
-                    outputPath,
-                    state.RelativePath
-                );
-            }
+                StateMachineName = stateMachineName,
+                OutputPath = outputPath,
+                IsInternal = isInternal,
+                NamespaceName = namespaceName,
+                Graph = graph,
+                InitialNode = initialNode,
+                UseOriginalStateBase = args.UseOriginalStateBase,
+            };
+
+            IGenerator generator = new CSharpGenerator();
+            generator.Generate(options);
 
             return 0;
-        }
-
-        private void WriteFile(ICodeGenerator codeGenerator, string basePath, string relativeFilename)
-        {
-            var sb = new StringBuilder();
-            codeGenerator.Write(new CodeWriter(sb));
-            File.WriteAllText(Path.Combine(basePath, relativeFilename), sb.ToString());
         }
     }
 }

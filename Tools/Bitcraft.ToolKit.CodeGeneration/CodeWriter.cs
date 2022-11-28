@@ -10,7 +10,7 @@ namespace Bitcraft.ToolKit.CodeGeneration
     {
         private bool isIndented = true;
         private int indentation;
-        private StringBuilder sb;
+        private readonly StringBuilder sb;
 
         public CodeWriter(StringBuilder sb)
         {
@@ -78,7 +78,7 @@ namespace Bitcraft.ToolKit.CodeGeneration
 
         private class IndentDisposable : IDisposable
         {
-            private CodeWriter cw;
+            private readonly CodeWriter cw;
 
             public IndentDisposable(CodeWriter cw)
             {
@@ -94,8 +94,8 @@ namespace Bitcraft.ToolKit.CodeGeneration
 
         private class IndentationChangerDisposable : IDisposable
         {
-            private CodeWriter cw;
-            private bool originalIsIndented;
+            private readonly CodeWriter cw;
+            private readonly bool originalIsIndented;
 
             public IndentationChangerDisposable(CodeWriter cw, bool newIndent)
             {

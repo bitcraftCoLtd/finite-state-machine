@@ -20,7 +20,7 @@ namespace Bitcraft.StateMachineTool
         public bool UseOriginalStateBase { get; private set; }
         public bool IsInternal { get; private set; }
 
-        private string[] args;
+        private readonly string[] args;
 
         public const string HelpArgumentKey = "-help";
         public const string VersionArgumentKey = "-version";
@@ -35,7 +35,7 @@ namespace Bitcraft.StateMachineTool
 
         public bool NothingToDo { get; private set; }
 
-        private List<string> errors = new List<string>();
+        private readonly List<string> errors = new List<string>();
         public IReadOnlyCollection<string> Errors { get; }
 
         public CommandArguments(string[] args)

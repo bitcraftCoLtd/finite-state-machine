@@ -33,7 +33,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators
             if (namespaceName != null)
             {
                 Language.CreateNamespaceCodeGenerator(namespaceName).Write(writer);
-                Language.CreateScopeCodeGenerator(writeContentCodeGenerator, true).Write(writer);
+                Language.CreateScopeCodeGenerator(writeContentCodeGenerator, ScopeContentType.Namespace, true).Write(writer);
             }
             else
                 writeContentCodeGenerator.Write(writer);

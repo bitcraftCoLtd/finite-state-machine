@@ -8,11 +8,11 @@ using Bitcraft.StateMachineTool.Core;
 
 namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 {
-    public class ActionTokensCodeGenerator : CodeGeneratorBase
+    public class CppActionTokensCodeGenerator : CodeGeneratorBase
     {
-        private IGraph graph;
+        private readonly IGraph graph;
 
-        public ActionTokensCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, IGraph graph)
+        public CppActionTokensCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, IGraph graph)
             : base(generatorsFactory, namespaceName, stateMachineName)
         {
             if (graph == null)
@@ -32,7 +32,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
             writer.AppendLine();
 
             Language.CreateUsingCodeGenerator(
-                CSharpConstants.StateMachineNamespace
+                CppConstants.StateMachineNamespace
             ).Write(writer);
 
             writer.AppendLine();

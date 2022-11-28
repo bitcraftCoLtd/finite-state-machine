@@ -1,26 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Bitcraft.StateMachineTool.Core;
 using Bitcraft.ToolKit.CodeGeneration;
+using Bitcraft.StateMachineTool.Core;
 
 namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 {
-    public class StateTokensCodeGenerator : CodeGeneratorBase
+    public class CSharpActionTokensCodeGenerator : CodeGeneratorBase
     {
-        private IGraph graph;
-        private bool isInternal;
+        private readonly IGraph graph;
+        private readonly bool isInternal;
 
-        public StateTokensCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, bool isInternal, IGraph graph)
+        public CSharpActionTokensCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, bool isInternal, IGraph graph)
             : base(generatorsFactory, namespaceName, stateMachineName)
         {
             if (graph == null)
                 throw new ArgumentNullException(nameof(graph));
 
-            this.graph = graph;
             this.isInternal = isInternal;
+            this.graph = graph;
         }
 
         public override void Write(CodeWriter writer)
@@ -42,29 +39,30 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             Language.CreateClassCodeGenerator(
                 isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 new[] { "static" },
-                stateMachineName + Constants.StateTokensClass,
+                stateMachineName + Constants.ActionTokensClass,
                 null).Write(writer);
 
-            Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), true).Write(writer);
+            Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, true).Write(writer);
         }
 
         private void WriteClassContent(CodeWriter writer)
         {
-            var nodes = graph.Nodes
-                .Where(x => x.IsFinal == false)
-                .ToArray();
-
-            if (nodes.Length == 0)
+            if (graph.Transitions.Length == 0)
                 return;
 
-            foreach (var node in nodes)
+            var distinctTransitions = graph.Transitions
+                .Select(t => t.Semantic)
+                .Distinct()
+                .ToArray();
+
+            foreach (var transition in distinctTransitions)
             {
                 Language.CreateVariableDeclarationCodeGenerator(
                     isInternal ? AccessModifier.Internal : AccessModifier.Public,
                     new[] { "static", "readonly" },
-                    Constants.StateTokenType,
-                    node.Semantic,
-                    string.Format("new " + Constants.StateTokenType + "(\"{0}\")", node.Semantic)).Write(writer);
+                    Constants.ActionTokenType,
+                    transition,
+                    string.Format("new " + Constants.ActionTokenType + "(\"{0}\")", transition)).Write(writer);
             }
 
             writer.AppendLine();
@@ -72,18 +70,18 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             Language.CreateVariableDeclarationCodeGenerator(
                 isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 new[] { "static", "readonly" },
-                Constants.StateTokenType + "[]",
+                Constants.ActionTokenType + "[]",
                 Constants.TokenItemsProperty,
                 new AnonymousCodeGenerator(Language, w =>
-                {
-                    w.AppendLine();
-                    Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, w2 =>
                     {
-                        foreach (var node in nodes.Take(nodes.Length - 1))
-                            w2.AppendLine(node.Semantic + ",");
-                        w2.AppendLine(nodes.Last().Semantic);
-                    }), false).Write(w);
-                })).Write(writer);
+                        w.AppendLine();
+                        Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, w2 =>
+                            {
+                                foreach (var transition in distinctTransitions.Take(distinctTransitions.Length - 1))
+                                    w2.AppendLine(transition + ",");
+                                w2.AppendLine(distinctTransitions.Last());
+                            }), ScopeContentType.Method, false).Write(w);
+                    })).Write(writer);
         }
     }
 }
