@@ -24,19 +24,16 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
         {
             if (cppFileType == CppFileType.Source)
                 WriteSource(writer);
+            else if (cppFileType == CppFileType.Header)
+                WriteHeader(writer);
         }
 
         private void WriteSource(CodeWriter writer)
         {
-            var elements = new List<string>();
-
-            string accessModifierStr = CppCodeGenerationUtility.AccessModifierToString(accessModifier);
-
-            if (accessModifierStr != null)
-                elements.Add($"{accessModifierStr}:");
-
-            elements.Add(type);
-            elements.Add(name);
+            var elements = new List<string>
+            {
+                name
+            };
 
             if (initializationStatement != null)
             {
@@ -50,6 +47,21 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
                 elements.Add("=");
                 elements.Add(innerSb.ToString());
             }
+
+            writer.AppendLine($"{string.Join(" ", elements)};");
+        }
+
+        private void WriteHeader(CodeWriter writer)
+        {
+            var elements = new List<string>();
+
+            string accessModifierStr = CppCodeGenerationUtility.AccessModifierToString(accessModifier);
+
+            if (accessModifierStr != null)
+                elements.Add($"{accessModifierStr}:");
+
+            elements.Add(type);
+            elements.Add(name);
 
             writer.AppendLine($"{string.Join(" ", elements)};");
         }

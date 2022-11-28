@@ -1,31 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Bitcraft.ToolKit.CodeGeneration
 {
+    public enum LineEnding
+    {
+        LF,
+        CRLF
+    }
+
     public class CodeWriter
     {
-        private bool isIndented = true;
-        private int indentation;
+        private int indentationLevel = 0;
+        private readonly string indentation;
         private readonly StringBuilder sb;
+        private readonly LineEnding lineEnding;
 
-        public CodeWriter(StringBuilder sb)
+        public CodeWriter(StringBuilder sb, string indentation, LineEnding lineEnding)
         {
             if (sb == null)
                 throw new ArgumentNullException(nameof(sb));
 
             this.sb = sb;
+            this.indentation = indentation;
+            this.lineEnding = lineEnding;
         }
 
         public CodeWriter Clone(StringBuilder sb)
         {
-            return new CodeWriter(sb)
+            return new CodeWriter(sb, indentation, lineEnding)
             {
-                isIndented = this.isIndented,
-                indentation = this.indentation
+                indentationLevel = this.indentationLevel
             };
         }
 
@@ -46,34 +51,47 @@ namespace Bitcraft.ToolKit.CodeGeneration
 
         public void Append(string text)
         {
-            sb.Append(GetIndentation() + text);
+            AppendIndentation();
+            sb.Append(text);
         }
 
         public void Append(string format, params object[] args)
         {
-            sb.Append(GetIndentation() + string.Format(format, args));
+            AppendIndentation();
+            sb.AppendFormat(format, args);
         }
 
         public void AppendLine()
         {
-            sb.AppendLine(); // does not generate indentation on empty lines
+            // Does not generate indentation on empty lines.
+
+            if (lineEnding == LineEnding.LF)
+                sb.Append("\n");
+            else if (lineEnding == LineEnding.CRLF)
+                sb.Append("\r\n");
         }
 
         public void AppendLine(string text)
         {
-            sb.AppendLine(GetIndentation() + text);
+            AppendIndentation();
+            sb.Append(text);
+            AppendLine();
         }
 
         public void AppendLine(string format, params object[] args)
         {
-            sb.AppendLine(GetIndentation()  + string.Format(format, args));
+            AppendIndentation();
+            sb.AppendFormat(format, args);
+            AppendLine();
         }
 
-        private string GetIndentation()
+        private void AppendIndentation()
         {
-            if (isIndented)
-                return new string(' ', indentation * 4);
-            return string.Empty;
+            if (indentation.Length == 0)
+                return;
+
+            for (int level = 0; level < indentationLevel; level++)
+                sb.Append(indentation);
         }
 
         private class IndentDisposable : IDisposable
@@ -83,30 +101,30 @@ namespace Bitcraft.ToolKit.CodeGeneration
             public IndentDisposable(CodeWriter cw)
             {
                 this.cw = cw;
-                cw.indentation++;
+                cw.indentationLevel++;
             }
 
             public void Dispose()
             {
-                cw.indentation--;
+                cw.indentationLevel--;
             }
         }
 
         private class IndentationChangerDisposable : IDisposable
         {
             private readonly CodeWriter cw;
-            private readonly bool originalIsIndented;
+            private readonly int originalIndentationLevel;
 
             public IndentationChangerDisposable(CodeWriter cw, bool newIndent)
             {
                 this.cw = cw;
-                originalIsIndented = cw.isIndented;
-                cw.isIndented = newIndent;
+                originalIndentationLevel = cw.indentationLevel;
+                cw.indentationLevel = 0;
             }
 
             public void Dispose()
             {
-                cw.isIndented = originalIsIndented;
+                cw.indentationLevel = originalIndentationLevel;
             }
         }
     }

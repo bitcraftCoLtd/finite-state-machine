@@ -36,13 +36,15 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 
         protected override void WriteContent(CodeWriter writer)
         {
+            ScopeCodeGenerator classBodyGenerator = Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, true);
+
             Language.CreateClassCodeGenerator(
                 isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 new[] { "static" },
                 stateMachineName + Constants.ActionTokensClass,
-                null).Write(writer);
-
-            Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, true).Write(writer);
+                null,
+                classBodyGenerator
+            ).Write(writer);
         }
 
         private void WriteClassContent(CodeWriter writer)

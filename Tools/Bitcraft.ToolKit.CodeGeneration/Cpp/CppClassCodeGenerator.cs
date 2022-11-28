@@ -14,8 +14,9 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
             AccessModifier accessModifier,
             string[] additionalModifiers,
             string name,
-            string[] bases)
-            : base(languageAbstraction, accessModifier, additionalModifiers, name, bases)
+            string[] bases,
+            ScopeCodeGenerator bodyGenerator)
+            : base(languageAbstraction, accessModifier, additionalModifiers, name, bases, bodyGenerator)
         {
             this.cppFileType = cppFileType;
         }
@@ -49,6 +50,9 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
         {
             if (cppFileType == CppFileType.Header)
                 WriteHeader(writer);
+
+            if (bodyGenerator != null)
+                bodyGenerator.Write(writer);
         }
     }
 }

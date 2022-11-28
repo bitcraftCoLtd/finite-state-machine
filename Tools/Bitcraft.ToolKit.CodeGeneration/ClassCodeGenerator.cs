@@ -23,13 +23,15 @@ namespace Bitcraft.ToolKit.CodeGeneration
         protected readonly string[] additionalModifiers;
         protected readonly string name;
         protected readonly string[] bases;
+        protected readonly ScopeCodeGenerator bodyGenerator;
 
         public ClassCodeGenerator(
             ILanguageAbstraction languageAbstraction,
             AccessModifier accessModifier,
             string[] additionalModifiers,
             string name,
-            string[] bases)
+            string[] bases,
+            ScopeCodeGenerator bodyGenerator)
         {
             CodeGenerationUtility.IsValidIdentifier(name);
 
@@ -39,6 +41,7 @@ namespace Bitcraft.ToolKit.CodeGeneration
             this.additionalModifiers = additionalModifiers;
             this.name = name;
             this.bases = bases;
+            this.bodyGenerator = bodyGenerator;
         }
 
         public abstract void Write(CodeWriter writer);

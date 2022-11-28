@@ -41,6 +41,8 @@
     <Compile Include="Cpp\CppActionTokensCodeGeneratorcs.cs" />
     <Compile Include="Cpp\CppConstants.cs" />
     <Compile Include="Cpp\CppStateMachineCodeGenerator.cs" />
+    <Compile Include="Cpp\CppStateCodeGenerator.cs" />
+    <Compile Include="Cpp\CppStateTokensCodeGenerator.cs" />
     <Compile Include="CSharp\CSharpActionTokensCodeGeneratorcs.cs" />
     <Compile Include="CodeGeneratorBase.cs" />
     <Compile Include="Constants.cs" />

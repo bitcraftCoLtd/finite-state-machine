@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Bitcraft.ToolKit.CodeGeneration.CSharp
@@ -13,8 +14,9 @@ namespace Bitcraft.ToolKit.CodeGeneration.CSharp
             AccessModifier accessModifier,
             string[] additionalModifiers,
             string name,
-            string[] bases)
-            : base(languageAbstraction, accessModifier, additionalModifiers, name, bases)
+            string[] bases,
+            ScopeCodeGenerator bodyGenerator)
+            : base(languageAbstraction, accessModifier, additionalModifiers, name, bases, bodyGenerator)
         {
         }
 
@@ -52,6 +54,9 @@ namespace Bitcraft.ToolKit.CodeGeneration.CSharp
             }
 
             writer.AppendLine(string.Join(" ", elements));
+
+            if (bodyGenerator != null)
+                bodyGenerator.Write(writer);
         }
     }
 }

@@ -6,8 +6,8 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
     {
         private static readonly string[] separators = new string[] { ".", "::" };
 
-        public CppNamespaceCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string namespaceName)
-            : base(languageAbstraction, namespaceName)
+        public CppNamespaceCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string namespaceName, bool closeWithNewLine, ScopeCodeGenerator bodyGenerator)
+            : base(languageAbstraction, namespaceName, closeWithNewLine, bodyGenerator)
         {
             _ = cppFileType;
         }
@@ -19,6 +19,18 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
             string namespaceStatement = string.Join(" { namespace ", parts);
 
             writer.AppendLine($"namespace {namespaceStatement}");
+
+            if (bodyGenerator != null)
+                bodyGenerator.Write(writer);
+
+            using (writer.SuspendIndentation())
+            {
+                for (int i = 0; i < parts.Length - 1; i++)
+                    writer.Append(" }");
+            }
+
+            if (closeWithNewLine)
+                writer.AppendLine();
         }
     }
 }

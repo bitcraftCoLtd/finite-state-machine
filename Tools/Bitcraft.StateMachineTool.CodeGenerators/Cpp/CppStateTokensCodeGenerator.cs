@@ -1,15 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Bitcraft.ToolKit.CodeGeneration;
+using System.Text;
+using System.Threading.Tasks;
 using Bitcraft.StateMachineTool.Core;
+using Bitcraft.ToolKit.CodeGeneration;
 
 namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 {
-    public class CppActionTokensCodeGenerator : CodeGeneratorBase
+    public class CppStateTokensCodeGenerator : CodeGeneratorBase
     {
         private readonly IGraph graph;
 
-        public CppActionTokensCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, IGraph graph)
+        public CppStateTokensCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, IGraph graph)
             : base(generatorsFactory, namespaceName, stateMachineName)
         {
             if (graph == null)
@@ -36,9 +39,9 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
             ScopeCodeGenerator classBodyGenerator = Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, true);
 
             Language.CreateClassCodeGenerator(
-                AccessModifier.None,
-                new[] { "static" },
-                stateMachineName + Constants.ActionTokensClass,
+                AccessModifier.Public,
+                null,
+                stateMachineName + Constants.StateTokensClass,
                 null,
                 classBodyGenerator
             ).Write(writer);
@@ -46,22 +49,21 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
         private void WriteClassContent(CodeWriter writer)
         {
-            if (graph.Transitions.Length == 0)
-                return;
-
-            var distinctTransitions = graph.Transitions
-                .Select(t => t.Semantic)
-                .Distinct()
+            var nodes = graph.Nodes
+                .Where(x => x.IsFinal == false)
                 .ToArray();
 
-            foreach (var transition in distinctTransitions)
+            if (nodes.Length == 0)
+                return;
+
+            foreach (var node in nodes)
             {
                 Language.CreateVariableDeclarationCodeGenerator(
                     AccessModifier.Public,
                     new[] { "static", "const" },
-                    $"{Constants.ActionTokenType}*",
-                    transition,
-                    $"new {Constants.ActionTokenType}(\"{transition}\")"
+                    Constants.StateTokenType,
+                    node.Semantic,
+                    $"new {Constants.StateTokenType}(\"{node.Semantic}\")"
                 ).Write(writer);
             }
 
@@ -70,16 +72,16 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
             Language.CreateVariableDeclarationCodeGenerator(
                 AccessModifier.Public,
                 new[] { "static", "const" },
-                $"{Constants.ActionTokenType}*",
-                $"{Constants.TokenItemsProperty}[]",
+                $"{Constants.StateTokenType}[]",
+                Constants.TokenItemsProperty,
                 new AnonymousCodeGenerator(Language, w =>
                 {
                     w.AppendLine();
                     Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, w2 =>
                     {
-                        foreach (var transition in distinctTransitions.Take(distinctTransitions.Length - 1))
-                            w2.AppendLine(transition + ",");
-                        w2.AppendLine(distinctTransitions.Last());
+                        foreach (var node in nodes.Take(nodes.Length - 1))
+                            w2.AppendLine(node.Semantic + ",");
+                        w2.AppendLine(nodes.Last().Semantic);
                     }), ScopeContentType.Method, false).Write(w);
                 })).Write(writer);
         }

@@ -10,8 +10,10 @@ namespace Bitcraft.ToolKit.CodeGeneration
     {
         public ILanguageAbstraction Language { get; }
         protected readonly string namespaceName;
+        protected readonly bool closeWithNewLine;
+        protected readonly ScopeCodeGenerator bodyGenerator;
 
-        public NamespaceCodeGenerator(ILanguageAbstraction languageAbstraction, string namespaceName)
+        public NamespaceCodeGenerator(ILanguageAbstraction languageAbstraction, string namespaceName, bool closeWithNewLine, ScopeCodeGenerator bodyGenerator)
         {
             if (languageAbstraction == null)
                 throw new ArgumentNullException(nameof(languageAbstraction));
@@ -20,6 +22,8 @@ namespace Bitcraft.ToolKit.CodeGeneration
             Language = languageAbstraction;
 
             this.namespaceName = namespaceName;
+            this.closeWithNewLine = closeWithNewLine;
+            this.bodyGenerator = bodyGenerator;
         }
 
         public abstract void Write(CodeWriter writer);

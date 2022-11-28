@@ -26,7 +26,7 @@ namespace Bitcraft.StateMachineTool
         public static void WriteFile(ICodeGenerator codeGenerator, string basePath, string relativeFilename)
         {
             var sb = new StringBuilder();
-            codeGenerator.Write(new CodeWriter(sb));
+            codeGenerator.Write(new CodeWriter(sb, new string(' ', 4), LineEnding.LF));
             File.WriteAllText(Path.Combine(basePath, relativeFilename), sb.ToString());
         }
     }

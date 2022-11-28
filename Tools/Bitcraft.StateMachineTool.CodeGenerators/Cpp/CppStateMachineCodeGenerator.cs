@@ -11,7 +11,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
         private readonly INode initialNode;
         private readonly bool useStateBase;
 
-        public CppStateMachineCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, bool useStateBase, bool isInternal, INode initialNode, IGraph graph)
+        public CppStateMachineCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, bool useStateBase, INode initialNode, IGraph graph)
             : base(generatorsFactory, namespaceName, stateMachineName)
         {
             if (graph == null)
@@ -20,7 +20,6 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
             this.graph = graph;
             this.initialNode = initialNode;
             this.useStateBase = useStateBase;
-            _ = isInternal;
         }
 
         public override void Write(CodeWriter writer)
@@ -39,14 +38,15 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
         protected override void WriteContent(CodeWriter writer)
         {
+            ScopeCodeGenerator classBodyGenerator = Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, true);
+
             Language.CreateClassCodeGenerator(
                 AccessModifier.None,
                 null,
                 stateMachineName + Constants.StateMachineSuffix,
-                new[] { Constants.StateManagerType }
+                new[] { Constants.StateManagerType },
+                classBodyGenerator
             ).Write(writer);
-
-            Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, true).Write(writer);
         }
 
         private void WriteClassContent(CodeWriter writer)

@@ -8,10 +8,10 @@ namespace Bitcraft.ToolKit.CodeGeneration
 {
     public interface ILanguageAbstraction
     {
-        NamespaceCodeGenerator CreateNamespaceCodeGenerator(string namespaceName);
+        NamespaceCodeGenerator CreateNamespaceCodeGenerator(string namespaceName, bool closeWithNewLine, ScopeCodeGenerator bodyGenerator);
         UsingCodeGenerator CreateUsingCodeGenerator(params string[] usings);
 
-        ClassCodeGenerator CreateClassCodeGenerator(AccessModifier accessModifier, string[] additionalModifiers, string name, string[] bases);
+        ClassCodeGenerator CreateClassCodeGenerator(AccessModifier accessModifier, string[] additionalModifiers, string name, string[] bases, ScopeCodeGenerator bodyGenerator);
         CommentCodeGenerator CreateCommentCodeGenerator(ICodeGenerator innerGenerator, bool isSingleLine);
 
         ConstructorDeclarationCodeGenerator CreateConstructorDeclarationCodeGenerator(AccessModifier accessModifier, bool isStatic, string name, ArgumentInfo[] arguments, ParentConstructorInfo parentConstructorInfo, string[] parentConstructorParameters, ScopeCodeGenerator bodyGenerator);

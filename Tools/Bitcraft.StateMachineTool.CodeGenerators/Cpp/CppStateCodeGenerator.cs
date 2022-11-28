@@ -6,16 +6,15 @@ using System.Threading.Tasks;
 using Bitcraft.ToolKit.CodeGeneration;
 using Bitcraft.StateMachineTool.Core;
 
-namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
+namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 {
-    public class CSharpStateCodeGenerator : CodeGeneratorBase
+    public class CppStateCodeGenerator : CodeGeneratorBase
     {
-        private string stateName;
-        private IGraph graph;
-        private bool useStateBase;
-        private bool isInternal;
+        private readonly string stateName;
+        private readonly IGraph graph;
+        private readonly bool useStateBase;
 
-        public CSharpStateCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, string stateName, bool useStateBase, bool isInternal, IGraph graph)
+        public CppStateCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, string stateName, bool useStateBase, bool isInternal, IGraph graph)
             : base(generatorsFactory, namespaceName, stateMachineName)
         {
             CodeGenerationUtility.CheckValidPartialIdentifierArgument(stateName, nameof(stateName));
@@ -26,7 +25,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             this.stateName = stateName;
             this.graph = graph;
             this.useStateBase = useStateBase;
-            this.isInternal = isInternal;
+            _ = isInternal;
         }
 
         public override void Write(CodeWriter writer)
@@ -34,8 +33,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             WriteFileHeader(writer);
 
             Language.CreateUsingCodeGenerator(
-                "System",
-                CSharpConstants.StateMachineNamespace
+                CppConstants.StateMachineNamespace
             ).Write(writer);
 
             writer.AppendLine();
@@ -53,7 +51,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 
             Language.CreateClassCodeGenerator(
                 AccessModifier.None,
-                new[] { "partial" },
+                null,
                 stateMachineName + stateName + Constants.StateSuffix,
                 new[] { baseClassName },
                 classBodyGenerator
@@ -67,7 +65,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                 baseClassName = stateMachineName + baseClassName;
 
             Language.CreateConstructorDeclarationCodeGenerator(
-                isInternal ? AccessModifier.Internal : AccessModifier.Public,
+                AccessModifier.Public,
                 false,
                 stateMachineName + stateName + Constants.StateSuffix,
                 null,
@@ -77,7 +75,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                     Type = ParentConstructorType.Base,
                 },
                 new[] { stateMachineName + Constants.StateTokensClass + "." + stateName },
-                Language.CreateScopeCodeGenerator(null, ScopeContentType.Method, true)).Write(writer);
+                Language.CreateScopeCodeGenerator(null, ScopeContentType.Method, true)
+            ).Write(writer);
 
             var node = graph.Nodes.FirstOrDefault(n => n.Semantic == stateName);
 
@@ -104,20 +103,22 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                 Language.CreateMethodDeclarationCodeGenerator(
                     AccessModifier.None,
                     false,
-                    new[] { "partial" },
+                    null,
                     "void",
                     Constants.PreInitializedMethod,
                     null,
-                    null).Write(writer);
+                    null
+                ).Write(writer);
 
                 Language.CreateMethodDeclarationCodeGenerator(
                     AccessModifier.None,
                     false,
-                    new[] { "partial" },
+                    null,
                     "void",
                     Constants.PostInitializedMethod,
                     null,
-                    null).Write(writer);
+                    null
+                ).Write(writer);
 
                 writer.AppendLine();
 
@@ -130,7 +131,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                             writer.AppendLine();
                         }
                         WriteTransitionHandlerMethodCall(transitions.Last(), w2);
-                    }), false).Write(writer);
+                    }), false
+                ).Write(writer);
             }
         }
 
@@ -161,7 +163,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 
         private bool WriteTransitionHandlerMethodCall(ITransition tr, CodeWriter writer)
         {
-            var funcName = "On" + stateMachineName + tr.Semantic + Constants.ActionSuffix;
+            var funcName = $"On{stateMachineName}{tr.Semantic}{Constants.ActionSuffix}";
             var target = graph.Nodes.FirstOrDefault(n => n == tr.Target);
 
             if (target == null)

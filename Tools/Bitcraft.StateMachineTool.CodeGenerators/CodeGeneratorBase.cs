@@ -28,15 +28,16 @@ namespace Bitcraft.StateMachineTool.CodeGenerators
 
         public virtual void Write(CodeWriter writer)
         {
-            var writeContentCodeGenerator = new AnonymousCodeGenerator(Language, WriteContent);
+            var contentCodeGenerator = new AnonymousCodeGenerator(Language, WriteContent);
 
-            if (namespaceName != null)
+            if (namespaceName == null)
             {
-                Language.CreateNamespaceCodeGenerator(namespaceName).Write(writer);
-                Language.CreateScopeCodeGenerator(writeContentCodeGenerator, ScopeContentType.Namespace, true).Write(writer);
+                contentCodeGenerator.Write(writer);
+                return;
             }
-            else
-                writeContentCodeGenerator.Write(writer);
+
+            ScopeCodeGenerator nsCodeGenerator = Language.CreateScopeCodeGenerator(contentCodeGenerator, ScopeContentType.Namespace, false);
+            Language.CreateNamespaceCodeGenerator(namespaceName, true, nsCodeGenerator).Write(writer);
         }
 
         protected abstract void WriteContent(CodeWriter writer);

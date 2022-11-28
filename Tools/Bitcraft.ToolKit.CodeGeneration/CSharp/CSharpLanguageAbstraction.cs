@@ -8,9 +8,9 @@ namespace Bitcraft.ToolKit.CodeGeneration.CSharp
 {
     public class CSharpLanguageAbstraction : ILanguageAbstraction
     {
-        public NamespaceCodeGenerator CreateNamespaceCodeGenerator(string namespaceName)
+        public NamespaceCodeGenerator CreateNamespaceCodeGenerator(string namespaceName, bool closeWithNewLine, ScopeCodeGenerator bodyGenerator)
         {
-            return new CSharpNamespaceCodeGenerator(this, namespaceName);
+            return new CSharpNamespaceCodeGenerator(this, namespaceName, closeWithNewLine, bodyGenerator);
         }
 
         public UsingCodeGenerator CreateUsingCodeGenerator(params string[] usings)
@@ -18,9 +18,9 @@ namespace Bitcraft.ToolKit.CodeGeneration.CSharp
             return new CSharpUsingCodeGenerator(this, usings);
         }
 
-        public ClassCodeGenerator CreateClassCodeGenerator(AccessModifier accessModifier, string[] additionalModifiers, string name, string[] bases)
+        public ClassCodeGenerator CreateClassCodeGenerator(AccessModifier accessModifier, string[] additionalModifiers, string name, string[] bases, ScopeCodeGenerator bodyGenerator)
         {
-            return new CSharpClassCodeGenerator(this, accessModifier, additionalModifiers, name, bases);
+            return new CSharpClassCodeGenerator(this, accessModifier, additionalModifiers, name, bases, bodyGenerator);
         }
 
         public CommentCodeGenerator CreateCommentCodeGenerator(ICodeGenerator innerGenerator, bool isSingleLine)

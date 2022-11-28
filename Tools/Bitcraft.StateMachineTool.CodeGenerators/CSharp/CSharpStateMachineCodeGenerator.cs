@@ -41,13 +41,15 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 
         protected override void WriteContent(CodeWriter writer)
         {
+            ScopeCodeGenerator classBodyGenerator = Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, true);
+
             Language.CreateClassCodeGenerator(
                 AccessModifier.None,
                 new[] { "partial" },
                 stateMachineName + Constants.StateMachineSuffix,
-                new[] { Constants.StateManagerType }).Write(writer);
-
-            Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, true).Write(writer);
+                new[] { Constants.StateManagerType },
+                classBodyGenerator
+            ).Write(writer);
         }
 
         private void WriteClassContent(CodeWriter writer)

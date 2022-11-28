@@ -42,8 +42,8 @@ namespace Bitcraft.ToolKit.CodeGeneration
             if (string.IsNullOrWhiteSpace(paramName))
                 throw new InvalidOperationException($"Invalid '{nameof(paramName)}' argument.");
 
-            if (IsValidIdentifier(identifier) == false)
-                throw new ArgumentException(string.Format("Invalid '{0}' argument. It must follow the C# identifier naming rules", paramName));
+            //if (IsValidIdentifier(identifier) == false)
+            //    throw new ArgumentException(string.Format("Invalid '{0}' argument. It must follow the C# identifier naming rules", paramName));
         }
 
         public static void CheckNullOrWhitespaceArgument(string str, string paramName)

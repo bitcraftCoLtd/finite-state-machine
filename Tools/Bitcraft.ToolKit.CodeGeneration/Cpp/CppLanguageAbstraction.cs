@@ -11,9 +11,9 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
             this.cppFileType = cppFileType;
         }
 
-        public ClassCodeGenerator CreateClassCodeGenerator(AccessModifier accessModifier, string[] additionalModifiers, string name, string[] bases)
+        public ClassCodeGenerator CreateClassCodeGenerator(AccessModifier accessModifier, string[] additionalModifiers, string name, string[] bases, ScopeCodeGenerator bodyGenerator)
         {
-            return new CppClassCodeGenerator(this, cppFileType, accessModifier, additionalModifiers, name, bases);
+            return new CppClassCodeGenerator(this, cppFileType, accessModifier, additionalModifiers, name, bases, bodyGenerator);
         }
 
         public CommentCodeGenerator CreateCommentCodeGenerator(ICodeGenerator innerGenerator, bool isSingleLine)
@@ -36,9 +36,9 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
             return new CppMethodDeclarationCodeGenerator(this, cppFileType, accessModifier, isStatic, additionalModifiers, returnType, name, arguments, bodyGenerator);
         }
 
-        public NamespaceCodeGenerator CreateNamespaceCodeGenerator(string namespaceName)
+        public NamespaceCodeGenerator CreateNamespaceCodeGenerator(string namespaceName, bool closeWithNewLine, ScopeCodeGenerator bodyGenerator)
         {
-            return new CppNamespaceCodeGenerator(this, cppFileType, namespaceName);
+            return new CppNamespaceCodeGenerator(this, cppFileType, namespaceName, closeWithNewLine, bodyGenerator);
         }
 
         public RawStatementCodeGenerator CreateRawStatementCodeGenerator(string rawStatement)
