@@ -1,3 +1,6 @@
+.vs/
+.vscode/
+*.autogen.*
 Runtime/Cpp/Debug/
 Runtime/Cpp/Release/
 *.sdf
