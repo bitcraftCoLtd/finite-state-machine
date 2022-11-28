@@ -5,31 +5,39 @@ using System.Text;
 using System.Threading.Tasks;
 using Bitcraft.ToolKit.CodeGeneration;
 using Bitcraft.StateMachineTool.Core;
+using Bitcraft.ToolKit.CodeGeneration.Cpp;
 
 namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 {
     public class CppStateCodeGenerator : CodeGeneratorBase
     {
+        private readonly CppFileType cppFileType;
         private readonly string stateName;
         private readonly IGraph graph;
         private readonly bool useStateBase;
 
-        public CppStateCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, string stateName, bool useStateBase, bool isInternal, IGraph graph)
-            : base(generatorsFactory, namespaceName, stateMachineName)
+        public CppStateCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string namespaceName, string stateMachineName, string stateName, bool useStateBase, IGraph graph)
+            : base(languageAbstraction, namespaceName, stateMachineName)
         {
             CodeGenerationUtility.CheckValidPartialIdentifierArgument(stateName, nameof(stateName));
 
             if (graph == null)
                 throw new ArgumentNullException(nameof(graph));
 
+            this.cppFileType = cppFileType;
             this.stateName = stateName;
             this.graph = graph;
             this.useStateBase = useStateBase;
-            _ = isInternal;
         }
 
         public override void Write(CodeWriter writer)
         {
+            if (cppFileType == CppFileType.Header)
+            {
+                Language.CreateRawStatementCodeGenerator("#pragma once").Write(writer);
+                writer.AppendLine();
+            }
+
             WriteFileHeader(writer);
 
             Language.CreateUsingCodeGenerator(
@@ -47,7 +55,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
             if (useStateBase == false)
                 baseClassName = stateMachineName + baseClassName;
 
-            ScopeCodeGenerator classBodyGenerator = Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, true);
+            ScopeCodeGenerator classBodyGenerator = Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, false);
 
             Language.CreateClassCodeGenerator(
                 AccessModifier.None,
@@ -56,6 +64,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 new[] { baseClassName },
                 classBodyGenerator
             ).Write(writer);
+
+            writer.AppendLine();
         }
 
         private void WriteClassContent(CodeWriter writer)
@@ -64,10 +74,13 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
             if (useStateBase == false)
                 baseClassName = stateMachineName + baseClassName;
 
+            string className = stateMachineName + stateName + Constants.StateSuffix;
+
             Language.CreateConstructorDeclarationCodeGenerator(
                 AccessModifier.Public,
                 false,
-                stateMachineName + stateName + Constants.StateSuffix,
+                className,
+                className,
                 null,
                 new ParentConstructorInfo
                 {
@@ -93,6 +106,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                     false,
                     new[] { "override" },
                     "void",
+                    className,
                     Constants.OnInitializedMethod,
                     null,
                     Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, w => WriteOnInitializeMethod(transitions, w)), ScopeContentType.Method, true)
@@ -105,6 +119,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                     false,
                     null,
                     "void",
+                    className,
                     Constants.PreInitializedMethod,
                     null,
                     null
@@ -115,6 +130,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                     false,
                     null,
                     "void",
+                    className,
                     Constants.PostInitializedMethod,
                     null,
                     null
@@ -142,7 +158,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
             writer.AppendLine();
 
-            Language.CreateRawStatementCodeGenerator("base." + Constants.OnInitializedMethod + "()").Write(writer);
+            Language.CreateRawStatementCodeGenerator("base::" + Constants.OnInitializedMethod + "()").Write(writer);
 
             if (transitions != null)
             {
@@ -169,11 +185,14 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
             if (target == null)
                 return false;
 
+            string className = stateMachineName + stateName + Constants.StateSuffix;
+
             Language.CreateMethodDeclarationCodeGenerator(
                 AccessModifier.Private,
                 false,
                 null,
                 "void",
+                className,
                 funcName,
                 new[]
                 {

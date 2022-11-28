@@ -14,8 +14,7 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
 
         public override void Write(CodeWriter writer)
         {
-            if (cppFileType == CppFileType.Source)
-                writer.AppendLine(rawStatement + ";");
+            writer.AppendLine(rawStatement + ";");
         }
     }
 }

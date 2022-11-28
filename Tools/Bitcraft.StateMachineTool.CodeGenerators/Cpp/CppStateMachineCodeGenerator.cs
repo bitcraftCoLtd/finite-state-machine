@@ -1,5 +1,6 @@
 ﻿using Bitcraft.StateMachineTool.Core;
 using Bitcraft.ToolKit.CodeGeneration;
+using Bitcraft.ToolKit.CodeGeneration.Cpp;
 using System;
 using System.Linq;
 
@@ -7,16 +8,18 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 {
     public class CppStateMachineCodeGenerator : CodeGeneratorBase
     {
+        private readonly CppFileType cppFileType;
         private readonly IGraph graph;
         private readonly INode initialNode;
         private readonly bool useStateBase;
 
-        public CppStateMachineCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, bool useStateBase, INode initialNode, IGraph graph)
-            : base(generatorsFactory, namespaceName, stateMachineName)
+        public CppStateMachineCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string namespaceName, string stateMachineName, bool useStateBase, INode initialNode, IGraph graph)
+            : base(languageAbstraction, namespaceName, stateMachineName)
         {
             if (graph == null)
                 throw new ArgumentNullException(nameof(graph));
 
+            this.cppFileType = cppFileType;
             this.graph = graph;
             this.initialNode = initialNode;
             this.useStateBase = useStateBase;
@@ -24,6 +27,12 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
         public override void Write(CodeWriter writer)
         {
+            if (cppFileType == CppFileType.Header)
+            {
+                Language.CreateRawStatementCodeGenerator("#pragma once").Write(writer);
+                writer.AppendLine();
+            }
+
             WriteFileHeader(writer);
 
             Language.CreateUsingCodeGenerator(
@@ -38,7 +47,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
         protected override void WriteContent(CodeWriter writer)
         {
-            ScopeCodeGenerator classBodyGenerator = Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, true);
+            ScopeCodeGenerator classBodyGenerator = Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, false);
 
             Language.CreateClassCodeGenerator(
                 AccessModifier.None,
@@ -47,6 +56,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 new[] { Constants.StateManagerType },
                 classBodyGenerator
             ).Write(writer);
+
+            writer.AppendLine();
         }
 
         private void WriteClassContent(CodeWriter writer)
@@ -55,10 +66,13 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
             if (useStateBase == false)
                 baseClassName = stateMachineName + baseClassName;
 
+            string className = $"{stateMachineName}{Constants.StateMachineSuffix}";
+
             Language.CreateConstructorDeclarationCodeGenerator(
                 AccessModifier.Public,
                 false,
-                $"{stateMachineName}{Constants.StateMachineSuffix}",
+                className,
+                className,
                 null,
                 new ParentConstructorInfo
                 {
@@ -73,7 +87,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
             Language.CreateConstructorDeclarationCodeGenerator(
                 AccessModifier.Public,
                 false,
-                stateMachineName + Constants.StateMachineSuffix,
+                className,
+                className,
                 new[] { new ArgumentInfo("void*", "context") },
                 new ParentConstructorInfo
                 {
@@ -81,27 +96,45 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                     Type = ParentConstructorType.Base,
                 },
                 new[] { "context" },
-                Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteConstructorContent), ScopeContentType.Method, true)).Write(writer);
+                Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteConstructorContent), ScopeContentType.Method, true)
+            ).Write(writer);
+
+            writer.AppendLine();
+
+            Language.CreateConstructorDeclarationCodeGenerator(
+                AccessModifier.Public,
+                false,
+                className,
+                $"~{className}",
+                null,
+                null,
+                null,
+                Language.CreateScopeCodeGenerator(null, ScopeContentType.Method, true)
+            ).Write(writer);
 
             writer.AppendLine();
 
             Language.CreateMethodDeclarationCodeGenerator(
-                AccessModifier.None,
+                AccessModifier.Public,
                 false,
                 null,
                 "void",
+                $"{stateMachineName}{Constants.StateMachineSuffix}",
                 Constants.PreHandlersRegistrationMethod,
                 null,
-                null).Write(writer);
+                null
+            ).Write(writer);
 
             Language.CreateMethodDeclarationCodeGenerator(
-                AccessModifier.None,
+                AccessModifier.Public,
                 false,
                 null,
                 "void",
+                className,
                 Constants.PostHandlersRegistrationMethod,
                 null,
-                null).Write(writer);
+                null
+            ).Write(writer);
         }
 
         private void WriteConstructorContent(CodeWriter writer)

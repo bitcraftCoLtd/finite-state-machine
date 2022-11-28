@@ -28,9 +28,9 @@ namespace Bitcraft.ToolKit.CodeGeneration.CSharp
             return new CSharpCommentCodeGenerator(this, innerGenerator, isSingleLine);
         }
 
-        public ConstructorDeclarationCodeGenerator CreateConstructorDeclarationCodeGenerator(AccessModifier accessModifier, bool isStatic, string name, ArgumentInfo[] arguments, ParentConstructorInfo parentConstructorInfo, string[] parentConstructorParameters, ScopeCodeGenerator bodyGenerator)
+        public ConstructorDeclarationCodeGenerator CreateConstructorDeclarationCodeGenerator(AccessModifier accessModifier, bool isStatic, string className, string name, ArgumentInfo[] arguments, ParentConstructorInfo parentConstructorInfo, string[] parentConstructorParameters, ScopeCodeGenerator bodyGenerator)
         {
-            return new CSharpConstructorDeclarationCodeGenerator(this, accessModifier, isStatic, name, arguments, parentConstructorInfo, parentConstructorParameters, bodyGenerator);
+            return new CSharpConstructorDeclarationCodeGenerator(this, accessModifier, isStatic, className, name, arguments, parentConstructorInfo, parentConstructorParameters, bodyGenerator);
         }
 
         public VariableDeclarationCodeGenerator CreateVariableDeclarationCodeGenerator(AccessModifier accessModifier, string[] additionalModifiers, string type, string name, string initializationStatement)
@@ -48,9 +48,9 @@ namespace Bitcraft.ToolKit.CodeGeneration.CSharp
             return new CSharpMethodCallCodeGenerator(this, name, parameters);
         }
 
-        public MethodDeclarationCodeGenerator CreateMethodDeclarationCodeGenerator(AccessModifier accessModifier, bool isStatic, string[] additionalModifiers, string returnType, string name, ArgumentInfo[] arguments, ScopeCodeGenerator bodyGenerator)
+        public MethodDeclarationCodeGenerator CreateMethodDeclarationCodeGenerator(AccessModifier accessModifier, bool isStatic, string[] additionalModifiers, string returnType, string className, string name, ArgumentInfo[] arguments, ScopeCodeGenerator bodyGenerator)
         {
-            return new CSharpMethodDeclarationCodeGenerator(this, accessModifier, isStatic, additionalModifiers, returnType, name, arguments, bodyGenerator);
+            return new CSharpMethodDeclarationCodeGenerator(this, accessModifier, isStatic, additionalModifiers, returnType, className, name, arguments, bodyGenerator);
         }
 
         public ScopeCodeGenerator CreateScopeCodeGenerator(ICodeGenerator innerGenerator, ScopeContentType scopeContentType, bool closeWithNewLine)

@@ -25,8 +25,8 @@ namespace Bitcraft.StateMachineTool.Cpp
 
         private void GenerateStateMachineCode(ILanguageAbstraction sourceLanguageAbstraction, ILanguageAbstraction headerLanguageAbstraction, GeneratorOptions options)
         {
-            var sourceStateMachineCodeGenerator = new CppStateMachineCodeGenerator(sourceLanguageAbstraction, options.NamespaceName, options.StateMachineName, options.UseOriginalStateBase, options.InitialNode, options.Graph);
-            var headerStateMachineCodeGenerator = new CppStateMachineCodeGenerator(headerLanguageAbstraction, options.NamespaceName, options.StateMachineName, options.UseOriginalStateBase, options.InitialNode, options.Graph);
+            var sourceStateMachineCodeGenerator = new CppStateMachineCodeGenerator(sourceLanguageAbstraction, CppFileType.Source, options.NamespaceName, options.StateMachineName, options.UseOriginalStateBase, options.InitialNode, options.Graph);
+            var headerStateMachineCodeGenerator = new CppStateMachineCodeGenerator(headerLanguageAbstraction, CppFileType.Header, options.NamespaceName, options.StateMachineName, options.UseOriginalStateBase, options.InitialNode, options.Graph);
 
             string sourceStateMachineFilename = $"{options.StateMachineName}{Constants.StateMachineSuffix}.autogen.cpp";
             string headerStateMachineFilename = $"{options.StateMachineName}{Constants.StateMachineSuffix}.autogen.h";
@@ -37,8 +37,8 @@ namespace Bitcraft.StateMachineTool.Cpp
 
         private void GenerateStateTokensCode(ILanguageAbstraction sourceLanguageAbstraction, ILanguageAbstraction headerLanguageAbstraction, GeneratorOptions options)
         {
-            var sourceStateTokensCodeGenerator = new CppStateTokensCodeGenerator(sourceLanguageAbstraction, options.NamespaceName, options.StateMachineName, options.Graph);
-            var headerStateTokensCodeGenerator = new CppStateTokensCodeGenerator(headerLanguageAbstraction, options.NamespaceName, options.StateMachineName, options.Graph);
+            var sourceStateTokensCodeGenerator = new CppStateTokensCodeGenerator(sourceLanguageAbstraction, CppFileType.Source, options.NamespaceName, options.StateMachineName, options.Graph);
+            var headerStateTokensCodeGenerator = new CppStateTokensCodeGenerator(headerLanguageAbstraction, CppFileType.Header, options.NamespaceName, options.StateMachineName, options.Graph);
 
             string sourceStateTokensFilename = $"{options.StateMachineName}{Constants.StateTokensClass}.autogen.cpp";
             string headerStateTokensFilename = $"{options.StateMachineName}{Constants.StateTokensClass}.autogen.h";
@@ -49,8 +49,8 @@ namespace Bitcraft.StateMachineTool.Cpp
 
         private void GenerateActionTokensCode(ILanguageAbstraction sourceLanguageAbstraction, ILanguageAbstraction headerLanguageAbstraction, GeneratorOptions options)
         {
-            var sourceActionTokensCodeGenerator = new CppActionTokensCodeGenerator(sourceLanguageAbstraction, options.NamespaceName, options.StateMachineName, options.Graph);
-            var headerActionTokensCodeGenerator = new CppActionTokensCodeGenerator(headerLanguageAbstraction, options.NamespaceName, options.StateMachineName, options.Graph);
+            var sourceActionTokensCodeGenerator = new CppActionTokensCodeGenerator(sourceLanguageAbstraction, CppFileType.Source, options.NamespaceName, options.StateMachineName, options.Graph);
+            var headerActionTokensCodeGenerator = new CppActionTokensCodeGenerator(headerLanguageAbstraction, CppFileType.Header, options.NamespaceName, options.StateMachineName, options.Graph);
 
             string sourceActionTokensFilename = $"{options.StateMachineName}{Constants.ActionTokensClass}.autogen.cpp";
             string headerActionTokensFilename = $"{options.StateMachineName}{Constants.ActionTokensClass}.autogen.h";
@@ -74,21 +74,21 @@ namespace Bitcraft.StateMachineTool.Cpp
             {
                 var sourceStateCodeGenerator = new CppStateCodeGenerator(
                     sourceLanguageAbstraction,
+                    CppFileType.Source,
                     options.NamespaceName != null ? $"{options.NamespaceName}.{Constants.StatesFolder}" : null,
                     options.StateMachineName,
                     state.Semantic,
                     options.UseOriginalStateBase,
-                    options.IsInternal,
                     options.Graph
                 );
 
                 var headerStateCodeGenerator = new CppStateCodeGenerator(
                     headerLanguageAbstraction,
+                    CppFileType.Header,
                     options.NamespaceName != null ? $"{options.NamespaceName}.{Constants.StatesFolder}" : null,
                     options.StateMachineName,
                     state.Semantic,
                     options.UseOriginalStateBase,
-                    options.IsInternal,
                     options.Graph
                 );
 

@@ -12,12 +12,13 @@ namespace Bitcraft.ToolKit.CodeGeneration.CSharp
             ILanguageAbstraction languageAbstraction,
             AccessModifier accessModifier,
             bool isStatic,
+            string className,
             string name,
             ArgumentInfo[] arguments,
             ParentConstructorInfo parentConstructorInfo,
             string[] parentConstructorParameters,
             ScopeCodeGenerator bodyGenerator)
-            : base(languageAbstraction, accessModifier, isStatic, name, arguments, parentConstructorInfo, parentConstructorParameters, bodyGenerator)
+            : base(languageAbstraction, accessModifier, isStatic, className, name, arguments, parentConstructorInfo, parentConstructorParameters, bodyGenerator)
         {
         }
 

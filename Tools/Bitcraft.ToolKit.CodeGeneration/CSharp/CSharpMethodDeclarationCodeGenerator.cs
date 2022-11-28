@@ -8,8 +8,8 @@ namespace Bitcraft.ToolKit.CodeGeneration.CSharp
 {
     public class CSharpMethodDeclarationCodeGenerator : MethodDeclarationCodeGenerator
     {
-        public CSharpMethodDeclarationCodeGenerator(ILanguageAbstraction languageAbstraction, AccessModifier accessModifier, bool isStatic, string[] additionalModifiers, string returnType, string name, ArgumentInfo[] arguments, ScopeCodeGenerator bodyGenerator)
-            : base(languageAbstraction, accessModifier, isStatic, additionalModifiers, returnType, name, arguments, bodyGenerator)
+        public CSharpMethodDeclarationCodeGenerator(ILanguageAbstraction languageAbstraction, AccessModifier accessModifier, bool isStatic, string[] additionalModifiers, string returnType, string className, string name, ArgumentInfo[] arguments, ScopeCodeGenerator bodyGenerator)
+            : base(languageAbstraction, accessModifier, isStatic, additionalModifiers, returnType, className, name, arguments, bodyGenerator)
         {
         }
 

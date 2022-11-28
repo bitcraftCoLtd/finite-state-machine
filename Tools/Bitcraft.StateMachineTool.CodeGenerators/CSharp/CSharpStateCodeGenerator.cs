@@ -66,10 +66,13 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             if (useStateBase == false)
                 baseClassName = stateMachineName + baseClassName;
 
+            string className = stateMachineName + stateName + Constants.StateSuffix;
+
             Language.CreateConstructorDeclarationCodeGenerator(
                 isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 false,
-                stateMachineName + stateName + Constants.StateSuffix,
+                className,
+                className,
                 null,
                 new ParentConstructorInfo
                 {
@@ -94,6 +97,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                     false,
                     new[] { "override" },
                     "void",
+                    className,
                     Constants.OnInitializedMethod,
                     null,
                     Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, w => WriteOnInitializeMethod(transitions, w)), ScopeContentType.Method, true)
@@ -106,6 +110,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                     false,
                     new[] { "partial" },
                     "void",
+                    className,
                     Constants.PreInitializedMethod,
                     null,
                     null).Write(writer);
@@ -115,6 +120,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                     false,
                     new[] { "partial" },
                     "void",
+                    className,
                     Constants.PostInitializedMethod,
                     null,
                     null).Write(writer);
@@ -167,11 +173,14 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             if (target == null)
                 return false;
 
+            string className = stateMachineName + stateName + Constants.StateSuffix;
+
             Language.CreateMethodDeclarationCodeGenerator(
                 AccessModifier.Private,
                 false,
                 null,
                 "void",
+                className,
                 funcName,
                 new[]
                 {

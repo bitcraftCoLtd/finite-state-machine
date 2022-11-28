@@ -28,12 +28,13 @@ namespace Bitcraft.ToolKit.CodeGeneration
             ILanguageAbstraction languageAbstraction,
             AccessModifier accessModifier,
             bool isStatic,
+            string className,
             string name,
             ArgumentInfo[] arguments,
             ParentConstructorInfo parentConstructorInfo,
             string[] parentConstructorParameters,
             ScopeCodeGenerator bodyGenerator)
-            : base(languageAbstraction, accessModifier, isStatic, null, null, name, arguments, bodyGenerator)
+            : base(languageAbstraction, accessModifier, isStatic, null, null, className, name, arguments, bodyGenerator)
         {
             this.parentConstructorInfo = parentConstructorInfo;
             this.parentConstructorParameters = parentConstructorParameters ?? new string[0];

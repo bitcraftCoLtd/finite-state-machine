@@ -2,24 +2,33 @@
 using System.Linq;
 using Bitcraft.ToolKit.CodeGeneration;
 using Bitcraft.StateMachineTool.Core;
+using Bitcraft.ToolKit.CodeGeneration.Cpp;
 
 namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 {
     public class CppActionTokensCodeGenerator : CodeGeneratorBase
     {
+        private readonly CppFileType cppFileType;
         private readonly IGraph graph;
 
-        public CppActionTokensCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, IGraph graph)
-            : base(generatorsFactory, namespaceName, stateMachineName)
+        public CppActionTokensCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string namespaceName, string stateMachineName, IGraph graph)
+            : base(languageAbstraction, namespaceName, stateMachineName)
         {
             if (graph == null)
                 throw new ArgumentNullException(nameof(graph));
 
+            this.cppFileType = cppFileType;
             this.graph = graph;
         }
 
         public override void Write(CodeWriter writer)
         {
+            if (cppFileType == CppFileType.Header)
+            {
+                Language.CreateRawStatementCodeGenerator("#pragma once").Write(writer);
+                writer.AppendLine();
+            }
+
             WriteFileHeader(writer);
 
             Language.CreateUsingCodeGenerator(
@@ -33,7 +42,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
         protected override void WriteContent(CodeWriter writer)
         {
-            ScopeCodeGenerator classBodyGenerator = Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, true);
+            ScopeCodeGenerator classBodyGenerator = Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, false);
 
             Language.CreateClassCodeGenerator(
                 AccessModifier.None,
@@ -42,6 +51,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 null,
                 classBodyGenerator
             ).Write(writer);
+
+            writer.AppendLine();
         }
 
         private void WriteClassContent(CodeWriter writer)

@@ -8,8 +8,8 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
     {
         private readonly CppFileType cppFileType;
 
-        public CppMethodDeclarationCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, AccessModifier accessModifier, bool isStatic, string[] additionalModifiers, string returnType, string name, ArgumentInfo[] arguments, ScopeCodeGenerator bodyGenerator)
-            : base(languageAbstraction, accessModifier, isStatic, additionalModifiers, returnType, name, arguments, bodyGenerator)
+        public CppMethodDeclarationCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, AccessModifier accessModifier, bool isStatic, string[] additionalModifiers, string returnType, string className, string name, ArgumentInfo[] arguments, ScopeCodeGenerator bodyGenerator)
+            : base(languageAbstraction, accessModifier, isStatic, additionalModifiers, returnType, className, name, arguments, bodyGenerator)
         {
             this.cppFileType = cppFileType;
         }
@@ -28,15 +28,14 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
             if (isStatic)
                 throw new NotSupportedException("C++ does not support static constructors.");
 
-            if (returnType == null)
-                throw new ArgumentException("Method declaration must have a return type.");
+            string returnTypeStr = returnType != null ? $"{returnType} " : string.Empty;
 
             var arguments = new List<string>();
             ConstructArguments(arguments);
 
             string argumentsStr = string.Join(", ", arguments);
 
-            writer.Append($"{returnType} {name}({argumentsStr})");
+            writer.Append($"{returnTypeStr}{className}::{name}({argumentsStr})");
 
             WriteBody(writer);
         }

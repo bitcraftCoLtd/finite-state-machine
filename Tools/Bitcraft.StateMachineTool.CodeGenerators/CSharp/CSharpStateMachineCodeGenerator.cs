@@ -58,10 +58,13 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             if (useStateBase == false)
                 baseClassName = stateMachineName + baseClassName;
 
+            string className = stateMachineName + Constants.StateMachineSuffix;
+
             Language.CreateConstructorDeclarationCodeGenerator(
                 isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 false,
-                stateMachineName + Constants.StateMachineSuffix,
+                className,
+                className,
                 null,
                 new ParentConstructorInfo
                 {
@@ -76,7 +79,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
             Language.CreateConstructorDeclarationCodeGenerator(
                 isInternal ? AccessModifier.Internal : AccessModifier.Public,
                 false,
-                stateMachineName + Constants.StateMachineSuffix,
+                className,
+                className,
                 new[] { new ArgumentInfo("object", "context") },
                 new ParentConstructorInfo
                 {
@@ -93,6 +97,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                 false,
                 new[] { "partial" },
                 "void",
+                className,
                 Constants.PreHandlersRegistrationMethod,
                 null,
                 null).Write(writer);
@@ -102,6 +107,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                 false,
                 new[] { "partial" },
                 "void",
+                className,
                 Constants.PostHandlersRegistrationMethod,
                 null,
                 null).Write(writer);

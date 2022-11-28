@@ -13,12 +13,13 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
             CppFileType cppFileType,
             AccessModifier accessModifier,
             bool isStatic,
+            string className,
             string name,
             ArgumentInfo[] arguments,
             ParentConstructorInfo parentConstructorInfo,
             string[] parentConstructorParameters,
             ScopeCodeGenerator bodyGenerator)
-            : base(languageAbstraction, accessModifier, isStatic, name, arguments, parentConstructorInfo, parentConstructorParameters, bodyGenerator)
+            : base(languageAbstraction, accessModifier, isStatic, className, name, arguments, parentConstructorInfo, parentConstructorParameters, bodyGenerator)
         {
             this.cppFileType = cppFileType;
         }
@@ -53,7 +54,7 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
 
         private void WriteSource(CodeWriter writer)
         {
-            writer.Append($"{name}::{name}(");
+            writer.Append($"{className}::{name}(");
 
             using (writer.SuspendIndentation())
             {
@@ -76,19 +77,15 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
 
                     using (writer.SuspendIndentation())
                     {
-
-                        using (writer.SuspendIndentation())
+                        if (parentConstructorParameters != null)
                         {
-                            if (parentConstructorParameters != null)
-                            {
-                                writer.Append(string.Join(", ", parentConstructorParameters
-                                    .Where(x => string.IsNullOrWhiteSpace(x) == false)
-                                    .Select(x => x.Trim())
-                                ));
-                            }
-
-                            writer.Append(")");
+                            writer.Append(string.Join(", ", parentConstructorParameters
+                                .Where(x => string.IsNullOrWhiteSpace(x) == false)
+                                .Select(x => x.Trim())
+                            ));
                         }
+
+                        writer.Append(")");
                     }
                 }
             }
@@ -101,13 +98,19 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
             string accessModifierStr = CppCodeGenerationUtility.AccessModifierToString(accessModifier);
 
             if (accessModifierStr != null)
-                writer.Append($"{accessModifierStr}: ");
+                writer.Append($"{accessModifierStr}:");
             else
                 writer.Append(string.Empty);
 
             using (writer.SuspendIndentation())
             {
-                writer.Append($"{name}(");
+                if (additionalModifiers != null)
+                {
+                    foreach (string additionalModifier in additionalModifiers)
+                        writer.Append($" {additionalModifier}");
+                }
+
+                writer.Append($" {name}(");
 
                 var arguments = new List<string>();
                 ConstructArguments(arguments);
@@ -117,17 +120,13 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
 
                 writer.AppendLine(");");
             }
-
-            // Write the destructor too.
-            writer.AppendLine($"{accessModifierStr}: virtual ~{name}();");
         }
 
         protected virtual void WriteBody(CodeWriter writer)
         {
             if (bodyGenerator != null)
             {
-                using (writer.SuspendIndentation())
-                    writer.AppendLine();
+                writer.AppendLine();
                 bodyGenerator.Write(writer);
             }
             else

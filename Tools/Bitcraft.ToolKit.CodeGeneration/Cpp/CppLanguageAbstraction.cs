@@ -21,9 +21,9 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
             return new CppCommentCodeGenerator(this, innerGenerator, isSingleLine);
         }
 
-        public ConstructorDeclarationCodeGenerator CreateConstructorDeclarationCodeGenerator(AccessModifier accessModifier, bool isStatic, string name, ArgumentInfo[] arguments, ParentConstructorInfo parentConstructorInfo, string[] parentConstructorParameters, ScopeCodeGenerator bodyGenerator)
+        public ConstructorDeclarationCodeGenerator CreateConstructorDeclarationCodeGenerator(AccessModifier accessModifier, bool isStatic, string className, string name, ArgumentInfo[] arguments, ParentConstructorInfo parentConstructorInfo, string[] parentConstructorParameters, ScopeCodeGenerator bodyGenerator)
         {
-            return new CppConstructorDeclarationCodeGenerator(this, cppFileType, accessModifier, isStatic, name, arguments, parentConstructorInfo, parentConstructorParameters, bodyGenerator);
+            return new CppConstructorDeclarationCodeGenerator(this, cppFileType, accessModifier, isStatic, className, name, arguments, parentConstructorInfo, parentConstructorParameters, bodyGenerator);
         }
 
         public MethodCallCodeGenerator CreateMethodCallCodeGenerator(string name, params string[] parameters)
@@ -31,9 +31,9 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
             return new CppMethodCallCodeGenerator(this, cppFileType, name, parameters);
         }
 
-        public MethodDeclarationCodeGenerator CreateMethodDeclarationCodeGenerator(AccessModifier accessModifier, bool isStatic, string[] additionalModifiers, string returnType, string name, ArgumentInfo[] arguments, ScopeCodeGenerator bodyGenerator)
+        public MethodDeclarationCodeGenerator CreateMethodDeclarationCodeGenerator(AccessModifier accessModifier, bool isStatic, string[] additionalModifiers, string returnType, string className, string name, ArgumentInfo[] arguments, ScopeCodeGenerator bodyGenerator)
         {
-            return new CppMethodDeclarationCodeGenerator(this, cppFileType, accessModifier, isStatic, additionalModifiers, returnType, name, arguments, bodyGenerator);
+            return new CppMethodDeclarationCodeGenerator(this, cppFileType, accessModifier, isStatic, additionalModifiers, returnType, className, name, arguments, bodyGenerator);
         }
 
         public NamespaceCodeGenerator CreateNamespaceCodeGenerator(string namespaceName, bool closeWithNewLine, ScopeCodeGenerator bodyGenerator)

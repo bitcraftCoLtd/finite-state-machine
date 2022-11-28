@@ -52,7 +52,12 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
                 WriteHeader(writer);
 
             if (bodyGenerator != null)
+            {
                 bodyGenerator.Write(writer);
+
+                using (writer.SuspendIndentation())
+                    writer.Append(";");
+            }
         }
     }
 }
