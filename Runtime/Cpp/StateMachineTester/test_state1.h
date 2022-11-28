@@ -24,7 +24,7 @@ public:
 
     void OnEnter(StateEnterEventArgs* e) override
     {
-        StateToken* from = e->GetFrom();
+        const StateToken* const from = e->GetFrom();
 
         printf("State '%S': OnEnter(from '%S')\n", GetToken()->ToString(), from != NULL ? from->ToString() : L"(null)");
 
