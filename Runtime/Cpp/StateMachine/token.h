@@ -39,7 +39,7 @@ namespace Bitcraft
             /// Provides a string representation of the token.
             /// </summary>
             /// <returns>Returns the string representation of the token.</returns>
-            const wchar_t* ToString();
+            const wchar_t* ToString() const;
 
             /// <summary>
             /// Checks whether the current token is the same as another one.

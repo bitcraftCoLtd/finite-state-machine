@@ -23,7 +23,7 @@ namespace Bitcraft
             _name = name;
         }
 
-        const wchar_t* Token::ToString()
+        const wchar_t* Token::ToString() const
         {
             return _name == NULL ? L"(no name)" : _name;
         }
