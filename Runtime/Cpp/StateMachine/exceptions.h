@@ -2,6 +2,8 @@
 #define __BITCRAFT_STATEMACHINE_EXCEPTIONS_H__
 
 #include <exception>
+#include <stdexcept>
+
 #include "action_token.h"
 #include "state_token.h"
 
