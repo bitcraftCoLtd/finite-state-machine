@@ -32,9 +32,9 @@ namespace Bitcraft
 
         private:
             void InternalInitialization(void* context);
-            void PerformTransitionTo(StateToken* stateToken, StateData* data);
-            TransitionInfo* TransitionTo(StateToken* stateToken, StateData* data);
-            StateBase* FindState(StateToken* token);
+            void PerformTransitionTo(const StateToken* stateToken, StateData* data);
+            TransitionInfo* TransitionTo(const StateToken* const stateToken, StateData* data);
+            StateBase* FindState(const StateToken* const token);
             bool StateExists(StateBase* state);
 
         protected:
@@ -63,7 +63,7 @@ namespace Bitcraft
             /// <summary>
             /// Gets the token of the currently active state. (shortcut to CurrentState.Token)
             /// </summary>
-            StateToken* GetCurrentStateToken();
+            const StateToken* const GetCurrentStateToken() const;
 
             /// <summary>
             /// Initializes the StateManager instance without context.

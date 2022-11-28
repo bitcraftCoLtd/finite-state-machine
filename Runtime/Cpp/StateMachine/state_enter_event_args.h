@@ -15,7 +15,7 @@ namespace Bitcraft
         class StateEnterEventArgs
         {
         private:
-            StateToken* _from;
+            const StateToken* const  _from;
             StateData* _data;
             TransitionInfo _redirect;
 
@@ -25,12 +25,12 @@ namespace Bitcraft
             /// </summary>
             /// <param name="from">The source state of the transition.</param>
             /// <param name="data">The data provided from the source state, for the target state.</param>
-            StateEnterEventArgs(StateToken* from, StateData* data);
+            StateEnterEventArgs(const StateToken* const from, StateData* data);
 
             /// <summary>
             /// Gets the source state token.
             /// </summary>
-            StateToken* GetFrom();
+            const StateToken* const GetFrom() const;
 
             /// <summary>
             /// Gets the data provided from source, for the target.

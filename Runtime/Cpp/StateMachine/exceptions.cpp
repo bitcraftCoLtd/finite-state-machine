@@ -6,28 +6,24 @@ namespace Bitcraft
     {
         // === ActionExceptionBase ========================================================================================
 
-        ActionToken* ActionExceptionBase::GetActionToken()
+        const ActionToken* const ActionExceptionBase::GetActionToken() const
         {
             return _actionToken;
         }
 
-        StateToken* ActionExceptionBase::GetStateToken()
+        const StateToken* const ActionExceptionBase::GetStateToken() const
         {
             return _stateToken;
         }
 
-        ActionExceptionBase::ActionExceptionBase(ActionToken* actionToken, StateToken* stateToken)
-            : exception(NULL)
+        ActionExceptionBase::ActionExceptionBase(const ActionToken* const actionToken, const StateToken* const stateToken)
+            : exception(NULL), _actionToken(actionToken), _stateToken(stateToken)
         {
-            _actionToken = actionToken;
-            _stateToken = stateToken;
         }
 
-        ActionExceptionBase::ActionExceptionBase(ActionToken* actionToken, StateToken* stateToken, char* message)
-            : exception(message)
+        ActionExceptionBase::ActionExceptionBase(const ActionToken* const actionToken, const StateToken* const stateToken, char* message)
+            : exception(message), _actionToken(actionToken), _stateToken(stateToken)
         {
-            _actionToken = actionToken;
-            _stateToken = stateToken;
         }
 
         // === IllegalActionException ========================================================================================
@@ -44,24 +40,24 @@ namespace Bitcraft
 
         // === UnknownActionException ========================================================================================
 
-        UnknownActionException::UnknownActionException(ActionToken* actionToken, StateToken* stateToken)
+        UnknownActionException::UnknownActionException(const ActionToken* const actionToken, const StateToken* const stateToken)
             : ActionExceptionBase(actionToken, stateToken)
         {
         }
 
         // === UnknownStateException ========================================================================================
 
-        StateToken* UnknownStateException::GetSourceStateToken()
+        const StateToken* UnknownStateException::GetSourceStateToken()
         {
             return _sourceStateToken;
         }
 
-        StateToken* UnknownStateException::GetUnknownStateToken()
+        const StateToken* UnknownStateException::GetUnknownStateToken()
         {
             return _unknownStateToken;
         }
 
-        UnknownStateException::UnknownStateException(StateToken* sourceStateToken, StateToken* unknownStateToken)
+        UnknownStateException::UnknownStateException(const StateToken* sourceStateToken, const StateToken* unknownStateToken)
         {
             _sourceStateToken = sourceStateToken;
             _unknownStateToken = unknownStateToken;

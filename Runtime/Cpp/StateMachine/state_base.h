@@ -92,7 +92,7 @@ namespace Bitcraft
             /// <summary>
             /// Gets the token that identifies the current state.
             /// </summary>
-            StateToken* GetToken();
+            const StateToken* const StateBase::GetToken() const;
 
             /// <summary>
             /// Gets the state manager in which the current state is registered.

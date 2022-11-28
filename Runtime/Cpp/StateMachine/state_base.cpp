@@ -14,7 +14,7 @@ namespace Bitcraft
             _token = token;
         }
 
-        StateToken* StateBase::GetToken()
+        const StateToken* const StateBase::GetToken() const
         {
             return _token;
         }

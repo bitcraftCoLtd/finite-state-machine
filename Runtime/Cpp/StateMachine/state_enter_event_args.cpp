@@ -5,13 +5,13 @@ namespace Bitcraft
 {
     namespace StateMachine
     {
-        StateEnterEventArgs::StateEnterEventArgs(StateToken* from, StateData* data)
+        StateEnterEventArgs::StateEnterEventArgs(const StateToken* const from, StateData* data):
+            _from(from)
         {
-            _from = from;
             _data = data;
         }
 
-        StateToken* StateEnterEventArgs::GetFrom()
+        const StateToken* const StateEnterEventArgs::GetFrom() const
         {
             return _from;
         }

@@ -28,7 +28,7 @@ namespace Bitcraft
             return _name == NULL ? L"(no name)" : _name;
         }
 
-        bool Token::Equals(Token* other)
+        bool Token::Equals(const Token* const other) const
         {
             if (other == NULL)
                 return false;
