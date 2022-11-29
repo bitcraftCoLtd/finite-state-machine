@@ -146,7 +146,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 
             writer.AppendLine();
 
-            Language.CreateRawStatementCodeGenerator("base." + Constants.OnInitializedMethod + "()").Write(writer);
+            Language.CreateRawStatementCodeGenerator("base." + Constants.OnInitializedMethod + "();").Write(writer);
 
             if (transitions != null)
             {

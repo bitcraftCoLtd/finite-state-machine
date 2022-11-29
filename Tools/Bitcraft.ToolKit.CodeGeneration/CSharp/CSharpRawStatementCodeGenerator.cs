@@ -15,7 +15,7 @@ namespace Bitcraft.ToolKit.CodeGeneration.CSharp
 
         public override void Write(CodeWriter writer)
         {
-            writer.AppendLine(rawStatement + ";");
+            writer.AppendLine(rawStatement);
         }
     }
 }

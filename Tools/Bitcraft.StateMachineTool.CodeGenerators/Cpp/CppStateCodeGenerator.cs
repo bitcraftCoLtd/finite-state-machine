@@ -158,7 +158,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
             writer.AppendLine();
 
-            Language.CreateRawStatementCodeGenerator("base::" + Constants.OnInitializedMethod + "()").Write(writer);
+            Language.CreateRawStatementCodeGenerator("base::" + Constants.OnInitializedMethod + "();").Write(writer);
 
             if (transitions != null)
             {
