@@ -55,8 +55,11 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
             {
                 bodyGenerator.Write(writer);
 
-                using (writer.SuspendIndentation())
-                    writer.Append(";");
+                if (cppFileType == CppFileType.Header)
+                {
+                    using (writer.SuspendIndentation())
+                        writer.Append(";");
+                }
             }
         }
     }

@@ -35,6 +35,13 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
             WriteFileHeader(writer);
 
+            if (cppFileType == CppFileType.Source)
+            {
+                Language
+                    .CreateRawStatementCodeGenerator("#include \"StateMachine/state_machine.h\"")
+                    .Write(writer);
+            }
+
             Language.CreateUsingCodeGenerator(
                 CppConstants.StateMachineNamespace,
                 $"{namespaceName}::{Constants.StatesFolder}"
@@ -62,7 +69,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
         private void WriteClassContent(CodeWriter writer)
         {
-            string baseClassName = Constants.StateBaseType;
+            string baseClassName = Constants.StateManagerType;
             if (useStateBase == false)
                 baseClassName = stateMachineName + baseClassName;
 
@@ -122,8 +129,10 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 $"{stateMachineName}{Constants.StateMachineSuffix}",
                 Constants.PreHandlersRegistrationMethod,
                 null,
-                null
+                Language.CreateScopeCodeGenerator(null, ScopeContentType.Method, true)
             ).Write(writer);
+
+            writer.AppendLine();
 
             Language.CreateMethodDeclarationCodeGenerator(
                 AccessModifier.Public,
@@ -133,7 +142,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 className,
                 Constants.PostHandlersRegistrationMethod,
                 null,
-                null
+                Language.CreateScopeCodeGenerator(null, ScopeContentType.Method, false)
             ).Write(writer);
         }
 
@@ -149,7 +158,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
             {
                 Language.CreateMethodCallCodeGenerator(
                     Constants.RegisterStateMethod,
-                    $"new {stateMachineName}{node.Semantic}{Constants.StateSuffix}()").Write(writer);
+                    $"new {Constants.StatesFolder}::{stateMachineName}{node.Semantic}{Constants.StateSuffix}()").Write(writer);
             }
 
             writer.AppendLine();

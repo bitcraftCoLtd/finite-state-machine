@@ -17,14 +17,11 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
 
         public override void Write(CodeWriter writer)
         {
-            if (cppFileType == CppFileType.Source)
+            foreach (var u in usings.Where(u => u != null))
             {
-                foreach (var u in usings.Where(u => u != null))
-                {
-                    string[] parts = u.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+                string[] parts = u.Split(separators, StringSplitOptions.RemoveEmptyEntries);
 
-                    writer.AppendLine($"using namespace {string.Join("::", parts)};");
-                }
+                writer.AppendLine($"using namespace {string.Join("::", parts)};");
             }
         }
     }

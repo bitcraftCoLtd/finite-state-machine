@@ -31,6 +31,17 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
             WriteFileHeader(writer);
 
+            if (cppFileType == CppFileType.Source)
+            {
+                new CppRawStatementCodeGenerator(Language, "#include \"StateMachine/state_machine.h\"").Write(writer);
+            }
+            else if (cppFileType == CppFileType.Header)
+            {
+                new CppRawStatementCodeGenerator(Language, "#include \"StateMachine/action_token.h\"").Write(writer);
+            }
+
+            writer.AppendLine();
+
             base.Write(writer);
         }
 
@@ -65,34 +76,44 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 .Distinct()
                 .ToArray();
 
-            foreach (var transition in distinctTransitions)
+            string actionTokensClassName = $"{stateMachineName}{Constants.ActionTokensClass}";
+
+            if (cppFileType == CppFileType.Source)
             {
-                Language.CreateVariableDeclarationCodeGenerator(
-                    AccessModifier.Public,
-                    new[] { "static", "const" },
-                    $"{Constants.ActionTokenType}*",
-                    transition,
-                    $"new {Constants.ActionTokenType}(\"{transition}\")"
-                ).Write(writer);
+                foreach (var transition in distinctTransitions)
+                {
+                    string statement = $"{Constants.ActionTokenType}* {actionTokensClassName}::{transition} = new {Constants.ActionTokenType}(L\"{transition}\");";
+                    new CppRawStatementCodeGenerator(Language, statement).Write(writer);
+                }
+            }
+            else if (cppFileType == CppFileType.Header)
+            {
+                foreach (var transition in distinctTransitions)
+                {
+                    string statement = $"public: static {Constants.ActionTokenType}* {transition};";
+                    new CppRawStatementCodeGenerator(Language, statement).Write(writer);
+                }
             }
 
             writer.AppendLine();
 
-            Language.CreateVariableDeclarationCodeGenerator(
-                AccessModifier.Public,
-                new[] { "static", "const" },
-                $"{Constants.ActionTokenType}*",
-                $"{Constants.TokenItemsProperty}[]",
-                new AnonymousCodeGenerator(Language, w =>
+            if (cppFileType == CppFileType.Source)
+            {
+                string itemsStatement = $"{Constants.ActionTokenType}* {actionTokensClassName}::Items[] =";
+                new CppRawStatementCodeGenerator(Language, itemsStatement).Write(writer);
+
+                Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, w =>
                 {
-                    w.AppendLine();
-                    Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, w2 =>
-                    {
-                        foreach (var transition in distinctTransitions.Take(distinctTransitions.Length - 1))
-                            w2.AppendLine(transition + ",");
-                        w2.AppendLine(distinctTransitions.Last());
-                    }), ScopeContentType.Method, false).Write(w);
-                })).Write(writer);
+                    foreach (var transition in distinctTransitions.Take(distinctTransitions.Length - 1))
+                        w.AppendLine($"{actionTokensClassName}::{transition},");
+                    w.AppendLine($"{actionTokensClassName}::{distinctTransitions.Last()}");
+                }), ScopeContentType.Method, false).Write(writer);
+            }
+            else if (cppFileType == CppFileType.Header)
+            {
+                string itemsStatement = $"public: static {Constants.ActionTokenType}* Items[];";
+                new CppRawStatementCodeGenerator(Language, itemsStatement).Write(writer);
+            }
         }
     }
 }
