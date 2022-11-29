@@ -35,10 +35,10 @@ namespace Bitcraft
         void StateBase::Initialize(StateManager* parent)
         {
             _stateManager = parent;
-            OnInitialize();
+            OnInitialized();
         }
 
-        void StateBase::OnInitialize() { }
+        void StateBase::OnInitialized() { }
 
         void StateBase::OnEnter(StateEnterEventArgs* e) { }
         void StateBase::OnExit() { }

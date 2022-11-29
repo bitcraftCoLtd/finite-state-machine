@@ -23,7 +23,7 @@ namespace Bitcraft.StateMachine
         ErrorAlreadyPerformingAction,
 
         /// <summary>
-        /// Error, cannot perform action from special events such as OnInitialize, OnEnter and OnExit.
+        /// Error, cannot perform action from special events such as OnInitialized, OnEnter and OnExit.
         /// </summary>
         ErrorForbiddenFromSpecialEvents,
     }

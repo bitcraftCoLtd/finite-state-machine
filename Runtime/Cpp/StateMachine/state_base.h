@@ -75,7 +75,7 @@ namespace Bitcraft
             /// <summary>
             /// Called when the state machine is initialized.
             /// </summary>
-            virtual void OnInitialize();
+            virtual void OnInitialized();
 
             /// <summary>
             /// Registers a handler where the state transitions to the next one for a given action.

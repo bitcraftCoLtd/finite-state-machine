@@ -16,7 +16,7 @@ public:
     {
     }
 
-    void OnInitialize() override
+    void OnInitialized() override
     {
         RegisterActionHandler(TestActionTokens::GoToState1Action, [this](StateData* data, TransitionInfo* result) {
             result->TargetStateToken = TestStateTokens::StateToken1;

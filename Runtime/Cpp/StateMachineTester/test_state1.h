@@ -17,7 +17,7 @@ public:
         _alreadyPassed = false;
     }
 
-    void OnInitialize() override
+    void OnInitialized() override
     {
         RegisterActionHandler(TestActionTokens::GoToState2Action, [this](StateData* data, TransitionInfo* result) {
             result->TargetStateToken = TestStateTokens::StateToken2;

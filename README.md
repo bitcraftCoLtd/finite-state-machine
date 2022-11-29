@@ -26,7 +26,7 @@ Then the process repeats.
 
 Create tokens to identify states and actions, using respectively the `StateToken` class and the `ActionToken` class.
 
-Then create states inheriting from the `StateBase` class. Implement the state transitions in each state in the virtual `OnInitialize` method, using the `RegisterActionHandler` method.
+Then create states inheriting from the `StateBase` class. Implement the state transitions in each state in the virtual `OnInitialized` method, using the `RegisterActionHandler` method.
 In your action handlers, use the callback provided to tell the state machine where to transition to.
 
 Finally, instanciate a `StateManager` class, register the states using its `RegisterState` method, and call its `SetInitialState` method to provide an entry point to the state machine.
@@ -168,7 +168,7 @@ With an intermediate state, you can implement the *any state* pattern easily.
 As you can see, each specific state describes its own identity through a `StateToken` instance.
 
 A state have to register action handlers, they tell the state machine of which actions the current state is aware of.
-This is best done in the `OnInitialize()` virtual method.
+This is best done in the `OnInitialized()` virtual method.
 
     public class PaymentBasketState : BasketStateBase
     {
@@ -193,7 +193,7 @@ This is best done in the `OnInitialize()` virtual method.
         ...
     }
 
-Two things here. First the `OnInitialize()` virtual method overridden with registration of an action handler.
+Two things here. First the `OnInitialized()` virtual method overridden with registration of an action handler.
 This registration says "if you ask me to go to confirmation screen, I know *what to do*, otherwise you will not go any further".
 
 The second thing is the "what to do" from the previous sentence.
@@ -266,7 +266,7 @@ The `PerformAction()` method returns an `ActionResultType` enumeration value, wh
 - `Success` meaning the current state was aware of the action you performed and that transition happened
 - `ErrorUnknownAction` meaning the current state in unaware of what you want to do
 - `ErrorAlreadyPerformingAction` meaning a state transition is in progress and decision has been purposely delayed and still under way
-- `ErrorForbiddenFromSpecialEvents` meaning that calls to `PerformAction()` are forbidden during `OnInitialize`, `OnEnter`, `OnExit`, `OnStateChanged` and `OnCompleted` events.
+- `ErrorForbiddenFromSpecialEvents` meaning that calls to `PerformAction()` are forbidden during `OnInitialized`, `OnEnter`, `OnExit`, `OnStateChanged` and `OnCompleted` events.
 
 #### More details
 
@@ -317,7 +317,7 @@ The `StateManager` class has the following virtual methods:
 
 The `StateBase` class has the following virtual methods:
 
-- `OnInitialize()` that is called once the state has been attached to a state machine.
+- `OnInitialized()` that is called once the state has been attached to a state machine.
 - `OnEnter()` is called just after the state machine has changed its internal state to the current state.
     - This method receives a `StateEnterEventArgs` argument that contains:
         - `From` telling the origin state from which the transition is happening.
@@ -328,7 +328,7 @@ The `StateBase` class has the following virtual methods:
         - `To` telling the destination state to which the transition is happening.
         - `Data` which is an optional custom data.
 
-You basically uses the `OnInitialize()` method to register action handlers, the `OnEnter()` method to start initializing what is needed for the current state life cycle, and `OnExit()` to clean up the current state related things.
+You basically uses the `OnInitialized()` method to register action handlers, the `OnEnter()` method to start initializing what is needed for the current state life cycle, and `OnExit()` to clean up the current state related things.
 
 ##### Partial methods
 
@@ -611,7 +611,7 @@ You can still access the non public members if the function is declared into the
     {
     public:
 
-        void OnInitialize() override
+        void OnInitialized() override
         {
             RegisterActionHandler(TestActionTokens::GoToState1Action, OnGotoState1);
         }

@@ -15,7 +15,7 @@
     ErrorAlreadyPerformingAction,
 
     /// <summary>
-    /// Error, cannot perform action from special events such as OnInitialize, OnEnter, OnExit, OnStateChanged and OnCompleted.
+    /// Error, cannot perform action from special events such as OnInitialized, OnEnter, OnExit, OnStateChanged and OnCompleted.
     /// </summary>
     ErrorForbiddenFromSpecialEvents
 }
