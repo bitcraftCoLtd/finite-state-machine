@@ -8,7 +8,7 @@
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("bitcraft Corporation")]
 [assembly: AssemblyProduct("Bitcraft.StateMachineTool")]
-[assembly: AssemblyCopyright("Copyright © bitcraft Corporation 2014 - 2016")]
+[assembly: AssemblyCopyright("Copyright © bitcraft Corporation 2014 - 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -22,4 +22,4 @@
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.2.1.0")]
+[assembly: AssemblyVersion("0.3.0.0")]
