@@ -61,6 +61,9 @@ namespace Bitcraft.StateMachineTool.Cpp
 
         private void GenerateStatesCode(ILanguageAbstraction sourceLanguageAbstraction, ILanguageAbstraction headerLanguageAbstraction, GeneratorOptions options)
         {
+            string allStatesHeaderRelativePath = Path.Combine(Constants.StatesFolder, $"{options.StateMachineName}{Constants.StateSuffix}s.autogen.h");
+            Utils.WriteFile(new CppStatesCodeGenerator(headerLanguageAbstraction, options.StateMachineName, options.Graph), options.OutputPath, allStatesHeaderRelativePath);
+
             var states = options.Graph.Nodes
                 .Where(x => x.IsFinal == false)
                 .Select(n => new

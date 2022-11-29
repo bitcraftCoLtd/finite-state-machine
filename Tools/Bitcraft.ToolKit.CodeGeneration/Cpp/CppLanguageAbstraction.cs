@@ -43,7 +43,7 @@ namespace Bitcraft.ToolKit.CodeGeneration.Cpp
 
         public RawStatementCodeGenerator CreateRawStatementCodeGenerator(string rawStatement)
         {
-            return new CppRawStatementCodeGenerator(this, cppFileType, rawStatement);
+            return new CppRawStatementCodeGenerator(this, rawStatement);
         }
 
         public ScopeCodeGenerator CreateScopeCodeGenerator(ICodeGenerator innerGenerator, ScopeContentType scopeContentType, bool closeWithNewLine)
