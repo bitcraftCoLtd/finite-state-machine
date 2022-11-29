@@ -10,10 +10,10 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
 {
     public class CSharpStateCodeGenerator : CodeGeneratorBase
     {
-        private string stateName;
-        private IGraph graph;
-        private bool useStateBase;
-        private bool isInternal;
+        private readonly string stateName;
+        private readonly IGraph graph;
+        private readonly bool useStateBase;
+        private readonly bool isInternal;
 
         public CSharpStateCodeGenerator(ILanguageAbstraction languageAbstraction, string namespaceName, string stateMachineName, string stateName, bool useStateBase, bool isInternal, IGraph graph)
             : base(languageAbstraction, namespaceName, stateMachineName)
