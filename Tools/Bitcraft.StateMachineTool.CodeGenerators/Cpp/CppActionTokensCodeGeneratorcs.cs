@@ -86,7 +86,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 foreach (var transition in distinctTransitions)
                 {
                     string statement = $"{Constants.ActionTokenType}* {actionTokensClassName}::{transition} = new {Constants.ActionTokenType}(L\"{transition}\");";
-                    new CppRawStatementCodeGenerator(Language, statement).Write(writer);
+                    writer.AppendLine(statement);
                 }
             }
             else if (cppFileType == CppFileType.Header)
@@ -94,7 +94,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 foreach (var transition in distinctTransitions)
                 {
                     string statement = $"public: static {Constants.ActionTokenType}* {transition};";
-                    new CppRawStatementCodeGenerator(Language, statement).Write(writer);
+                    writer.AppendLine(statement);
                 }
             }
 
@@ -103,7 +103,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
             if (cppFileType == CppFileType.Source)
             {
                 string itemsStatement = $"{Constants.ActionTokenType}* {actionTokensClassName}::Items[] =";
-                new CppRawStatementCodeGenerator(Language, itemsStatement).Write(writer);
+                writer.AppendLine(itemsStatement);
 
                 Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, w =>
                 {
@@ -118,7 +118,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
             else if (cppFileType == CppFileType.Header)
             {
                 string itemsStatement = $"public: static {Constants.ActionTokenType}* Items[];";
-                new CppRawStatementCodeGenerator(Language, itemsStatement).Write(writer);
+                writer.AppendLine(itemsStatement);
             }
         }
     }

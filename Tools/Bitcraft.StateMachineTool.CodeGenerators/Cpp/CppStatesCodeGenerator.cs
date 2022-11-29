@@ -36,9 +36,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 .OrderBy(x => x);
 
             foreach (string filename in orderedNodeNames)
-            {
-                new CppRawStatementCodeGenerator(Language, $"#include \"./{filename}\"").Write(writer);
-            }
+                writer.AppendLine($"#include \"./{filename}\"");
         }
     }
 }
