@@ -29,7 +29,14 @@ namespace Bitcraft.StateMachineTool
         {
             var sb = new StringBuilder();
             codeGenerator.Write(new CodeWriter(sb, new string(' ', 4), LineEnding.LF));
-            File.WriteAllText(Path.Combine(basePath, relativeFilename), sb.ToString());
+
+            string targetFilename = Path.Combine(basePath, relativeFilename);
+            string targetDirectory = Path.GetDirectoryName(targetFilename);
+
+            if (Directory.Exists(targetDirectory) == false)
+                Directory.CreateDirectory(targetDirectory);
+
+            File.WriteAllText(targetFilename, sb.ToString());
         }
     }
 }
