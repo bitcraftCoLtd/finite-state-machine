@@ -66,7 +66,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                     new[] { "static", "readonly" },
                     Constants.StateTokenType,
                     node.Semantic,
-                    string.Format("new " + Constants.StateTokenType + "(\"{0}\")", node.Semantic)).Write(writer);
+                    string.Format("new " + Constants.StateTokenType + "(\"{0}\")", node.Semantic)
+                ).Write(writer);
             }
 
             writer.AppendLine();
@@ -85,7 +86,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
                             w2.AppendLine(node.Semantic + ",");
                         w2.AppendLine(nodes.Last().Semantic);
                     }), ScopeContentType.Method, false).Write(w);
-                })).Write(writer);
+                })
+            ).Write(writer);
         }
     }
 }

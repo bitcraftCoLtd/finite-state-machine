@@ -2,21 +2,20 @@
 using Bitcraft.ToolKit.CodeGeneration;
 using Bitcraft.StateMachineTool.Core;
 using Bitcraft.ToolKit.CodeGeneration.Cpp;
+using System.Linq;
 
 namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 {
     public class CppStatesCodeGenerator : CodeGeneratorBase
     {
-        private readonly string stateMachineName;
         private readonly IGraph graph;
 
         public CppStatesCodeGenerator(ILanguageAbstraction languageAbstraction, string stateMachineName, IGraph graph)
-            : base(languageAbstraction, null, null)
+            : base(languageAbstraction, null, stateMachineName)
         {
             if (graph == null)
                 throw new ArgumentNullException(nameof(graph));
 
-            this.stateMachineName = stateMachineName;
             this.graph = graph;
         }
 
@@ -32,11 +31,13 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
         protected override void WriteContent(CodeWriter writer)
         {
-            foreach (INode node in graph.Nodes)
-            {
-                string relativeFilename = $"{stateMachineName}{node.Semantic}{Constants.StateSuffix}.autogen.h";
+            var orderedNodeNames = graph.Nodes
+                .Select(node => $"{stateMachineName}{node.Semantic}{Constants.StateSuffix}.autogen.h")
+                .OrderBy(x => x);
 
-                new CppRawStatementCodeGenerator(Language, $"#include \"./{relativeFilename}\"").Write(writer);
+            foreach (string filename in orderedNodeNames)
+            {
+                new CppRawStatementCodeGenerator(Language, $"#include \"./{filename}\"").Write(writer);
             }
         }
     }

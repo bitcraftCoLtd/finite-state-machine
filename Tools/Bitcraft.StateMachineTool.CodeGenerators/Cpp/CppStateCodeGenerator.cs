@@ -12,11 +12,15 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
     public class CppStateCodeGenerator : CodeGeneratorBase
     {
         private readonly CppFileType cppFileType;
+        private readonly string projectRelativePathPrefix;
+        private readonly string generatedCodeRelativePathPrefix;
         private readonly string stateName;
         private readonly IGraph graph;
         private readonly bool useStateBase;
 
-        public CppStateCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string namespaceName, string stateMachineName, string stateName, bool useStateBase, IGraph graph)
+        private const string StateDataType = "StateData";
+
+        public CppStateCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string projectRelativePathPrefix, string generatedCodeRelativePathPrefix, string namespaceName, string stateMachineName, string stateName, bool useStateBase, IGraph graph)
             : base(languageAbstraction, namespaceName, stateMachineName)
         {
             CodeGenerationUtility.CheckValidPartialIdentifierArgument(stateName, nameof(stateName));
@@ -25,6 +29,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 throw new ArgumentNullException(nameof(graph));
 
             this.cppFileType = cppFileType;
+            this.projectRelativePathPrefix = projectRelativePathPrefix;
+            this.generatedCodeRelativePathPrefix = generatedCodeRelativePathPrefix;
             this.stateName = stateName;
             this.graph = graph;
             this.useStateBase = useStateBase;
@@ -40,9 +46,17 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
             WriteFileHeader(writer);
 
-            Language.CreateUsingCodeGenerator(
-                CppConstants.StateMachineNamespace
-            ).Write(writer);
+            if (cppFileType == CppFileType.Source)
+            {
+                writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{Constants.StatesFolder}/{stateMachineName}{stateName}{Constants.StateSuffix}.autogen.h\"");
+                writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{stateMachineName}{Constants.StateTokensClass}.autogen.h\"");
+                writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{stateMachineName}{Constants.ActionTokensClass}.autogen.h\"");
+                writer.AppendLine($"#include \"StateMachine/state_machine.h\"");
+            }
+            else if (cppFileType == CppFileType.Header)
+            {
+                writer.AppendLine($"#include \"{projectRelativePathPrefix}/{stateMachineName}{Constants.StateBaseType}.h\"");
+            }
 
             writer.AppendLine();
 
@@ -51,6 +65,12 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
         protected override void WriteContent(CodeWriter writer)
         {
+            Language.CreateUsingCodeGenerator(
+                CppConstants.StateMachineNamespace
+            ).Write(writer);
+
+            writer.AppendLine();
+
             var baseClassName = Constants.StateBaseType;
             if (useStateBase == false)
                 baseClassName = stateMachineName + baseClassName;
@@ -65,7 +85,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 classBodyGenerator
             ).Write(writer);
 
-            writer.AppendLine();
+            if (cppFileType == CppFileType.Header)
+                writer.AppendLine();
         }
 
         private void WriteClassContent(CodeWriter writer)
@@ -87,7 +108,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                     BaseName = baseClassName,
                     Type = ParentConstructorType.Base,
                 },
-                new[] { stateMachineName + Constants.StateTokensClass + "." + stateName },
+                new[] { $"{stateMachineName}{Constants.StateTokensClass}::{stateName}" },
                 Language.CreateScopeCodeGenerator(null, ScopeContentType.Method, true)
             ).Write(writer);
 
@@ -104,7 +125,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 Language.CreateMethodDeclarationCodeGenerator(
                     AccessModifier.Protected,
                     false,
-                    new[] { "override" },
+                    null,
                     "void",
                     className,
                     Constants.OnInitializedMethod,
@@ -115,25 +136,28 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 writer.AppendLine();
 
                 Language.CreateMethodDeclarationCodeGenerator(
-                    AccessModifier.None,
+                    AccessModifier.Protected,
                     false,
                     null,
                     "void",
                     className,
                     Constants.PreInitializedMethod,
                     null,
-                    null
+                    Language.CreateScopeCodeGenerator(null, ScopeContentType.Method, true)
                 ).Write(writer);
 
+                if (cppFileType == CppFileType.Source)
+                    writer.AppendLine();
+
                 Language.CreateMethodDeclarationCodeGenerator(
-                    AccessModifier.None,
+                    AccessModifier.Protected,
                     false,
                     null,
                     "void",
                     className,
                     Constants.PostInitializedMethod,
                     null,
-                    null
+                    Language.CreateScopeCodeGenerator(null, ScopeContentType.Method, true)
                 ).Write(writer);
 
                 writer.AppendLine();
@@ -144,7 +168,9 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                         {
                             if (WriteTransitionHandlerMethodCall(tr, w2) == false)
                                 continue;
-                            writer.AppendLine();
+
+                            if (cppFileType == CppFileType.Source)
+                                writer.AppendLine();
                         }
                         WriteTransitionHandlerMethodCall(transitions.Last(), w2);
                     }), false
@@ -158,7 +184,13 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
             writer.AppendLine();
 
-            Language.CreateRawStatementCodeGenerator("base::" + Constants.OnInitializedMethod + "();").Write(writer);
+            string stateName = Constants.StateBaseType;
+            if (useStateBase == false)
+                stateName = $"{stateMachineName}{stateName}";
+
+            writer.AppendLine($"{stateName}::{Constants.OnInitializedMethod}();");
+
+            writer.AppendLine();
 
             if (transitions != null)
             {
@@ -166,8 +198,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 {
                     Language.CreateMethodCallCodeGenerator(Constants.RegisterActionHandlerMethod, new[]
                     {
-                        stateMachineName + Constants.ActionTokensClass + "." + tr.Semantic,
-                        "On" + stateMachineName + tr.Semantic + Constants.ActionSuffix
+                        $"{stateMachineName}{Constants.ActionTokensClass}::{tr.Semantic}",
+                        $"[this]({StateDataType}* data, {Constants.TransitionInfoType}* transition) {{ this->On{stateMachineName}{tr.Semantic}{Constants.ActionSuffix}(data, transition); }}"
                     }).Write(writer);
                 }
             }
@@ -196,14 +228,12 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 funcName,
                 new[]
                 {
-                    new ArgumentInfo(Constants.StateDataType, "data"),
-                    new ArgumentInfo("Action<" + Constants.StateTokenType + ">", "callback")
+                    new ArgumentInfo($"{StateDataType}*", "data"),
+                    new ArgumentInfo($"{Constants.TransitionInfoType}*", "transition")
                 },
                 Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, w =>
                 {
-                    Language.CreateMethodCallCodeGenerator(
-                        "callback",
-                        ConstructStateTokenFullname(target)).Write(w);
+                    w.AppendLine($"transition->TargetStateToken = {ConstructStateTokenFullname(target)};");
                 }), ScopeContentType.Method, true)
             ).Write(writer);
 
@@ -214,7 +244,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
         {
             if (node.IsFinal)
                 return "null";
-            return stateMachineName + Constants.StateTokensClass + "." + node.Semantic;
+            return $"{stateMachineName}{Constants.StateTokensClass}::{node.Semantic}";
         }
     }
 }

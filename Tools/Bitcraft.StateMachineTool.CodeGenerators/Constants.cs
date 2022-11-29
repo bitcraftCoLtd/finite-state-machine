@@ -38,5 +38,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators
         public static readonly string RegisterActionHandlerMethod = "RegisterActionHandler";
         public static readonly string RegisterStateMethod = "RegisterState";
         public static readonly string SetInitialStateMethod = "SetInitialState";
+
+        public static readonly string TransitionInfoType = "TransitionInfo";
     }
 }

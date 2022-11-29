@@ -12,15 +12,17 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
     public class CppStateTokensCodeGenerator : CodeGeneratorBase
     {
         private readonly CppFileType cppFileType;
+        private readonly string generatedCodeRelativePathPrefix;
         private readonly IGraph graph;
 
-        public CppStateTokensCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string namespaceName, string stateMachineName, IGraph graph)
+        public CppStateTokensCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string generatedCodeRelativePathPrefix, string namespaceName, string stateMachineName, IGraph graph)
             : base(languageAbstraction, namespaceName, stateMachineName)
         {
             if (graph == null)
                 throw new ArgumentNullException(nameof(graph));
 
             this.cppFileType = cppFileType;
+            this.generatedCodeRelativePathPrefix = generatedCodeRelativePathPrefix;
             this.graph = graph;
         }
 
@@ -34,9 +36,13 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
             WriteFileHeader(writer);
 
-            Language.CreateUsingCodeGenerator(
-                CppConstants.StateMachineNamespace
-            ).Write(writer);
+            if (cppFileType == CppFileType.Source)
+            {
+                writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{stateMachineName}{Constants.StateTokensClass}.autogen.h\"");
+                writer.AppendLine($"#include \"StateMachine/state_machine.h\"");
+            }
+            else if (cppFileType == CppFileType.Header)
+                writer.AppendLine($"#include \"StateMachine/state_token.h\"");
 
             writer.AppendLine();
 
@@ -45,6 +51,12 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
         protected override void WriteContent(CodeWriter writer)
         {
+            Language.CreateUsingCodeGenerator(
+                CppConstants.StateMachineNamespace
+            ).Write(writer);
+
+            writer.AppendLine();
+
             ScopeCodeGenerator classBodyGenerator = Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, false);
 
             Language.CreateClassCodeGenerator(
@@ -55,7 +67,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                 classBodyGenerator
             ).Write(writer);
 
-            writer.AppendLine();
+            if (cppFileType == CppFileType.Header)
+                writer.AppendLine();
         }
 
         private void WriteClassContent(CodeWriter writer)
@@ -67,34 +80,37 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
             if (nodes.Length == 0)
                 return;
 
-            foreach (var node in nodes)
+            if (cppFileType == CppFileType.Source)
             {
-                Language.CreateVariableDeclarationCodeGenerator(
-                    AccessModifier.Public,
-                    new[] { "static", "const" },
-                    Constants.StateTokenType,
-                    node.Semantic,
-                    $"new {Constants.StateTokenType}(\"{node.Semantic}\")"
-                ).Write(writer);
+                foreach (var node in nodes)
+                    writer.AppendLine($"{Constants.StateTokenType}* {stateMachineName}{Constants.StateTokensClass}::{node.Semantic} = new {Constants.StateTokenType}(L\"{node.Semantic}\");");
+            }
+            else if (cppFileType == CppFileType.Header)
+            {
+                foreach (var node in nodes)
+                    writer.AppendLine($"public: static {Constants.StateTokenType}* {node.Semantic};");
             }
 
             writer.AppendLine();
 
-            Language.CreateVariableDeclarationCodeGenerator(
-                AccessModifier.Public,
-                new[] { "static", "const" },
-                $"{Constants.StateTokenType}[]",
-                Constants.TokenItemsProperty,
-                new AnonymousCodeGenerator(Language, w =>
+            if (cppFileType == CppFileType.Source)
+            {
+                writer.AppendLine($"{Constants.StateTokenType}* {stateMachineName}{Constants.StateTokensClass}::Items[] =");
+
+                Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, w =>
                 {
-                    w.AppendLine();
-                    Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, w2 =>
-                    {
-                        foreach (var node in nodes.Take(nodes.Length - 1))
-                            w2.AppendLine(node.Semantic + ",");
-                        w2.AppendLine(nodes.Last().Semantic);
-                    }), ScopeContentType.Method, false).Write(w);
-                })).Write(writer);
+                    foreach (var node in nodes.Take(nodes.Length - 1))
+                        w.AppendLine($"{stateMachineName}{Constants.StateTokensClass}::{node.Semantic},");
+                    w.AppendLine($"{stateMachineName}{Constants.StateTokensClass}::{nodes.Last().Semantic}");
+                }), ScopeContentType.Method, false).Write(writer);
+
+                using (writer.SuspendIndentation())
+                    writer.AppendLine(";");
+            }
+            else if (cppFileType == CppFileType.Header)
+            {
+                writer.AppendLine($"public: static {Constants.StateTokenType}* Items[];");
+            }
         }
     }
 }

@@ -9,15 +9,17 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
     public class CppActionTokensCodeGenerator : CodeGeneratorBase
     {
         private readonly CppFileType cppFileType;
+        private readonly string generatedCodeRelativePathPrefix;
         private readonly IGraph graph;
 
-        public CppActionTokensCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string namespaceName, string stateMachineName, IGraph graph)
+        public CppActionTokensCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string generatedCodeRelativePathPrefix, string namespaceName, string stateMachineName, IGraph graph)
             : base(languageAbstraction, namespaceName, stateMachineName)
         {
             if (graph == null)
                 throw new ArgumentNullException(nameof(graph));
 
             this.cppFileType = cppFileType;
+            this.generatedCodeRelativePathPrefix = generatedCodeRelativePathPrefix;
             this.graph = graph;
         }
 
@@ -33,11 +35,12 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
             if (cppFileType == CppFileType.Source)
             {
-                new CppRawStatementCodeGenerator(Language, "#include \"StateMachine/state_machine.h\"").Write(writer);
+                writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{stateMachineName}{Constants.ActionTokensClass}.autogen.h\"");
+                writer.AppendLine("#include \"StateMachine/state_machine.h\"");
             }
             else if (cppFileType == CppFileType.Header)
             {
-                new CppRawStatementCodeGenerator(Language, "#include \"StateMachine/action_token.h\"").Write(writer);
+                writer.AppendLine("#include \"StateMachine/action_token.h\"");
             }
 
             writer.AppendLine();
@@ -108,6 +111,9 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
                         w.AppendLine($"{actionTokensClassName}::{transition},");
                     w.AppendLine($"{actionTokensClassName}::{distinctTransitions.Last()}");
                 }), ScopeContentType.Method, false).Write(writer);
+
+                using (writer.SuspendIndentation())
+                    writer.Append(";");
             }
             else if (cppFileType == CppFileType.Header)
             {

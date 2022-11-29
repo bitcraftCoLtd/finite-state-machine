@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Bitcraft.StateMachineTool.CodeGenerators;
 using Bitcraft.StateMachineTool.CodeGenerators.Cpp;
-using Bitcraft.StateMachineTool.CodeGenerators.CSharp;
 using Bitcraft.ToolKit.CodeGeneration;
 using Bitcraft.ToolKit.CodeGeneration.Cpp;
 
@@ -11,6 +11,32 @@ namespace Bitcraft.StateMachineTool.Cpp
 {
     public class CppGenerator : IGenerator
     {
+        private static string GetMandatoryKeyValue(IReadOnlyDictionary<string, string> customOptions, string key, string helpMessage)
+        {
+            if (customOptions.TryGetValue(key, out string value) == false)
+                throw new Exception($"Custom option '{key}' is missing but mandatory. {helpMessage}");
+
+            return value;
+        }
+
+        private static string GetProjectRelativePathPrefix(IReadOnlyDictionary<string, string> customOptions)
+        {
+            return GetMandatoryKeyValue(
+                customOptions,
+                "ProjectRelativePathPrefix", 
+                "This value is a relative path to your project location."
+            ).Trim('/', '\\');
+        }
+
+        private static string GetGeneratedCodeRelativePathPrefix(IReadOnlyDictionary<string, string> customOptions)
+        {
+            return GetMandatoryKeyValue(
+                customOptions,
+                "GeneratedCodeRelativePathPrefix",
+                "This value is a relative path to generated files from your project location."
+            ).Trim('/', '\\');
+        }
+
         public void Generate(GeneratorOptions options)
         {
             ILanguageAbstraction sourceLanguageAbstraction = new CppLanguageAbstraction(CppFileType.Source);
@@ -25,8 +51,11 @@ namespace Bitcraft.StateMachineTool.Cpp
 
         private void GenerateStateMachineCode(ILanguageAbstraction sourceLanguageAbstraction, ILanguageAbstraction headerLanguageAbstraction, GeneratorOptions options)
         {
-            var sourceStateMachineCodeGenerator = new CppStateMachineCodeGenerator(sourceLanguageAbstraction, CppFileType.Source, options.NamespaceName, options.StateMachineName, options.UseOriginalStateBase, options.InitialNode, options.Graph);
-            var headerStateMachineCodeGenerator = new CppStateMachineCodeGenerator(headerLanguageAbstraction, CppFileType.Header, options.NamespaceName, options.StateMachineName, options.UseOriginalStateBase, options.InitialNode, options.Graph);
+            string projectRelativePathPrefix = GetProjectRelativePathPrefix(options.CustomOptions);
+            string generatedCodeRelativePathPrefix = GetGeneratedCodeRelativePathPrefix(options.CustomOptions);
+
+            var sourceStateMachineCodeGenerator = new CppStateMachineCodeGenerator(sourceLanguageAbstraction, CppFileType.Source, projectRelativePathPrefix, generatedCodeRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.UseOriginalStateBase, options.InitialNode, options.Graph);
+            var headerStateMachineCodeGenerator = new CppStateMachineCodeGenerator(headerLanguageAbstraction, CppFileType.Header, projectRelativePathPrefix, generatedCodeRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.UseOriginalStateBase, options.InitialNode, options.Graph);
 
             string sourceStateMachineFilename = $"{options.StateMachineName}{Constants.StateMachineSuffix}.autogen.cpp";
             string headerStateMachineFilename = $"{options.StateMachineName}{Constants.StateMachineSuffix}.autogen.h";
@@ -37,8 +66,10 @@ namespace Bitcraft.StateMachineTool.Cpp
 
         private void GenerateStateTokensCode(ILanguageAbstraction sourceLanguageAbstraction, ILanguageAbstraction headerLanguageAbstraction, GeneratorOptions options)
         {
-            var sourceStateTokensCodeGenerator = new CppStateTokensCodeGenerator(sourceLanguageAbstraction, CppFileType.Source, options.NamespaceName, options.StateMachineName, options.Graph);
-            var headerStateTokensCodeGenerator = new CppStateTokensCodeGenerator(headerLanguageAbstraction, CppFileType.Header, options.NamespaceName, options.StateMachineName, options.Graph);
+            string generatedCodeRelativePathPrefix = GetGeneratedCodeRelativePathPrefix(options.CustomOptions);
+
+            var sourceStateTokensCodeGenerator = new CppStateTokensCodeGenerator(sourceLanguageAbstraction, CppFileType.Source, generatedCodeRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.Graph);
+            var headerStateTokensCodeGenerator = new CppStateTokensCodeGenerator(headerLanguageAbstraction, CppFileType.Header, generatedCodeRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.Graph);
 
             string sourceStateTokensFilename = $"{options.StateMachineName}{Constants.StateTokensClass}.autogen.cpp";
             string headerStateTokensFilename = $"{options.StateMachineName}{Constants.StateTokensClass}.autogen.h";
@@ -49,8 +80,10 @@ namespace Bitcraft.StateMachineTool.Cpp
 
         private void GenerateActionTokensCode(ILanguageAbstraction sourceLanguageAbstraction, ILanguageAbstraction headerLanguageAbstraction, GeneratorOptions options)
         {
-            var sourceActionTokensCodeGenerator = new CppActionTokensCodeGenerator(sourceLanguageAbstraction, CppFileType.Source, options.NamespaceName, options.StateMachineName, options.Graph);
-            var headerActionTokensCodeGenerator = new CppActionTokensCodeGenerator(headerLanguageAbstraction, CppFileType.Header, options.NamespaceName, options.StateMachineName, options.Graph);
+            string generatedCodeRelativePathPrefix = GetGeneratedCodeRelativePathPrefix(options.CustomOptions);
+
+            var sourceActionTokensCodeGenerator = new CppActionTokensCodeGenerator(sourceLanguageAbstraction, CppFileType.Source, generatedCodeRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.Graph);
+            var headerActionTokensCodeGenerator = new CppActionTokensCodeGenerator(headerLanguageAbstraction, CppFileType.Header, generatedCodeRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.Graph);
 
             string sourceActionTokensFilename = $"{options.StateMachineName}{Constants.ActionTokensClass}.autogen.cpp";
             string headerActionTokensFilename = $"{options.StateMachineName}{Constants.ActionTokensClass}.autogen.h";
@@ -61,6 +94,9 @@ namespace Bitcraft.StateMachineTool.Cpp
 
         private void GenerateStatesCode(ILanguageAbstraction sourceLanguageAbstraction, ILanguageAbstraction headerLanguageAbstraction, GeneratorOptions options)
         {
+            string projectRelativePathPrefix = GetProjectRelativePathPrefix(options.CustomOptions);
+            string generatedCodeRelativePathPrefix = GetGeneratedCodeRelativePathPrefix(options.CustomOptions);
+
             string allStatesHeaderRelativePath = Path.Combine(Constants.StatesFolder, $"{options.StateMachineName}{Constants.StateSuffix}s.autogen.h");
             Utils.WriteFile(new CppStatesCodeGenerator(headerLanguageAbstraction, options.StateMachineName, options.Graph), options.OutputPath, allStatesHeaderRelativePath);
 
@@ -78,6 +114,8 @@ namespace Bitcraft.StateMachineTool.Cpp
                 var sourceStateCodeGenerator = new CppStateCodeGenerator(
                     sourceLanguageAbstraction,
                     CppFileType.Source,
+                    projectRelativePathPrefix,
+                    generatedCodeRelativePathPrefix,
                     options.NamespaceName != null ? $"{options.NamespaceName}.{Constants.StatesFolder}" : null,
                     options.StateMachineName,
                     state.Semantic,
@@ -88,6 +126,8 @@ namespace Bitcraft.StateMachineTool.Cpp
                 var headerStateCodeGenerator = new CppStateCodeGenerator(
                     headerLanguageAbstraction,
                     CppFileType.Header,
+                    projectRelativePathPrefix,
+                    generatedCodeRelativePathPrefix,
                     options.NamespaceName != null ? $"{options.NamespaceName}.{Constants.StatesFolder}" : null,
                     options.StateMachineName,
                     state.Semantic,
