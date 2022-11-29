@@ -12,8 +12,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
         private readonly bool useStateBase;
         private readonly bool isInternal;
 
-        public CSharpStateMachineCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, bool useStateBase, bool isInternal, INode initialNode, IGraph graph)
-            : base(generatorsFactory, namespaceName, stateMachineName)
+        public CSharpStateMachineCodeGenerator(ILanguageAbstraction languageAbstraction, string namespaceName, string stateMachineName, bool useStateBase, bool isInternal, INode initialNode, IGraph graph)
+            : base(languageAbstraction, namespaceName, stateMachineName)
         {
             if (graph == null)
                 throw new ArgumentNullException(nameof(graph));

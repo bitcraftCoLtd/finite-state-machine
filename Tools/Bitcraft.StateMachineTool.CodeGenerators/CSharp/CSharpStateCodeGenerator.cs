@@ -15,8 +15,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
         private bool useStateBase;
         private bool isInternal;
 
-        public CSharpStateCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, string stateName, bool useStateBase, bool isInternal, IGraph graph)
-            : base(generatorsFactory, namespaceName, stateMachineName)
+        public CSharpStateCodeGenerator(ILanguageAbstraction languageAbstraction, string namespaceName, string stateMachineName, string stateName, bool useStateBase, bool isInternal, IGraph graph)
+            : base(languageAbstraction, namespaceName, stateMachineName)
         {
             CodeGenerationUtility.CheckValidPartialIdentifierArgument(stateName, nameof(stateName));
 

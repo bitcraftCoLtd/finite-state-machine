@@ -13,8 +13,8 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
         private IGraph graph;
         private bool isInternal;
 
-        public CSharpStateTokensCodeGenerator(ILanguageAbstraction generatorsFactory, string namespaceName, string stateMachineName, bool isInternal, IGraph graph)
-            : base(generatorsFactory, namespaceName, stateMachineName)
+        public CSharpStateTokensCodeGenerator(ILanguageAbstraction languageAbstraction, string namespaceName, string stateMachineName, bool isInternal, IGraph graph)
+            : base(languageAbstraction, namespaceName, stateMachineName)
         {
             if (graph == null)
                 throw new ArgumentNullException(nameof(graph));
