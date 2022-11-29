@@ -42,6 +42,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
             if (cppFileType == CppFileType.Source)
             {
                 writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{stateMachineName}{Constants.StateMachineSuffix}.autogen.h\"");
+                writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{stateMachineName}{Constants.StateTokensClass}.autogen.h\"");
                 writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{Constants.StatesFolder}/{stateMachineName}{Constants.StatesFolder}.autogen.h\"");
                 if (useStateBase == false)
                     writer.AppendLine($"#include \"{projectRelativePathPrefix}/{stateMachineName}{Constants.StateBaseType}.h\"");
@@ -181,7 +182,7 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
                 Language.CreateMethodCallCodeGenerator(
                     Constants.SetInitialStateMethod,
-                    $"{stateMachineName}{Constants.StateTokensClass}::{initialNode.Semantic}"
+                    $"{stateMachineName}{Constants.StateTokensClass}::{initialNode.Semantic}", "nullptr"
                 ).Write(writer);
             }
         }
