@@ -94,6 +94,11 @@ namespace Bitcraft.ToolKit.CodeGeneration
                 sb.Append(indentation);
         }
 
+        public override string ToString()
+        {
+            return sb.ToString();
+        }
+
         private class IndentDisposable : IDisposable
         {
             private readonly CodeWriter cw;
