@@ -31,17 +31,17 @@ namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
 
             WriteFileHeader(writer);
 
+            base.Write(writer);
+        }
+
+        protected override void WriteContent(CodeWriter writer)
+        {
             Language.CreateUsingCodeGenerator(
                 CppConstants.StateMachineNamespace
             ).Write(writer);
 
             writer.AppendLine();
 
-            base.Write(writer);
-        }
-
-        protected override void WriteContent(CodeWriter writer)
-        {
             ScopeCodeGenerator classBodyGenerator = Language.CreateScopeCodeGenerator(new AnonymousCodeGenerator(Language, WriteClassContent), ScopeContentType.Class, false);
 
             Language.CreateClassCodeGenerator(
