@@ -20,7 +20,7 @@ public:
     void OnInitialized() override
     {
         RegisterActionHandler(TestActionTokens::GoToState2Action, [this](StateData* data, TransitionInfo* result) {
-            result->TargetStateToken = TestStateTokens::StateToken2;
+            this->OnGoToState2(data, result);
         });
     }
 
@@ -34,6 +34,11 @@ public:
             e->GetRedirect()->TargetStateToken = TestStateTokens::StateToken3;
 
         _alreadyPassed = true;
+    }
+
+    void OnGoToState2(StateData* data, TransitionInfo* result)
+    {
+        result->TargetStateToken = TestStateTokens::StateToken2;
     }
 
     void OnExit() override
