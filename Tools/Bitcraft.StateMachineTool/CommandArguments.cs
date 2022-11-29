@@ -32,11 +32,15 @@ namespace Bitcraft.StateMachineTool
         public const string OutputRelativeToFileArgumentKey = "-fromwd";
         public const string UseOriginalStateBaseArgumentKey = "-statebase";
         public const string InternalArgumentKey = "-internal";
+        public const string CustomOptionArgumentKey = "-custom";
 
         public bool NothingToDo { get; private set; }
 
         private readonly List<string> errors = new List<string>();
         public IReadOnlyCollection<string> Errors { get; }
+
+        private readonly Dictionary<string, string> customOptions = new Dictionary<string, string>();
+        public IReadOnlyDictionary<string, string> CustomOptions { get; }
 
         public CommandArguments(string[] args)
         {
@@ -45,6 +49,7 @@ namespace Bitcraft.StateMachineTool
 
             this.args = args;
             Errors = new ReadOnlyCollection<string>(errors);
+            CustomOptions = new ReadOnlyDictionary<string, string>(customOptions);
 
             Initialize();
         }
@@ -69,49 +74,53 @@ namespace Bitcraft.StateMachineTool
 
             for (int i = 0; i < args.Length; i++)
             {
-                if (args[i].StartsWith("-"))
+                if (args[i].StartsWith("-") == false)
+                    continue;
+
+                switch (args[i])
                 {
-                    switch (args[i])
-                    {
-                        case NamespaceNameArgumentKey:
-                            NamespaceName = GetNext(ref i);
-                            NothingToDo = false;
-                            break;
-                        case StateMachineNameArgumentKey:
-                            StateMachineName = GetNext(ref i);
-                            NothingToDo = false;
-                            break;
-                        case GraphmlFilenameArgumentKey:
-                            GraphmlFilename = GetNext(ref i);
-                            NothingToDo = false;
-                            break;
-                        case OutputFolderArgumentKey:
-                            OutputFolder = GetNext(ref i);
-                            NothingToDo = false;
-                            break;
-                        case InitialStateNameArgumentKey:
-                            InitialStateName = GetNext(ref i);
-                            NothingToDo = false;
-                            break;
-                        case OutputRelativeToFileArgumentKey:
-                            IsOutputFolderRelativeToWorkingDir = true;
-                            NothingToDo = false;
-                            break;
-                        case UseOriginalStateBaseArgumentKey:
-                            UseOriginalStateBase = true;
-                            NothingToDo = false;
-                            break;
-                        case InternalArgumentKey:
-                            IsInternal = true;
-                            NothingToDo = false;
-                            break;
-                        case VersionArgumentKey:
-                        case HelpArgumentKey:
-                            break;
-                        default:
-                            errors.Add(string.Format("Unknown '{0}' argument.", args[i]));
-                            break;
-                    }
+                    case NamespaceNameArgumentKey:
+                        NamespaceName = GetNext(ref i);
+                        NothingToDo = false;
+                        break;
+                    case StateMachineNameArgumentKey:
+                        StateMachineName = GetNext(ref i);
+                        NothingToDo = false;
+                        break;
+                    case GraphmlFilenameArgumentKey:
+                        GraphmlFilename = GetNext(ref i);
+                        NothingToDo = false;
+                        break;
+                    case OutputFolderArgumentKey:
+                        OutputFolder = GetNext(ref i);
+                        NothingToDo = false;
+                        break;
+                    case InitialStateNameArgumentKey:
+                        InitialStateName = GetNext(ref i);
+                        NothingToDo = false;
+                        break;
+                    case OutputRelativeToFileArgumentKey:
+                        IsOutputFolderRelativeToWorkingDir = true;
+                        NothingToDo = false;
+                        break;
+                    case UseOriginalStateBaseArgumentKey:
+                        UseOriginalStateBase = true;
+                        NothingToDo = false;
+                        break;
+                    case InternalArgumentKey:
+                        IsInternal = true;
+                        NothingToDo = false;
+                        break;
+                    case CustomOptionArgumentKey:
+                        FillCustomOption(GetNext(ref i));
+                        NothingToDo = false;
+                        break;
+                    case VersionArgumentKey:
+                    case HelpArgumentKey:
+                        break;
+                    default:
+                        errors.Add(string.Format("Unknown '{0}' argument.", args[i]));
+                        break;
                 }
             }
 
@@ -128,6 +137,16 @@ namespace Bitcraft.StateMachineTool
                 return result;
             }
             return null;
+        }
+
+        private void FillCustomOption(string raw)
+        {
+            string[] keyValue = raw.Split(new char[] { '=' }, 2);
+
+            if (keyValue.Length == 1)
+                customOptions.Add(keyValue[0], null);
+            else
+                customOptions.Add(keyValue[0], keyValue[1]);
         }
 
         public void PrintVersion()
@@ -185,6 +204,11 @@ namespace Bitcraft.StateMachineTool
             Console.WriteLine();
 
             PrintCommand(InternalArgumentKey, "Makes all exposed types internal instead of public");
+            Console.WriteLine();
+
+            PrintCommand(CustomOptionArgumentKey, "<key>=<value> creates a custom key/value pair.");
+            PrintAdditionalInfo("Custom key/values are transmitted as is to source code generators");
+            PrintAdditionalInfo("for them to decide to ignore them or interpret them as they want.");
             Console.WriteLine();
         }
 

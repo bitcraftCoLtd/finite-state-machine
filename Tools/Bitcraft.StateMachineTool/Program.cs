@@ -107,6 +107,7 @@ namespace Bitcraft.StateMachineTool
                 Graph = graph,
                 InitialNode = initialNode,
                 UseOriginalStateBase = args.UseOriginalStateBase,
+                CustomOptions = args.CustomOptions,
             };
 
             var generators = new IGenerator[]

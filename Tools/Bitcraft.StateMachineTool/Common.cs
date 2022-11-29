@@ -1,5 +1,6 @@
 ﻿using Bitcraft.StateMachineTool.Core;
 using Bitcraft.ToolKit.CodeGeneration;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -14,6 +15,7 @@ namespace Bitcraft.StateMachineTool
         public IGraph Graph;
         public INode InitialNode;
         public bool UseOriginalStateBase;
+        public IReadOnlyDictionary<string, string> CustomOptions;
     }
 
     public interface IGenerator
