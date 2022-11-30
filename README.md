@@ -647,6 +647,8 @@ When generating C++ code with the code generation tool, you need to provide cust
 - `ProjectRelativePathPrefix`: This is a relative path prefixed to all `#include` statements generated to find the state machine runtime headers.
 - `GeneratedCodeRelativePathPrefix`: This is a relative path prefixed to all `#include` statements generated to find generated header files.
 
+You can also provide an optional custom option `StateMachineRelativePathPrefix` if you want to prefix include of the state machine header files.
+
 If it is not clear to you which values to path, have a try something that sounds pertinent to you, run the tool and see what's produced, and then adjust accordingly and retry.
 
 Example of usage of the `-custom` option
