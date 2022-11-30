@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Bitcraft.ToolKit.CodeGeneration.Cpp;
 
-namespace Bitcraft.ToolKit.CodeGeneration.Cpp
+public enum CppFileType
 {
-    public enum CppFileType
-    {
-        Source,
-        Header,
-    }
+    Source,
+    Header,
 }

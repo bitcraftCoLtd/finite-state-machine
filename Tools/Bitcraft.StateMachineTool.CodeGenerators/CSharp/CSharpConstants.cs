@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp;
 
-namespace Bitcraft.StateMachineTool.CodeGenerators.CSharp
+public static class CSharpConstants
 {
-    public static class CSharpConstants
-    {
-        public static readonly string StateMachineNamespace = "Bitcraft.StateMachine";
-    }
+    public static readonly string StateMachineNamespace = "Bitcraft.StateMachine";
 }

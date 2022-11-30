@@ -1,42 +1,38 @@
-﻿using System;
-using Bitcraft.ToolKit.CodeGeneration;
+﻿using Bitcraft.ToolKit.CodeGeneration;
 using Bitcraft.StateMachineTool.Core;
-using Bitcraft.ToolKit.CodeGeneration.Cpp;
-using System.Linq;
 
-namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp
+namespace Bitcraft.StateMachineTool.CodeGenerators.Cpp;
+
+public class CppStatesCodeGenerator : CodeGeneratorBase
 {
-    public class CppStatesCodeGenerator : CodeGeneratorBase
+    private readonly IGraph graph;
+
+    public CppStatesCodeGenerator(ILanguageAbstraction languageAbstraction, string stateMachineName, IGraph graph)
+        : base(languageAbstraction, null, stateMachineName)
     {
-        private readonly IGraph graph;
+        if (graph == null)
+            throw new ArgumentNullException(nameof(graph));
 
-        public CppStatesCodeGenerator(ILanguageAbstraction languageAbstraction, string stateMachineName, IGraph graph)
-            : base(languageAbstraction, null, stateMachineName)
-        {
-            if (graph == null)
-                throw new ArgumentNullException(nameof(graph));
+        this.graph = graph;
+    }
 
-            this.graph = graph;
-        }
+    public override void Write(CodeWriter writer)
+    {
+        Language.CreateRawStatementCodeGenerator("#pragma once").Write(writer);
+        writer.AppendLine();
 
-        public override void Write(CodeWriter writer)
-        {
-            Language.CreateRawStatementCodeGenerator("#pragma once").Write(writer);
-            writer.AppendLine();
+        WriteFileHeader(writer);
 
-            WriteFileHeader(writer);
+        base.Write(writer);
+    }
 
-            base.Write(writer);
-        }
+    protected override void WriteContent(CodeWriter writer)
+    {
+        var orderedNodeNames = graph.Nodes
+            .Select(node => $"{stateMachineName}{node.Semantic}{Constants.StateSuffix}.autogen.h")
+            .OrderBy(x => x);
 
-        protected override void WriteContent(CodeWriter writer)
-        {
-            var orderedNodeNames = graph.Nodes
-                .Select(node => $"{stateMachineName}{node.Semantic}{Constants.StateSuffix}.autogen.h")
-                .OrderBy(x => x);
-
-            foreach (string filename in orderedNodeNames)
-                writer.AppendLine($"#include \"./{filename}\"");
-        }
+        foreach (string filename in orderedNodeNames)
+            writer.AppendLine($"#include \"./{filename}\"");
     }
 }

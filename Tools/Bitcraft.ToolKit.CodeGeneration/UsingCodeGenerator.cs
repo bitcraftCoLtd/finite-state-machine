@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Bitcraft.ToolKit.CodeGeneration;
 
-namespace Bitcraft.ToolKit.CodeGeneration
+public abstract class UsingCodeGenerator : ICodeGenerator
 {
-    public abstract class UsingCodeGenerator : ICodeGenerator
+    public ILanguageAbstraction Language { get; }
+
+    protected readonly string[] usings;
+
+    public UsingCodeGenerator(ILanguageAbstraction languageAbstraction, params string[] usings)
     {
-        public ILanguageAbstraction Language { get; }
+        if (languageAbstraction == null)
+            throw new ArgumentNullException(nameof(languageAbstraction));
 
-        protected readonly string[] usings;
+        Language = languageAbstraction;
 
-        public UsingCodeGenerator(ILanguageAbstraction languageAbstraction, params string[] usings)
-        {
-            if (languageAbstraction == null)
-                throw new ArgumentNullException(nameof(languageAbstraction));
-            this.usings = usings;
-
-            Language = languageAbstraction;
-        }
-
-        public abstract void Write(CodeWriter writer);
+        this.usings = usings;
     }
+
+    public abstract void Write(CodeWriter writer);
 }

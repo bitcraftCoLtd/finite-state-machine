@@ -1,26 +1,22 @@
-﻿using System;
-using System.Linq;
+﻿namespace Bitcraft.ToolKit.CodeGeneration.Cpp;
 
-namespace Bitcraft.ToolKit.CodeGeneration.Cpp
+public class CppMethodCallCodeGenerator : MethodCallCodeGenerator
 {
-    public class CppMethodCallCodeGenerator : MethodCallCodeGenerator
+    private readonly CppFileType cppFileType;
+
+    public CppMethodCallCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string name, params string[] parameters)
+        : base(languageAbstraction, name, parameters)
     {
-        private readonly CppFileType cppFileType;
+        this.cppFileType = cppFileType;
+    }
 
-        public CppMethodCallCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string name, params string[] parameters)
-            : base(languageAbstraction, name, parameters)
+    public override void Write(CodeWriter writer)
+    {
+        if (cppFileType == CppFileType.Source)
         {
-            this.cppFileType = cppFileType;
-        }
+            string args = string.Join(", ", parameters.Where(p => string.IsNullOrWhiteSpace(p) == false).Select(p => p.Trim()));
 
-        public override void Write(CodeWriter writer)
-        {
-            if (cppFileType == CppFileType.Source)
-            {
-                string args = string.Join(", ", parameters.Where(p => string.IsNullOrWhiteSpace(p) == false).Select(p => p.Trim()));
-
-                writer.AppendLine($"{name}({args});");
-            }
+            writer.AppendLine($"{name}({args});");
         }
     }
 }

@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Bitcraft.StateMachineTool.Core;
 
-namespace Bitcraft.StateMachineTool.Core
+public interface IParser
 {
-    public interface IParser
-    {
-        IGraph Parse(Stream stream);
-    }
+    IGraph Parse(Stream stream);
 }

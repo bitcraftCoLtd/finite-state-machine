@@ -1,17 +1,14 @@
-﻿using System;
+﻿namespace Bitcraft.ToolKit.CodeGeneration.Cpp;
 
-namespace Bitcraft.ToolKit.CodeGeneration.Cpp
+public class CppRawStatementCodeGenerator : RawStatementCodeGenerator
 {
-    public class CppRawStatementCodeGenerator : RawStatementCodeGenerator
+    public CppRawStatementCodeGenerator(ILanguageAbstraction languageAbstraction, string rawStatement)
+        : base(languageAbstraction, rawStatement)
     {
-        public CppRawStatementCodeGenerator(ILanguageAbstraction languageAbstraction, string rawStatement)
-            : base(languageAbstraction, rawStatement)
-        {
-        }
+    }
 
-        public override void Write(CodeWriter writer)
-        {
-            writer.AppendLine(rawStatement);
-        }
+    public override void Write(CodeWriter writer)
+    {
+        writer.AppendLine(rawStatement);
     }
 }

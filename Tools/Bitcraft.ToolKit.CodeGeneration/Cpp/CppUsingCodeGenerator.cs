@@ -1,28 +1,21 @@
-﻿using System;
-using System.Linq;
+﻿namespace Bitcraft.ToolKit.CodeGeneration.Cpp;
 
-namespace Bitcraft.ToolKit.CodeGeneration.Cpp
+public class CppUsingCodeGenerator : UsingCodeGenerator
 {
-    public class CppUsingCodeGenerator : UsingCodeGenerator
+    private static readonly string[] separators = new string[] { ".", "::" };
+
+    public CppUsingCodeGenerator(ILanguageAbstraction languageAbstraction, params string[] usings)
+        : base(languageAbstraction, usings)
     {
-        private readonly CppFileType cppFileType;
+    }
 
-        private static readonly string[] separators = new string[] { ".", "::" };
-
-        public CppUsingCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, params string[] usings)
-            : base(languageAbstraction, usings)
+    public override void Write(CodeWriter writer)
+    {
+        foreach (var u in usings.Where(u => u != null))
         {
-            this.cppFileType = cppFileType;
-        }
+            string[] parts = u.Split(separators, StringSplitOptions.RemoveEmptyEntries);
 
-        public override void Write(CodeWriter writer)
-        {
-            foreach (var u in usings.Where(u => u != null))
-            {
-                string[] parts = u.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-
-                writer.AppendLine($"using namespace {string.Join("::", parts)};");
-            }
+            writer.AppendLine($"using namespace {string.Join("::", parts)};");
         }
     }
 }

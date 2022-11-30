@@ -1,69 +1,66 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 
-namespace Bitcraft.ToolKit.CodeGeneration.Cpp
+namespace Bitcraft.ToolKit.CodeGeneration.Cpp;
+
+public class CppVariableDeclarationCodeGenerator : VariableDeclarationCodeGenerator
 {
-    public class CppVariableDeclarationCodeGenerator : VariableDeclarationCodeGenerator
+    private readonly CppFileType cppFileType;
+
+    public CppVariableDeclarationCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, AccessModifier accessModifier, string[] additionalModifiers, string type, string name, string initializationStatement)
+        : base(languageAbstraction, accessModifier, additionalModifiers, type, name, initializationStatement)
     {
-        private readonly CppFileType cppFileType;
+        this.cppFileType = cppFileType;
+    }
 
-        public CppVariableDeclarationCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, AccessModifier accessModifier, string[] additionalModifiers, string type, string name, string initializationStatement)
-            : base(languageAbstraction, accessModifier, additionalModifiers, type, name, initializationStatement)
+    public CppVariableDeclarationCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, AccessModifier accessModifier, string[] additionalModifiers, string type, string name, ICodeGenerator innerGenerator)
+        : base(languageAbstraction, accessModifier, additionalModifiers, type, name, innerGenerator)
+    {
+        this.cppFileType = cppFileType;
+    }
+
+    public override void Write(CodeWriter writer)
+    {
+        if (cppFileType == CppFileType.Source)
+            WriteSource(writer);
+        else if (cppFileType == CppFileType.Header)
+            WriteHeader(writer);
+    }
+
+    private void WriteSource(CodeWriter writer)
+    {
+        var elements = new List<string>
         {
-            this.cppFileType = cppFileType;
+            name
+        };
+
+        if (initializationStatement != null)
+        {
+            elements.Add("=");
+            elements.Add(initializationStatement);
+        }
+        else if (innerGenerator != null)
+        {
+            var innerSb = new StringBuilder();
+            innerGenerator.Write(writer.Clone(innerSb));
+            elements.Add("=");
+            elements.Add(innerSb.ToString());
         }
 
-        public CppVariableDeclarationCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, AccessModifier accessModifier, string[] additionalModifiers, string type, string name, ICodeGenerator innerGenerator)
-            : base(languageAbstraction, accessModifier, additionalModifiers, type, name, innerGenerator)
-        {
-            this.cppFileType = cppFileType;
-        }
+        writer.AppendLine($"{string.Join(" ", elements)};");
+    }
 
-        public override void Write(CodeWriter writer)
-        {
-            if (cppFileType == CppFileType.Source)
-                WriteSource(writer);
-            else if (cppFileType == CppFileType.Header)
-                WriteHeader(writer);
-        }
+    private void WriteHeader(CodeWriter writer)
+    {
+        var elements = new List<string>();
 
-        private void WriteSource(CodeWriter writer)
-        {
-            var elements = new List<string>
-            {
-                name
-            };
+        string? accessModifierStr = CppCodeGenerationUtility.AccessModifierToString(accessModifier);
 
-            if (initializationStatement != null)
-            {
-                elements.Add("=");
-                elements.Add(initializationStatement);
-            }
-            else if (innerGenerator != null)
-            {
-                var innerSb = new StringBuilder();
-                innerGenerator.Write(writer.Clone(innerSb));
-                elements.Add("=");
-                elements.Add(innerSb.ToString());
-            }
+        if (accessModifierStr != null)
+            elements.Add($"{accessModifierStr}:");
 
-            writer.AppendLine($"{string.Join(" ", elements)};");
-        }
+        elements.Add(type);
+        elements.Add(name);
 
-        private void WriteHeader(CodeWriter writer)
-        {
-            var elements = new List<string>();
-
-            string accessModifierStr = CppCodeGenerationUtility.AccessModifierToString(accessModifier);
-
-            if (accessModifierStr != null)
-                elements.Add($"{accessModifierStr}:");
-
-            elements.Add(type);
-            elements.Add(name);
-
-            writer.AppendLine($"{string.Join(" ", elements)};");
-        }
+        writer.AppendLine($"{string.Join(" ", elements)};");
     }
 }
