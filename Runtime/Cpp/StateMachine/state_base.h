@@ -11,8 +11,6 @@
 #include "transition_info.h"
 #include "state_manager.h"
 
-using namespace std;
-
 namespace Bitcraft
 {
     namespace StateMachine
@@ -40,7 +38,7 @@ namespace Bitcraft
                 }
             };
 
-            map<ActionToken*, StateHandler, ActionTokenComparer> _handlers;
+            std::map<ActionToken*, StateHandler, ActionTokenComparer> _handlers;
 
             StateManager* _stateManager;
             StateToken* _token;

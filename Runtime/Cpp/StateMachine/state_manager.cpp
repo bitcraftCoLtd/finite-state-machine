@@ -5,6 +5,8 @@
 #include "state_data.h"
 #include "exceptions.h"
 
+using namespace std;
+
 namespace Bitcraft
 {
     namespace StateMachine

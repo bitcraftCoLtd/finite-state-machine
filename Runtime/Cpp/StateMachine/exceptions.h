@@ -7,8 +7,6 @@
 #include "action_token.h"
 #include "state_token.h"
 
-using namespace std;
-
 namespace Bitcraft
 {
     namespace StateMachine
@@ -16,7 +14,7 @@ namespace Bitcraft
         /// <summary>
         /// Represents an exception related to a state machine action.
         /// </summary>
-        class ActionExceptionBase : public exception
+        class ActionExceptionBase : public std::exception
         {
         private:
             const ActionToken* const _actionToken;
@@ -88,7 +86,7 @@ namespace Bitcraft
         /// <summary>
         /// Represents an exception related to an undeclared state machine state.
         /// </summary>
-        class UnknownStateException : public exception
+        class UnknownStateException : public std::exception
         {
         private:
             const StateToken* _sourceStateToken;

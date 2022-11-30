@@ -9,8 +9,6 @@
 #include "transition_info.h"
 #include "action_token.h"
 
-using namespace std;
-
 namespace Bitcraft
 {
     namespace StateMachine
@@ -27,7 +25,7 @@ namespace Bitcraft
         private:
             void* _context;
             StateBase* _currentState;
-            list<StateBase*> _states;
+            std::list<StateBase*> _states;
             bool _isPerformActionLocked;
 
         private:
