@@ -4,7 +4,9 @@
 
 Last update: 2022/11/29
 
-All the solutions and projects in this repository are made with Microsoft Visual Studio 2013 Community Edition, and open seamlessly with Visual Studio 2015 Community Edition and Visual Studio 2022 Community Edition.
+The solutions and projects in the `./Runtime` directory are made with Microsoft Visual Studio 2013 Community Edition, and open seamlessly with Visual Studio 2015 Community Edition and Visual Studio 2022 Community Edition.
+
+The solution and projects in the `./Tools` directory are made with Microsoft Visual Studio 2022 Community Edition, and require C# 11 to build and .NET 7.0+ to run. The solution can be opened with Visual Studio Code.
 
 ## Overview
 
