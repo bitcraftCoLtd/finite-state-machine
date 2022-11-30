@@ -8,9 +8,10 @@ public class CppActionTokensCodeGenerator : CodeGeneratorBase
 {
     private readonly CppFileType cppFileType;
     private readonly string generatedCodeRelativePathPrefix;
+    private readonly string? stateMachineRelativePathPrefix;
     private readonly IGraph graph;
 
-    public CppActionTokensCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string generatedCodeRelativePathPrefix, string? namespaceName, string stateMachineName, IGraph graph)
+    public CppActionTokensCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string generatedCodeRelativePathPrefix, string? stateMachineRelativePathPrefix, string? namespaceName, string stateMachineName, IGraph graph)
         : base(languageAbstraction, namespaceName, stateMachineName)
     {
         if (graph == null)
@@ -18,6 +19,7 @@ public class CppActionTokensCodeGenerator : CodeGeneratorBase
 
         this.cppFileType = cppFileType;
         this.generatedCodeRelativePathPrefix = generatedCodeRelativePathPrefix;
+        this.stateMachineRelativePathPrefix = stateMachineRelativePathPrefix;
         this.graph = graph;
     }
 
@@ -34,11 +36,17 @@ public class CppActionTokensCodeGenerator : CodeGeneratorBase
         if (cppFileType == CppFileType.Source)
         {
             writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{stateMachineName}{Constants.ActionTokensClass}.autogen.h\"");
-            writer.AppendLine("#include \"StateMachine/state_machine.h\"");
+            if (stateMachineRelativePathPrefix != null)
+                writer.AppendLine($"#include \"{stateMachineRelativePathPrefix}/StateMachine/state_machine.h\"");
+            else
+                writer.AppendLine("#include \"StateMachine/state_machine.h\"");
         }
         else if (cppFileType == CppFileType.Header)
         {
-            writer.AppendLine("#include \"StateMachine/action_token.h\"");
+            if (stateMachineRelativePathPrefix != null)
+                writer.AppendLine($"#include \"{stateMachineRelativePathPrefix}/StateMachine/action_token.h\"");
+            else
+                writer.AppendLine("#include \"StateMachine/action_token.h\"");
         }
 
         writer.AppendLine();

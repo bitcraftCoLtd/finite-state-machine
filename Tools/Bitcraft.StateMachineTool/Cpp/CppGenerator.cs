@@ -22,7 +22,7 @@ public sealed class CppGenerator : IGenerator
     {
         return GetMandatoryKeyValue(
             customOptions,
-            "ProjectRelativePathPrefix", 
+            "ProjectRelativePathPrefix",
             "This value is a relative path to your project location."
         ).Trim('/', '\\');
     }
@@ -34,6 +34,18 @@ public sealed class CppGenerator : IGenerator
             "GeneratedCodeRelativePathPrefix",
             "This value is a relative path to generated files from your project location."
         ).Trim('/', '\\');
+    }
+
+    private static string? GetStateMachineRelativePathPrefix(IReadOnlyDictionary<string, string?> customOptions)
+    {
+        customOptions.TryGetValue("StateMachineRelativePathPrefix", out string? relativePath);
+
+        relativePath = relativePath?.Trim('/', '\\');
+
+        if (string.IsNullOrWhiteSpace(relativePath))
+            return null;
+
+        return relativePath;
     }
 
     public void Generate(GeneratorOptions options)
@@ -52,9 +64,10 @@ public sealed class CppGenerator : IGenerator
     {
         string projectRelativePathPrefix = GetProjectRelativePathPrefix(options.CustomOptions);
         string generatedCodeRelativePathPrefix = GetGeneratedCodeRelativePathPrefix(options.CustomOptions);
+        string? stateMachineRelativePathPrefix = GetStateMachineRelativePathPrefix(options.CustomOptions);
 
-        var sourceStateMachineCodeGenerator = new CppStateMachineCodeGenerator(sourceLanguageAbstraction, CppFileType.Source, projectRelativePathPrefix, generatedCodeRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.UseOriginalStateBase, options.InitialNode, options.Graph);
-        var headerStateMachineCodeGenerator = new CppStateMachineCodeGenerator(headerLanguageAbstraction, CppFileType.Header, projectRelativePathPrefix, generatedCodeRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.UseOriginalStateBase, options.InitialNode, options.Graph);
+        var sourceStateMachineCodeGenerator = new CppStateMachineCodeGenerator(sourceLanguageAbstraction, CppFileType.Source, projectRelativePathPrefix, generatedCodeRelativePathPrefix, stateMachineRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.UseOriginalStateBase, options.InitialNode, options.Graph);
+        var headerStateMachineCodeGenerator = new CppStateMachineCodeGenerator(headerLanguageAbstraction, CppFileType.Header, projectRelativePathPrefix, generatedCodeRelativePathPrefix, stateMachineRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.UseOriginalStateBase, options.InitialNode, options.Graph);
 
         string sourceStateMachineFilename = $"{options.StateMachineName}{Constants.StateMachineSuffix}.autogen.cpp";
         string headerStateMachineFilename = $"{options.StateMachineName}{Constants.StateMachineSuffix}.autogen.h";
@@ -66,9 +79,10 @@ public sealed class CppGenerator : IGenerator
     private static void GenerateStateTokensCode(ILanguageAbstraction sourceLanguageAbstraction, ILanguageAbstraction headerLanguageAbstraction, GeneratorOptions options)
     {
         string generatedCodeRelativePathPrefix = GetGeneratedCodeRelativePathPrefix(options.CustomOptions);
+        string? stateMachineRelativePathPrefix = GetStateMachineRelativePathPrefix(options.CustomOptions);
 
-        var sourceStateTokensCodeGenerator = new CppStateTokensCodeGenerator(sourceLanguageAbstraction, CppFileType.Source, generatedCodeRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.Graph);
-        var headerStateTokensCodeGenerator = new CppStateTokensCodeGenerator(headerLanguageAbstraction, CppFileType.Header, generatedCodeRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.Graph);
+        var sourceStateTokensCodeGenerator = new CppStateTokensCodeGenerator(sourceLanguageAbstraction, CppFileType.Source, generatedCodeRelativePathPrefix, stateMachineRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.Graph);
+        var headerStateTokensCodeGenerator = new CppStateTokensCodeGenerator(headerLanguageAbstraction, CppFileType.Header, generatedCodeRelativePathPrefix, stateMachineRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.Graph);
 
         string sourceStateTokensFilename = $"{options.StateMachineName}{Constants.StateTokensClass}.autogen.cpp";
         string headerStateTokensFilename = $"{options.StateMachineName}{Constants.StateTokensClass}.autogen.h";
@@ -80,9 +94,10 @@ public sealed class CppGenerator : IGenerator
     private static void GenerateActionTokensCode(ILanguageAbstraction sourceLanguageAbstraction, ILanguageAbstraction headerLanguageAbstraction, GeneratorOptions options)
     {
         string generatedCodeRelativePathPrefix = GetGeneratedCodeRelativePathPrefix(options.CustomOptions);
+        string? stateMachineRelativePathPrefix = GetStateMachineRelativePathPrefix(options.CustomOptions);
 
-        var sourceActionTokensCodeGenerator = new CppActionTokensCodeGenerator(sourceLanguageAbstraction, CppFileType.Source, generatedCodeRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.Graph);
-        var headerActionTokensCodeGenerator = new CppActionTokensCodeGenerator(headerLanguageAbstraction, CppFileType.Header, generatedCodeRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.Graph);
+        var sourceActionTokensCodeGenerator = new CppActionTokensCodeGenerator(sourceLanguageAbstraction, CppFileType.Source, generatedCodeRelativePathPrefix, stateMachineRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.Graph);
+        var headerActionTokensCodeGenerator = new CppActionTokensCodeGenerator(headerLanguageAbstraction, CppFileType.Header, generatedCodeRelativePathPrefix, stateMachineRelativePathPrefix, options.NamespaceName, options.StateMachineName, options.Graph);
 
         string sourceActionTokensFilename = $"{options.StateMachineName}{Constants.ActionTokensClass}.autogen.cpp";
         string headerActionTokensFilename = $"{options.StateMachineName}{Constants.ActionTokensClass}.autogen.h";
@@ -95,6 +110,7 @@ public sealed class CppGenerator : IGenerator
     {
         string projectRelativePathPrefix = GetProjectRelativePathPrefix(options.CustomOptions);
         string generatedCodeRelativePathPrefix = GetGeneratedCodeRelativePathPrefix(options.CustomOptions);
+        string? stateMachineRelativePathPrefix = GetStateMachineRelativePathPrefix(options.CustomOptions);
 
         string allStatesHeaderRelativePath = Path.Combine(Constants.StatesFolder, $"{options.StateMachineName}{Constants.StateSuffix}s.autogen.h");
         Utils.WriteFile(new CppStatesCodeGenerator(headerLanguageAbstraction, options.StateMachineName, options.Graph), options.OutputPath, allStatesHeaderRelativePath);
@@ -115,6 +131,7 @@ public sealed class CppGenerator : IGenerator
                 CppFileType.Source,
                 projectRelativePathPrefix,
                 generatedCodeRelativePathPrefix,
+                stateMachineRelativePathPrefix,
                 options.NamespaceName != null ? $"{options.NamespaceName}.{Constants.StatesFolder}" : null,
                 options.StateMachineName,
                 state.Semantic,
@@ -127,6 +144,7 @@ public sealed class CppGenerator : IGenerator
                 CppFileType.Header,
                 projectRelativePathPrefix,
                 generatedCodeRelativePathPrefix,
+                stateMachineRelativePathPrefix,
                 options.NamespaceName != null ? $"{options.NamespaceName}.{Constants.StatesFolder}" : null,
                 options.StateMachineName,
                 state.Semantic,

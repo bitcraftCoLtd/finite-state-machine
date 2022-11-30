@@ -9,11 +9,12 @@ public class CppStateMachineCodeGenerator : CodeGeneratorBase
     private readonly CppFileType cppFileType;
     private readonly string projectRelativePathPrefix;
     private readonly string generatedCodeRelativePathPrefix;
+    private readonly string? stateMachineRelativePathPrefix;
     private readonly IGraph graph;
     private readonly INode? initialNode;
     private readonly bool useStateBase;
 
-    public CppStateMachineCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string projectRelativePathPrefix, string generatedCodeRelativePathPrefix, string? namespaceName, string stateMachineName, bool useStateBase, INode? initialNode, IGraph graph)
+    public CppStateMachineCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string projectRelativePathPrefix, string generatedCodeRelativePathPrefix, string? stateMachineRelativePathPrefix, string? namespaceName, string stateMachineName, bool useStateBase, INode? initialNode, IGraph graph)
         : base(languageAbstraction, namespaceName, stateMachineName)
     {
         if (graph == null)
@@ -22,6 +23,7 @@ public class CppStateMachineCodeGenerator : CodeGeneratorBase
         this.cppFileType = cppFileType;
         this.projectRelativePathPrefix = projectRelativePathPrefix;
         this.generatedCodeRelativePathPrefix = generatedCodeRelativePathPrefix;
+        this.stateMachineRelativePathPrefix = stateMachineRelativePathPrefix;
         this.graph = graph;
         this.initialNode = initialNode;
         this.useStateBase = useStateBase;
@@ -44,11 +46,18 @@ public class CppStateMachineCodeGenerator : CodeGeneratorBase
             writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{Constants.StatesFolder}/{stateMachineName}{Constants.StatesFolder}.autogen.h\"");
             if (useStateBase == false)
                 writer.AppendLine($"#include \"{projectRelativePathPrefix}/{stateMachineName}{Constants.StateBaseType}.h\"");
-            writer.AppendLine("#include \"StateMachine/state_machine.h\"");
+
+            if (stateMachineRelativePathPrefix != null)
+                writer.AppendLine($"#include \"{stateMachineRelativePathPrefix}/StateMachine/state_machine.h\"");
+            else
+                writer.AppendLine("#include \"StateMachine/state_machine.h\"");
         }
         else if (cppFileType == CppFileType.Header)
         {
-            writer.AppendLine("#include \"StateMachine/state_manager.h\"");
+            if (stateMachineRelativePathPrefix != "")
+                writer.AppendLine($"#include \"{stateMachineRelativePathPrefix}/StateMachine/state_manager.h\"");
+            else
+                writer.AppendLine("#include \"StateMachine/state_manager.h\"");
         }
 
         writer.AppendLine();

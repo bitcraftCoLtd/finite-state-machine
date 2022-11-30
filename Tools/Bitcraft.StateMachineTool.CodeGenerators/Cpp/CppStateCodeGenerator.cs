@@ -9,13 +9,14 @@ public class CppStateCodeGenerator : CodeGeneratorBase
     private readonly CppFileType cppFileType;
     private readonly string projectRelativePathPrefix;
     private readonly string generatedCodeRelativePathPrefix;
+    private readonly string? stateMachineRelativePathPrefix;
     private readonly string stateName;
     private readonly IGraph graph;
     private readonly bool useStateBase;
 
     private const string StateDataType = "StateData";
 
-    public CppStateCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string projectRelativePathPrefix, string generatedCodeRelativePathPrefix, string? namespaceName, string stateMachineName, string stateName, bool useStateBase, IGraph graph)
+    public CppStateCodeGenerator(ILanguageAbstraction languageAbstraction, CppFileType cppFileType, string projectRelativePathPrefix, string generatedCodeRelativePathPrefix, string? stateMachineRelativePathPrefix, string? namespaceName, string stateMachineName, string stateName, bool useStateBase, IGraph graph)
         : base(languageAbstraction, namespaceName, stateMachineName)
     {
         CodeGenerationUtility.CheckValidPartialIdentifierArgument(stateName, nameof(stateName));
@@ -26,6 +27,7 @@ public class CppStateCodeGenerator : CodeGeneratorBase
         this.cppFileType = cppFileType;
         this.projectRelativePathPrefix = projectRelativePathPrefix;
         this.generatedCodeRelativePathPrefix = generatedCodeRelativePathPrefix;
+        this.stateMachineRelativePathPrefix = stateMachineRelativePathPrefix;
         this.stateName = stateName;
         this.graph = graph;
         this.useStateBase = useStateBase;
@@ -46,7 +48,10 @@ public class CppStateCodeGenerator : CodeGeneratorBase
             writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{Constants.StatesFolder}/{stateMachineName}{stateName}{Constants.StateSuffix}.autogen.h\"");
             writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{stateMachineName}{Constants.StateTokensClass}.autogen.h\"");
             writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{stateMachineName}{Constants.ActionTokensClass}.autogen.h\"");
-            writer.AppendLine($"#include \"StateMachine/state_machine.h\"");
+                if (stateMachineRelativePathPrefix != null)
+                    writer.AppendLine($"#include \"{stateMachineRelativePathPrefix}/StateMachine/state_machine.h\"");
+                else
+                    writer.AppendLine($"#include \"StateMachine/state_machine.h\"");
         }
         else if (cppFileType == CppFileType.Header)
         {
