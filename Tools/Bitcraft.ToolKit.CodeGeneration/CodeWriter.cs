@@ -1,113 +1,134 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
-namespace Bitcraft.ToolKit.CodeGeneration
+namespace Bitcraft.ToolKit.CodeGeneration;
+
+public enum LineEnding
 {
-    public class CodeWriter
+    LF,
+    CRLF
+}
+
+public class CodeWriter
+{
+    private int indentationLevel = 0;
+    private readonly string indentation;
+    private readonly StringBuilder sb;
+    private readonly LineEnding lineEnding;
+
+    public CodeWriter(StringBuilder sb, string indentation, LineEnding lineEnding)
     {
-        private bool isIndented = true;
-        private int indentation;
-        private StringBuilder sb;
+        if (sb == null)
+            throw new ArgumentNullException(nameof(sb));
 
-        public CodeWriter(StringBuilder sb)
+        this.sb = sb;
+        this.indentation = indentation;
+        this.lineEnding = lineEnding;
+    }
+
+    public CodeWriter Clone(StringBuilder sb)
+    {
+        return new CodeWriter(sb, indentation, lineEnding)
         {
-            if (sb == null)
-                throw new ArgumentNullException(nameof(sb));
+            indentationLevel = this.indentationLevel
+        };
+    }
 
-            this.sb = sb;
+    public IDisposable Indent()
+    {
+        return new IndentDisposable(this);
+    }
+
+    public IDisposable SuspendIndentation()
+    {
+        return new IndentationChangerDisposable(this, false);
+    }
+
+    public IDisposable ResumeIndentation()
+    {
+        return new IndentationChangerDisposable(this, true);
+    }
+
+    public void Append(string text)
+    {
+        AppendIndentation();
+        sb.Append(text);
+    }
+
+    public void Append(string format, params object[] args)
+    {
+        AppendIndentation();
+        sb.AppendFormat(format, args);
+    }
+
+    public void AppendLine()
+    {
+        // Does not generate indentation on empty lines.
+
+        if (lineEnding == LineEnding.LF)
+            sb.Append("\n");
+        else if (lineEnding == LineEnding.CRLF)
+            sb.Append("\r\n");
+    }
+
+    public void AppendLine(string text)
+    {
+        AppendIndentation();
+        sb.Append(text);
+        AppendLine();
+    }
+
+    public void AppendLine(string format, params object[] args)
+    {
+        AppendIndentation();
+        sb.AppendFormat(format, args);
+        AppendLine();
+    }
+
+    private void AppendIndentation()
+    {
+        if (indentation.Length == 0)
+            return;
+
+        for (int level = 0; level < indentationLevel; level++)
+            sb.Append(indentation);
+    }
+
+    public override string ToString()
+    {
+        return sb.ToString();
+    }
+
+    private class IndentDisposable : IDisposable
+    {
+        private readonly CodeWriter cw;
+
+        public IndentDisposable(CodeWriter cw)
+        {
+            this.cw = cw;
+            cw.indentationLevel++;
         }
 
-        public CodeWriter Clone(StringBuilder sb)
+        public void Dispose()
         {
-            return new CodeWriter(sb)
-            {
-                isIndented = this.isIndented,
-                indentation = this.indentation
-            };
+            cw.indentationLevel--;
+        }
+    }
+
+    private class IndentationChangerDisposable : IDisposable
+    {
+        private readonly CodeWriter cw;
+        private readonly int originalIndentationLevel;
+
+        public IndentationChangerDisposable(CodeWriter cw, bool newIndent)
+        {
+            this.cw = cw;
+            originalIndentationLevel = cw.indentationLevel;
+            cw.indentationLevel = 0;
         }
 
-        public IDisposable Indent()
+        public void Dispose()
         {
-            return new IndentDisposable(this);
-        }
-
-        public IDisposable SuspendIndentation()
-        {
-            return new IndentationChangerDisposable(this, false);
-        }
-
-        public IDisposable ResumeIndentation()
-        {
-            return new IndentationChangerDisposable(this, true);
-        }
-
-        public void Append(string text)
-        {
-            sb.Append(GetIndentation() + text);
-        }
-
-        public void Append(string format, params object[] args)
-        {
-            sb.Append(GetIndentation() + string.Format(format, args));
-        }
-
-        public void AppendLine()
-        {
-            sb.AppendLine(); // does not generate indentation on empty lines
-        }
-
-        public void AppendLine(string text)
-        {
-            sb.AppendLine(GetIndentation() + text);
-        }
-
-        public void AppendLine(string format, params object[] args)
-        {
-            sb.AppendLine(GetIndentation()  + string.Format(format, args));
-        }
-
-        private string GetIndentation()
-        {
-            if (isIndented)
-                return new string(' ', indentation * 4);
-            return string.Empty;
-        }
-
-        private class IndentDisposable : IDisposable
-        {
-            private CodeWriter cw;
-
-            public IndentDisposable(CodeWriter cw)
-            {
-                this.cw = cw;
-                cw.indentation++;
-            }
-
-            public void Dispose()
-            {
-                cw.indentation--;
-            }
-        }
-
-        private class IndentationChangerDisposable : IDisposable
-        {
-            private CodeWriter cw;
-            private bool originalIsIndented;
-
-            public IndentationChangerDisposable(CodeWriter cw, bool newIndent)
-            {
-                this.cw = cw;
-                originalIsIndented = cw.isIndented;
-                cw.isIndented = newIndent;
-            }
-
-            public void Dispose()
-            {
-                cw.isIndented = originalIsIndented;
-            }
+            cw.indentationLevel = originalIndentationLevel;
         }
     }
 }

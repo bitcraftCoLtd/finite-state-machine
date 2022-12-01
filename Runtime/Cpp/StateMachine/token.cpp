@@ -5,7 +5,7 @@ namespace Bitcraft
 {
     namespace StateMachine
     {
-        unsigned long long Token::_globalId = 1;
+        uint32_t Token::_globalId = 1;
 
         Token::Token()
         {
@@ -23,12 +23,12 @@ namespace Bitcraft
             _name = name;
         }
 
-        const wchar_t* Token::ToString()
+        const wchar_t* Token::ToString() const
         {
             return _name == NULL ? L"(no name)" : _name;
         }
 
-        bool Token::Equals(Token* other)
+        bool Token::Equals(const Token* const other) const
         {
             if (other == NULL)
                 return false;

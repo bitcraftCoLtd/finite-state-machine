@@ -7,8 +7,6 @@
 #include "action_token.h"
 #include "state_token.h"
 
-using namespace std;
-
 namespace Bitcraft
 {
     namespace StateMachine
@@ -16,29 +14,29 @@ namespace Bitcraft
         /// <summary>
         /// Represents an exception related to a state machine action.
         /// </summary>
-        class ActionExceptionBase : public exception
+        class ActionExceptionBase : public std::exception
         {
         private:
-            ActionToken* _actionToken;
-            StateToken* _stateToken;
+            const ActionToken* const _actionToken;
+            const StateToken* const  _stateToken;
 
         public:
             /// <summary>
             /// Gets the token of the action that produced the error.
             /// </summary>
-            ActionToken* GetActionToken();
+            const ActionToken* const GetActionToken() const;
 
             /// <summary>
             /// Gets the token of the state that was active when the error has been produced.
             /// </summary>
-            StateToken* GetStateToken();
+            const StateToken* const GetStateToken() const;
 
             /// <summary>
             /// Initializes the ActionExceptionBase instance.
             /// </summary>
             /// <param name="actionToken">The token of the action that produced the error.</param>
             /// <param name="stateToken">The token of the state that was active when the error has been produced.</param>
-            ActionExceptionBase(ActionToken* actionToken, StateToken* stateToken);
+            ActionExceptionBase(const ActionToken* const actionToken, const StateToken* const stateToken);
 
             /// <summary>
             /// Initializes the ActionExceptionBase instance.
@@ -46,7 +44,7 @@ namespace Bitcraft
             /// <param name="actionToken">The token of the action that produced the error.</param>
             /// <param name="stateToken">The token of the state that was active when the error has been produced.</param>
             /// <param name="message">Custom message explaining the error.</param>
-            ActionExceptionBase(ActionToken* actionToken, StateToken* stateToken, char* message);
+            ActionExceptionBase(const ActionToken* const actionToken, const StateToken* const stateToken, char* message);
         };
 
         /// <summary>
@@ -82,35 +80,35 @@ namespace Bitcraft
             /// </summary>
             /// <param name="actionToken">The token of the action that produced the error.</param>
             /// <param name="stateToken">The token of the state that was active when the error has been produced.</param>
-            UnknownActionException(ActionToken* actionToken, StateToken* stateToken);
+            UnknownActionException(const ActionToken* const  actionToken, const StateToken* const stateToken);
         };
 
         /// <summary>
         /// Represents an exception related to an undeclared state machine state.
         /// </summary>
-        class UnknownStateException : public exception
+        class UnknownStateException : public std::exception
         {
         private:
-            StateToken* _sourceStateToken;
-            StateToken* _unknownStateToken;
+            const StateToken* _sourceStateToken;
+            const StateToken* _unknownStateToken;
 
         public:
             /// <summary>
             /// Gets the token of the source state.
             /// </summary>
-            StateToken* GetSourceStateToken();
+            const StateToken* GetSourceStateToken();
 
             /// <summary>
             /// Gets the undeclared token that was targeting the new state.
             /// </summary>
-            StateToken* GetUnknownStateToken();
+            const StateToken* GetUnknownStateToken();
 
             /// <summary>
             /// Initializes the UnknownStateException instance.
             /// </summary>
             /// <param name="sourceStateToken">The token of the source state.</param>
             /// <param name="unknownStateToken">The undeclared token that was targeting the new state.</param>
-            UnknownStateException(StateToken* sourceStateToken, StateToken* unknownStateToken);
+            UnknownStateException(const StateToken* sourceStateToken, const StateToken* unknownStateToken);
         };
     }
 }

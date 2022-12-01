@@ -9,8 +9,6 @@
 #include "transition_info.h"
 #include "action_token.h"
 
-using namespace std;
-
 namespace Bitcraft
 {
     namespace StateMachine
@@ -27,14 +25,14 @@ namespace Bitcraft
         private:
             void* _context;
             StateBase* _currentState;
-            list<StateBase*> _states;
+            std::list<StateBase*> _states;
             bool _isPerformActionLocked;
 
         private:
             void InternalInitialization(void* context);
-            void PerformTransitionTo(StateToken* stateToken, StateData* data);
-            TransitionInfo* TransitionTo(StateToken* stateToken, StateData* data);
-            StateBase* FindState(StateToken* token);
+            void PerformTransitionTo(const StateToken* stateToken, StateData* data);
+            TransitionInfo* TransitionTo(const StateToken* const stateToken, StateData* data);
+            StateBase* FindState(const StateToken* const token);
             bool StateExists(StateBase* state);
 
         protected:
@@ -63,7 +61,7 @@ namespace Bitcraft
             /// <summary>
             /// Gets the token of the currently active state. (shortcut to CurrentState.Token)
             /// </summary>
-            StateToken* GetCurrentStateToken();
+            const StateToken* const GetCurrentStateToken() const;
 
             /// <summary>
             /// Initializes the StateManager instance without context.

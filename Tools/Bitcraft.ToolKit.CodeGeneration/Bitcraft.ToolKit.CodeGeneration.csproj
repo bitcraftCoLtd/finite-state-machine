@@ -1,83 +1,18 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E7BD071A-2441-4213-B427-FFA7AECB7DF6}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Bitcraft.ToolKit.CodeGeneration</RootNamespace>
-    <AssemblyName>Bitcraft.ToolKit.CodeGeneration</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AggregateCodeGenerator.cs" />
-    <Compile Include="AnonymousCodeGenerator.cs" />
-    <Compile Include="ClassCodeGenerator.cs" />
-    <Compile Include="CodeWriter.cs" />
-    <Compile Include="CommentCodeGenerator.cs" />
-    <Compile Include="ConstructorDeclarationCodeGenerator.cs" />
-    <Compile Include="CSharp\CSharpClassCodeGenerator.cs" />
-    <Compile Include="CSharp\CSharpConstructorDeclarationCodeGenerator.cs" />
-    <Compile Include="CSharp\CSharpCommentCodeGenerator.cs" />
-    <Compile Include="CSharp\CSharpCodeGenerationUtility.cs" />
-    <Compile Include="CSharp\CSharpLanguageAbstraction.cs" />
-    <Compile Include="CSharp\CSharpMethodCallCodeGenerator.cs" />
-    <Compile Include="CSharp\CSharpMethodDeclarationCodeGenerator.cs" />
-    <Compile Include="CSharp\CSharpNamespaceCodeGenerator.cs" />
-    <Compile Include="CSharp\CSharpRawStatementCodeGenerator.cs" />
-    <Compile Include="CSharp\CSharpScopeCodeGenerator.cs" />
-    <Compile Include="CSharp\CSharpUsingCodeGenerator.cs" />
-    <Compile Include="CSharp\CSharpVariableDeclarationCodeGenerator.cs" />
-    <Compile Include="ICodeGenerator.cs" />
-    <Compile Include="ILanguageAbstraction.cs" />
-    <Compile Include="MethodCallCodeGenerator.cs" />
-    <Compile Include="MethodDeclarationCodeGenerator.cs" />
-    <Compile Include="NamespaceCodeGenerator.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RawStatementCodeGenerator.cs" />
-    <Compile Include="ScopeCodeGenerator.cs" />
-    <Compile Include="UsingCodeGenerator.cs" />
-    <Compile Include="CodeGenerationUtility.cs" />
-    <Compile Include="VariableDeclarationCodeGenerator.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <WarningLevel>9999</WarningLevel>
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Description>Base framework for C# language source code generation.</Description>
+        <Company>bitcraft Corporation</Company>
+        <Copyright>Copyright © bitcraft Corporation 2014 - 2022</Copyright>
+        <Version>0.2.0.0</Version>
+    </PropertyGroup>
+
 </Project>

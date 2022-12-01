@@ -1,68 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using Bitcraft.StateMachineTool.Core;
 
-namespace Bitcraft.StateMachineTool.yWorks
+namespace Bitcraft.StateMachineTool.yWorks;
+
+internal class TransitionStub : ITransition
 {
-    internal class TransitionStub : ITransition
+    public string Semantic { get; }
+    public INode Source { get; }
+    public INode Target { get; }
+
+    public TransitionStub(string semantic, INode source, INode target)
     {
-        public string Semantic { get; }
-        public INode Source { get; }
-        public INode Target { get; }
-
-        public TransitionStub(string semantic, INode source, INode target)
-        {
-            Semantic = semantic;
-            Source = source;
-            Target = target;
-        }
-
-        public override string ToString()
-        {
-            return string.Format("{0} -> {1}", Source.Semantic, Target.Semantic);
-        }
+        Semantic = semantic;
+        Source = source;
+        Target = target;
     }
 
-    public class Transition : GraphObject
+    public override string ToString()
     {
-        public string Source { get; private set; }
-        public string Target { get; private set; }
+        return $"{Source.Semantic} -> {Target.Semantic}";
+    }
+}
 
-        public override void Load(XElement element, KeyMapping keyMapping)
-        {
-            base.Load(element, keyMapping);
+public class Transition : GraphObject
+{
+    public string? Source { get; }
+    public string? Target { get; }
 
-            CheckIdProperty(element);
+    protected Transition(string identifier, string description, string? source, string? target)
+        : base(identifier, description)
+    {
+        Source = source;
+        Target = target;
+    }
 
-            Source = (string)element.Attribute("source");
-            Target = (string)element.Attribute("target");
+    public static new Transition Load(XElement element, KeyMapping keyMapping)
+    {
+        GraphObject graphObject = GraphObject.Load(element, keyMapping);
 
-            if (Source != null)
-                Source = Source.Trim();
+        CheckIdProperty(element, graphObject);
 
-            if (Target != null)
-                Target = Target.Trim();
-        }
+        string? source = element.Attribute("source")?.Value;
+        string? target = element.Attribute("target")?.Value;
 
-        internal void UpdateDescription(string newDescription)
-        {
-            Description = newDescription;
-        }
+        if (source != null)
+            source = source.Trim();
 
-        public static Transition Create(XElement element, KeyMapping keyMapping)
-        {
-            var transition = new Transition();
-            transition.Load(element, keyMapping);
-            return transition;
-        }
+        if (target != null)
+            target = target.Trim();
 
-        public override string ToString()
-        {
-            return base.ToString() + " { " + string.Format("{0} -> {1}", Source, Target) + " }";
-        }
+        return new Transition(graphObject.Identifier, graphObject.Description, source, target);
+    }
+
+    internal void UpdateDescription(string newDescription)
+    {
+        Description = newDescription;
+    }
+
+    public override string ToString()
+    {
+        return base.ToString() + " { " + string.Format("{0} -> {1}", Source, Target) + " }";
     }
 }

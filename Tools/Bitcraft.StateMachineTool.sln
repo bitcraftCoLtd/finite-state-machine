@@ -1,17 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Windows Desktop
-VisualStudioVersion = 12.0.30723.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcraft.StateMachineTool", "Bitcraft.StateMachineTool\Bitcraft.StateMachineTool.csproj", "{794F456B-7DED-49BB-81CA-6F5164C79E3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitcraft.ToolKit.CodeGeneration", "Bitcraft.ToolKit.CodeGeneration\Bitcraft.ToolKit.CodeGeneration.csproj", "{DA3FCE27-8B35-40C8-9528-608B0455A228}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcraft.StateMachineTool.yWorks", "Bitcraft.StateMachineTool.yWorks\Bitcraft.StateMachineTool.yWorks.csproj", "{0AA9B9F7-01C2-4493-8877-424D203B5C1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitcraft.StateMachineTool.yWorks", "Bitcraft.StateMachineTool.yWorks\Bitcraft.StateMachineTool.yWorks.csproj", "{4483AD4A-C814-4CD1-BC76-F2D3226B205F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcraft.StateMachineTool.CodeGenerators", "Bitcraft.StateMachineTool.CodeGenerators\Bitcraft.StateMachineTool.CodeGenerators.csproj", "{83F3E723-811A-46AB-B48A-540F6E0AC263}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitcraft.StateMachineTool.Core", "Bitcraft.StateMachineTool.Core\Bitcraft.StateMachineTool.Core.csproj", "{33BED10F-D563-405F-96A9-EE989782FDA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcraft.ToolKit.CodeGeneration", "Bitcraft.ToolKit.CodeGeneration\Bitcraft.ToolKit.CodeGeneration.csproj", "{E7BD071A-2441-4213-B427-FFA7AECB7DF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitcraft.StateMachineTool.CodeGenerators", "Bitcraft.StateMachineTool.CodeGenerators\Bitcraft.StateMachineTool.CodeGenerators.csproj", "{1162BA42-CE2D-4A53-B2A1-F2D63A4E9303}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcraft.StateMachineTool.Core", "Bitcraft.StateMachineTool.Core\Bitcraft.StateMachineTool.Core.csproj", "{0B04F94E-08F3-416C-BD97-DD7943ED15E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitcraft.StateMachineTool", "Bitcraft.StateMachineTool\Bitcraft.StateMachineTool.csproj", "{08747EF0-82BC-4F29-8841-91F0F890A630}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0DEDB3F5-DB94-443A-9EF4-7BD30DB74A7C}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,28 +24,31 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{794F456B-7DED-49BB-81CA-6F5164C79E3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{794F456B-7DED-49BB-81CA-6F5164C79E3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{794F456B-7DED-49BB-81CA-6F5164C79E3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{794F456B-7DED-49BB-81CA-6F5164C79E3E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0AA9B9F7-01C2-4493-8877-424D203B5C1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0AA9B9F7-01C2-4493-8877-424D203B5C1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0AA9B9F7-01C2-4493-8877-424D203B5C1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0AA9B9F7-01C2-4493-8877-424D203B5C1C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{83F3E723-811A-46AB-B48A-540F6E0AC263}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{83F3E723-811A-46AB-B48A-540F6E0AC263}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{83F3E723-811A-46AB-B48A-540F6E0AC263}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{83F3E723-811A-46AB-B48A-540F6E0AC263}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E7BD071A-2441-4213-B427-FFA7AECB7DF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E7BD071A-2441-4213-B427-FFA7AECB7DF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E7BD071A-2441-4213-B427-FFA7AECB7DF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E7BD071A-2441-4213-B427-FFA7AECB7DF6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0B04F94E-08F3-416C-BD97-DD7943ED15E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B04F94E-08F3-416C-BD97-DD7943ED15E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0B04F94E-08F3-416C-BD97-DD7943ED15E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0B04F94E-08F3-416C-BD97-DD7943ED15E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA3FCE27-8B35-40C8-9528-608B0455A228}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA3FCE27-8B35-40C8-9528-608B0455A228}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA3FCE27-8B35-40C8-9528-608B0455A228}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA3FCE27-8B35-40C8-9528-608B0455A228}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4483AD4A-C814-4CD1-BC76-F2D3226B205F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4483AD4A-C814-4CD1-BC76-F2D3226B205F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4483AD4A-C814-4CD1-BC76-F2D3226B205F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4483AD4A-C814-4CD1-BC76-F2D3226B205F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33BED10F-D563-405F-96A9-EE989782FDA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33BED10F-D563-405F-96A9-EE989782FDA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33BED10F-D563-405F-96A9-EE989782FDA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33BED10F-D563-405F-96A9-EE989782FDA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1162BA42-CE2D-4A53-B2A1-F2D63A4E9303}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1162BA42-CE2D-4A53-B2A1-F2D63A4E9303}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1162BA42-CE2D-4A53-B2A1-F2D63A4E9303}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1162BA42-CE2D-4A53-B2A1-F2D63A4E9303}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08747EF0-82BC-4F29-8841-91F0F890A630}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08747EF0-82BC-4F29-8841-91F0F890A630}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08747EF0-82BC-4F29-8841-91F0F890A630}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08747EF0-82BC-4F29-8841-91F0F890A630}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {020CFEA1-3ACA-4103-A73F-8C0CEFFFE27C}
 	EndGlobalSection
 EndGlobal

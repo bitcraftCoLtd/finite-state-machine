@@ -22,7 +22,7 @@ namespace Bitcraft
             /// <summary>
             /// Gets the target state token. (state active before transition)
             /// </summary>
-            StateToken* TargetStateToken;
+            const StateToken* TargetStateToken;
 
             /// <summary>
             /// Gets the data provided from the target state, for the source state.

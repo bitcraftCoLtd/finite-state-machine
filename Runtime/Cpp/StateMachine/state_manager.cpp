@@ -5,6 +5,8 @@
 #include "state_data.h"
 #include "exceptions.h"
 
+using namespace std;
+
 namespace Bitcraft
 {
     namespace StateMachine
@@ -19,7 +21,7 @@ namespace Bitcraft
             return _currentState;
         }
 
-        StateToken* StateManager::GetCurrentStateToken()
+        const StateToken* const StateManager::GetCurrentStateToken() const
         {
             return _currentState != NULL ? _currentState->GetToken() : NULL;
         }
@@ -57,9 +59,9 @@ namespace Bitcraft
             PerformTransitionTo(initialState, data);
         }
 
-        void StateManager::PerformTransitionTo(StateToken* stateToken, StateData* data)
+        void StateManager::PerformTransitionTo(const StateToken* stateToken, StateData* data)
         {
-            StateToken* targetStateToken = stateToken;
+            const StateToken* targetStateToken = stateToken;
             StateData* targetData = data;
 
             while (true)
@@ -73,7 +75,7 @@ namespace Bitcraft
             }
         }
 
-        TransitionInfo* StateManager::TransitionTo(StateToken* stateToken, StateData* data)
+        TransitionInfo* StateManager::TransitionTo(const StateToken* const stateToken, StateData* data)
         {
             if (stateToken == NULL)
                 throw new invalid_argument("Invalid 'stateToken' argument.");
@@ -105,13 +107,16 @@ namespace Bitcraft
             return stateEnterEventArgs.GetRedirect();
         }
 
-        StateBase* StateManager::FindState(StateToken* token)
+        StateBase* StateManager::FindState(const StateToken* const token)
         {
+            if (token == NULL)
+                throw new invalid_argument("Invalid 'stateToken' argument.");
+
             for (list<StateBase*>::const_iterator it = _states.begin(), end = _states.end(); it != end; it++)
             {
                 StateBase* currentState = *it;
 
-                StateToken* currentToken = currentState->GetToken();
+                const StateToken* const currentToken = currentState->GetToken();
                 if (currentToken == NULL)
                     continue;
 

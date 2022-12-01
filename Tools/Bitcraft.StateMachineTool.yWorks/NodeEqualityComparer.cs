@@ -1,27 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Bitcraft.StateMachineTool.Core;
+﻿using Bitcraft.StateMachineTool.Core;
 
-namespace Bitcraft.StateMachineTool.yWorks
+namespace Bitcraft.StateMachineTool.yWorks;
+
+public class NodeEqualityComparer : IEqualityComparer<INode>
 {
-    public class NodeEqualityComparer : IEqualityComparer<INode>
+    public bool Equals(INode? x, INode? y)
     {
-        public bool Equals(INode x, INode y)
-        {
-            if (x == null || y == null)
-                return false;
+        if (x == null || y == null)
+            return false;
 
-            return x.Semantic == y.Semantic;
-        }
+        return x.Semantic == y.Semantic;
+    }
 
-        public int GetHashCode(INode obj)
-        {
-            if (obj == null || obj.Semantic == null)
-                return 0;
-            return obj.Semantic.GetHashCode();
-        }
+    public int GetHashCode(INode? obj)
+    {
+        if (obj == null || obj.Semantic == null)
+            return 0;
+
+        return obj.Semantic.GetHashCode();
     }
 }

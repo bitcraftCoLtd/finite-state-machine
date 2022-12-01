@@ -2,15 +2,15 @@
 
 ## Information
 
-Last update: 2016/11/22
+Last update: 2022/11/29
 
-All the solutions and projects in this repository are made with Microsoft Visual Studio 2013 Community Edition, and open seamlessly with Visual Studio 2015 Community Edition.
+The solutions and projects in the `./Runtime` directory are made with Microsoft Visual Studio 2013 Community Edition, and open seamlessly with Visual Studio 2015 Community Edition and Visual Studio 2022 Community Edition.
 
-Not yet tested with Visual Studio 2017 RC Community Edition.
+The solution and projects in the `./Tools` directory are made with Microsoft Visual Studio 2022 Community Edition, and require C# 11 to build and .NET 7.0+ to run. The solution can be opened with Visual Studio Code.
 
 ## Overview
 
-The StateMachine provided by [bitcraft](https://www.bitcraft.co.jp) contains a runtime library for C#, C++ and JavaScript (a TypeScript implementation trial is also available, but has never been tested), and a tool to generate finite state machine source code (C# only) from a .graphml diagram file.
+The StateMachine provided by [AX](https://axinc.jp) contains a runtime library for C#, C++ and JavaScript (a TypeScript implementation trial is also available, but has never been tested), and a tool to generate finite state machine source code (C# and C++ only) from a .graphml diagram file.
 
 A state machine is composed of a state manager (`StateManager` class) and states (`StateBase` abstract class). Each state have handlers that perform transitions based on actions.
 
@@ -18,7 +18,7 @@ The states and actions are identified by what is called a *token*. They are resp
 
 When a state machine is instanced the first time, it instances all its states and set the initial state.
 Then, when an action occurs, the state machine tells the current state about the action.
-In the current state, the handler corresponding to the action is called, and it has to decide to which state to move on, based on that action. The next state to move on is identified thanks to its `StateToken`, not to its instance.
+In the current state, the handler corresponding to the action is called, and it has to decide to which state to move on, based on that action. The next state to move to is identified thanks to its `StateToken`, not to its instance.
 
 Then the process repeats.
 
@@ -26,10 +26,10 @@ Then the process repeats.
 
 Create tokens to identify states and actions, using respectively the `StateToken` class and the `ActionToken` class.
 
-Then create states inheriting from the `StateBase` class. Implement the state transitions in each state in the virtual `OnInitialize` method, using the `RegisterActionHandler` method.
+Then create states inheriting from the `StateBase` class. Implement the state transitions in each state in the virtual `OnInitialized` method, using the `RegisterActionHandler` method.
 In your action handlers, use the callback provided to tell the state machine where to transition to.
 
-Finally, instanciate a `StateManager` class, register the states using its `RegisterState` method, and call its `SetInitialState` method to provide an entry point to the state machine.
+Finally, instantiate a `StateManager` class, register the states using its `RegisterState` method, and call its `SetInitialState` method to provide an entry point to the state machine.
 
 Once all that is done, you are good to go and can call `PerformAction` method on the `StateManager` class to start having your state machine do its job.
 
@@ -37,28 +37,28 @@ Once all that is done, you are good to go and can call `PerformAction` method on
 
 ### C\#
 
-The C# runtime library is created using .NET 3.5 in order to run on a wide range of platforms.
+The C# runtime library is created using .NET Framework 3.5 in order to run on a wide range of platforms.
 It builds with `Any CPU` configuration, so it is totally architecture independent.
 
-The runtime is in the folder `Runtime\CSharp` and tools are in the `Tools` folder.
+The runtime is in the folder `Runtime/CSharp` and tools are in the `Tools` folder.
 
 ### C++
 
-The C++ runtime library uses the STL for map, and that's pretty much it in term of high level features. The code should build on almost any platforms and architectures.
+The C++ runtime library uses the STL for `map` and `func`, and that's pretty much it in term of high level features. The code should build on almost any platforms and architectures.
 
-The runtime is in the folder `Runtime\Cpp`.
+The runtime is in the folder `Runtime/Cpp`.
 
 ### JavaScript
 
 The JavaScript implementation uses only one `module.exports`, so commenting it out makes the state machine ready for browsers or embedded JavaScript engines.
 
-The runtime is in the folder `Runtime\JavaScript`.
+The runtime is in the folder `Runtime/JavaScript`.
 
 ### TypeScript
 
 This is a trial for fun and have never been tested.
 
-The runtime is in the folder `Runtime\TypeScript`.
+The runtime is in the folder `Runtime/TypeScript`.
 
 ## Runtime
 
@@ -74,7 +74,13 @@ In the following document, a shopping cart is used as sample for the purpose of 
 
 All the runtime types are located in the namespace `Bitcraft.StateMachine`.
 
-    using Bitcraft.StateMachine;
+```cs
+using Bitcraft.StateMachine;
+```
+
+```cpp
+using namespace Bitcraft::StateMachine;
+```
 
 #### StateManager
 
@@ -89,29 +95,33 @@ The `StateToken` and `ActionToken` classes inherit from the `Token` class, and a
 
 The recommended way is to use separated containers, and named matching the related state machine, as follow:
 
-    public static class BasketStateTokens
-    {
-        public static readonly StateToken ProductList = new StateToken("Product List");
-        public static readonly StateToken Payment = new StateToken("Payment");
-        public static readonly StateToken Confirmation = new StateToken("Confirmation");
-        public static readonly StateToken ThankYouScreen = new StateToken("Thank you!");
-        ...
-    }
+```cs
+public static class BasketStateTokens
+{
+    public static readonly StateToken ProductList = new StateToken("Product List");
+    public static readonly StateToken Payment = new StateToken("Payment");
+    public static readonly StateToken Confirmation = new StateToken("Confirmation");
+    public static readonly StateToken ThankYouScreen = new StateToken("Thank you!");
+    ...
+}
+```
 
 The string provided to the `Token` constructor is purely informative, this is a display name and absolutely not the `Token`'s identity.
 `Token` identity is based on the `Guid` type.
 
 The constructor of `ActionToken` can also take an informative string as parameter.
 
-    public static class BasketActionTokens
-    {
-        public static readonly ActionToken GoToProductList = new ActionToken();
-        public static readonly ActionToken GoToPaymentScreen = new ActionToken();
-        public static readonly ActionToken GoToConfirmation = new ActionToken();
-        public static readonly ActionToken PurchaseConfirmed = new ActionToken();
-        public static readonly ActionToken PurchaseCancelled = new ActionToken();
-        ...
-    }
+```cs
+public static class BasketActionTokens
+{
+    public static readonly ActionToken GoToProductList = new ActionToken();
+    public static readonly ActionToken GoToPaymentScreen = new ActionToken();
+    public static readonly ActionToken GoToConfirmation = new ActionToken();
+    public static readonly ActionToken PurchaseConfirmed = new ActionToken();
+    public static readonly ActionToken PurchaseCancelled = new ActionToken();
+    ...
+}
+```
 
 #### States
 
@@ -121,79 +131,88 @@ Then to create concrete specific states based on that common base state instead 
 
 For a state machine that implements a shopping cart, you may create the following class hierarchy:
 
-    public abstract class BasketStateBase : StateBase
+```cs
+public abstract class BasketStateBase : StateBase
+{
+    protected BasketStateBase(StateToken token)
+        : base(token)
     {
-        protected BasketStateBase(StateToken token)
-            : base(token)
-        {
-        }
-
-        ...
     }
+
+    ...
+}
+```
 
 Then:
 
-    public class ProductListBasketState : BasketStateBase
+```cs
+public class ProductListBasketState : BasketStateBase
+{
+    public ProductListBasketState()
+        : base(BasketStateTokens.ProductList)
     {
-        public ProductListBasketState()
-            : base(BasketStateTokens.ProductList)
-        {
-        }
-
-        ...
     }
 
-    public class PaymentBasketState : BasketStateBase
-    {
-        public PaymentBasketState()
-            : base(BasketStateTokens.Payment)
-        {
-        }
+    ...
+}
 
-        ...
+public class PaymentBasketState : BasketStateBase
+{
+    public PaymentBasketState()
+        : base(BasketStateTokens.Payment)
+    {
     }
 
-    public class ConfirmationBasketState : BasketStateBase
-    {
-        public ConfirmationBasketState()
-            : base(BasketStateTokens.Confirmation)
-        {
-        }
+    ...
+}
 
-        ...
+public class ConfirmationBasketState : BasketStateBase
+{
+    public ConfirmationBasketState()
+        : base(BasketStateTokens.Confirmation)
+    {
     }
 
-With an intermediate state, you can implement the *any state* pattern easily.
+    ...
+}
+```
+
+With an intermediate state class, you can implement the *any state* pattern easily.
 
 As you can see, each specific state describes its own identity through a `StateToken` instance.
 
 A state have to register action handlers, they tell the state machine of which actions the current state is aware of.
-This is best done in the `OnInitialize()` virtual method.
+This is best done in the `OnInitialized()` virtual method.
 
-    public class PaymentBasketState : BasketStateBase
+```cs
+public class PaymentBasketState : BasketStateBase
+{
+    public PaymentBasketState()
+        : base(BasketStateTokens.Payment)
     {
-        public PaymentBasketState()
-            : base(BasketStateTokens.Payment)
-        {
-        }
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            RegisterActionHandler(BasketActionTokens.GoToConfirmation, OnGoToConfirmationAction);
-        } //                                                           |
-          //         +-------------------------------------------------+
-          //         |
-          //         V
-        private void OnGoToConfirmationAction(object data, Action<StateToken> callback)
-        {
-            callback(BasketStateTokens.Confirmation);
-        }
-
-        ...
     }
 
-Two things here. First the `OnInitialize()` virtual method overridden with registration of an action handler.
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        RegisterActionHandler(BasketActionTokens.GoToConfirmation, OnGoToConfirmationAction);
+    } //                                                           |
+      //         +-------------------------------------------------+
+      //         |
+      //         V
+    private void OnGoToConfirmationAction(object data, Action<StateToken> callback)
+    {
+        // Do something.
+
+        callback(BasketStateTokens.Confirmation);
+    }
+
+    ...
+}
+```
+
+Two things here. First the `OnInitialized()` virtual method overridden with registration of an action handler.
 This registration says "if you ask me to go to confirmation screen, I know *what to do*, otherwise you will not go any further".
 
 The second thing is the "what to do" from the previous sentence.
@@ -205,50 +224,57 @@ The *callback* provided to the handler can be called later.
 During this delay phase, all subsequent calls to the `PerformAction()` method will return the `ActionResultType.ErrorAlreadyPerformingAction` value.
 
 Note that the delayed transition feature is only available in the C# and JavaScript runtimes.
-For the C++ and the TypeScript runtimes, the state machine have to be pulsed.
+For the C++ and the TypeScript runtimes, the state machine has to be pulsed.
 
 One very very important thing here is, when a handler is called, the callback **MUST** be called at least once.
 If you call it more than once, the subsequent calls are ignored, but if you do not call it at all, the state machine keeps waiting and thus gets locked because, once again, all subsequent calls to the `PerformAction()` method will return the `ActionResultType.ErrorAlreadyPerformingAction` value, and thus no other transitions will be permitted.
 
 One last thing about action handlers, it is possible to register an action handler that allows you to provide custom data to the target state, by registering the action handler as follow:
 
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        RegisterActionHandler(BasketActionTokens.GoToConfirmation, OnGoToConfirmationAction);
-    }
+```cs
+protected override void OnInitialized()
+{
+    base.OnInitialized();
 
-    //                                                                    ------ additional argument here
-    private void OnGoToConfirmationAction(object data, Action<StateToken, object> callback)
-    {
-        //                                       ----------------- a different custom value can be provided
-        callback(BasketStateTokens.Confirmation, anotherCustomData);
-    }
+    RegisterActionHandler(BasketActionTokens.GoToConfirmation, OnGoToConfirmationAction);
+}
+
+//                                                                    ------ additional argument here
+private void OnGoToConfirmationAction(object data, Action<StateToken, object> callback)
+{
+    //                                       ----------------- a different custom value can be provided
+    callback(BasketStateTokens.Confirmation, anotherCustomData);
+}
+```
 
 #### All together
 
 The last step is to stick everything together.
-Instanciate a `StageManager` object, register states and set the initial state, as follow:
+Instantiate a `StageManager` object, register states and set the initial state, as follow:
 
-    var fsm = new StateManager();
+```cs
+var fsm = new StateManager();
 
-    fsm.RegisterState(new ProductListBasketState());
-    fsm.RegisterState(new PaymentBasketState());
-    fsm.RegisterState(new ConfirmationBasketState());
+fsm.RegisterState(new ProductListBasketState());
+fsm.RegisterState(new PaymentBasketState());
+fsm.RegisterState(new ConfirmationBasketState());
 
-    fsm.SetInitialState(BasketStateTokens.ProductList);
+fsm.SetInitialState(BasketStateTokens.ProductList);
+```
 
 If you opted for a custom child `StateManager` class, you can register states in the constructor:
 
-    public class BasketStateMachine : StateManager
+```cs
+public class BasketStateMachine : StateManager
+{
+    public BasketStateMachine()
     {
-        public BasketStateMachine()
-        {
-            RegisterState(new ProductListBasketState());
-            RegisterState(new PaymentBasketState());
-            RegisterState(new ConfirmationBasketState());
-        }
+        RegisterState(new ProductListBasketState());
+        RegisterState(new PaymentBasketState());
+        RegisterState(new ConfirmationBasketState());
     }
+}
+```
 
 Calling the `SetInitialState()` method in the constructor is not recommended because you may need to set a different initial state according to some conditions, for example for testing and debugging purpose you may want to start directly from a certain state to save time.
 
@@ -256,17 +282,17 @@ Calling the `SetInitialState()` method in the constructor is not recommended bec
 
 Once everything is in place, what remains is simply to use the state machine in order to make it do something.
 The way to use the state machine is simply to call one method, `PerformAction()` and that's it.
-When using a finite state machine, you are not telling the state machine in which state to move on, you just tell it what you are doing, and it is up to the state machine to tell you if you are doing things good or not.
+When using a finite state machine, you are not telling the state machine in which state to move to, you just tell it what you are doing, and it is up to the state machine to tell you if you are doing things good or not.
 
 When you call the `PerformAction()` method, you give it an `ActionToken` parameter in order to describe what you are doing.
-If needed you can give an additional data, this is described in a section bellow.
+If needed, you can give an additional data, this is described in a section below.
 
 The `PerformAction()` method returns an `ActionResultType` enumeration value, which can be:
 
 - `Success` meaning the current state was aware of the action you performed and that transition happened
-- `ErrorUnknownAction` meaning the current state in unaware of what you want to do
+- `ErrorUnknownAction` meaning the current state is unaware of what you want to do
 - `ErrorAlreadyPerformingAction` meaning a state transition is in progress and decision has been purposely delayed and still under way
-- `ErrorForbiddenFromSpecialEvents` meaning that calls to `PerformAction()` are forbidden during `OnInitialize`, `OnEnter`, `OnExit`, `OnStateChanged` and `OnCompleted` events.
+- `ErrorForbiddenFromSpecialEvents` meaning that calls to `PerformAction()` are forbidden during `OnInitialized`, `OnEnter`, `OnExit`, `OnStateChanged` and `OnCompleted` events.
 
 #### More details
 
@@ -301,7 +327,7 @@ A specific data can also be provided to the state machine when calling the `SetI
 
 Eventually, data can be provided by a state to another.
 When a state is given data, and that state redirects to another state, the same data is automatically forwarded to the redirected state.
-You can always change this behaviour if needed.
+You can always change this behavior if needed.
 
 ##### Overrides
 
@@ -312,12 +338,12 @@ The `StateManager` class has the following virtual methods:
 - `OnStateChanged()` is called each time the state machine transition from a state to another.
     - This method receives a `StateChangedEventArgs` argument that contains:
         - `OldState` that represent the state that was active before the transition.
-        - `NewState` that represent the state that is active after the transaition.
+        - `NewState` that represent the state that is active after the transition.
 - `OnCompleted()` is called when the state machine has reach its terminal state and is over.
 
 The `StateBase` class has the following virtual methods:
 
-- `OnInitialize()` that is called once the state has been attached to a state machine.
+- `OnInitialized()` that is called once the state has been attached to a state machine.
 - `OnEnter()` is called just after the state machine has changed its internal state to the current state.
     - This method receives a `StateEnterEventArgs` argument that contains:
         - `From` telling the origin state from which the transition is happening.
@@ -328,7 +354,7 @@ The `StateBase` class has the following virtual methods:
         - `To` telling the destination state to which the transition is happening.
         - `Data` which is an optional custom data.
 
-You basically uses the `OnInitialize()` method to register action handlers, the `OnEnter()` method to start initializing what is needed for the current state life cycle, and `OnExit()` to clean up the current state related things.
+You basically use the `OnInitialized()` method to register action handlers, the `OnEnter()` method to start initializing what is needed for the current state life cycle, and `OnExit()` to clean up the current state related things.
 
 ##### Partial methods
 
@@ -353,28 +379,30 @@ When you need to change state to another state from within the `OnEnter()` metho
 Instead, you have to tell the state machine to directly redirect to a given state by setting the `TargetStateToken` property of the `Redirect` property of the event given as parameter.
 Hereafter is an example.
 
-    public class PaymentBasketState : BasketStateBase
+```cs
+public class PaymentBasketState : BasketStateBase
+{
+    public PaymentBasketState()
+        : base(BasketStateTokens.Payment)
     {
-        public PaymentBasketState()
-            : base(BasketStateTokens.Payment)
-        {
-        }
-
-        ...
-
-        protected override void OnEnter(StateEnterEventArgs e)
-        {
-            base.OnEnter(e);
-
-            if (isFastBuyOptionActivated)
-            {
-                e.Redirect.TargetStateToken = BasketStateTokens.ThankYouScreen;
-                // e.Redirect.TargetStateData = ... you can also optionally set a data to be forwarded
-            }
-        }
-
-        ...
     }
+
+    ...
+
+    protected override void OnEnter(StateEnterEventArgs e)
+    {
+        base.OnEnter(e);
+
+        if (isFastBuyOptionActivated)
+        {
+            e.Redirect.TargetStateToken = BasketStateTokens.ThankYouScreen;
+            // e.Redirect.TargetStateData = ... you can also optionally set a data to be forwarded
+        }
+    }
+
+    ...
+}
+```
 
 Here, when the `PaymentBasketState` becomes active, it checks whether the user has activated the fast buy option, and if yes, it requests the state machine to directly move to the "Thank you" screen, skipping the confirmation state.
 
@@ -393,14 +421,14 @@ When you need to delay a transition, hereafter are the steps to follow:
 
 ## Tools
 
-[bitcraft](https://www.bitcraft.co.jp) offers a tool to generate base state machine code (sub class of state manager, state tokens, action tokens, specific states and handler registration) from a .graphml diagram file.
+[AX](https://axinc.jp) offers a tool to generate base state machine code (sub class of state manager, state tokens, action tokens, specific states and handler registration) from a .graphml diagram file.
 
-Note that the tool only generates C# code.
-Generating JavaScript makes few sense, and generating C++ is not planned to be developed, so if you need this feature, please implement it by yourself, based on what the tool already provides.
+Note that the tool only generates C# and C++ code.
+Generating JavaScript makes few sense, so if you need this feature, please implement it by yourself, based on what the tool already provides.
 
-The diagram tool used is yEd from yWorks: [Download page](http://www.yworks.com/products/yed/download)
+The diagram tool used is yEd from yWorks: [Download page](https://www.yworks.com/products/yed/download)
 
-For the moment, no other tool has been tested, neither other .graphml files generated with other tools.
+For the moment, no other tools has been tested, neither other .graphml files generated with other tools.
 
 ### Libraries overview
 
@@ -473,51 +501,60 @@ In the *General* section, the *Number of Nodes* and *Number of Edges* properties
 
 Hereafter is the usage of the tool you get when providing it the *-help* argument.
 
-       -version    Shows current version number.
-          -help    Shows this help.
+```
+    -version Shows current version number.
+       -help Shows this help.
 
-          -file    <file> sets the input graph description file.
+       -file <file> sets the input graph description file.
 
-            -ns    <namespace> sets the namespace of generated files.
-                   If not set, the classes are generated without namespace.
+         -ns <namespace> sets the namespace of generated files.
+             If not set, the classes are generated without namespace.
 
-          -name    <name> sets the name of the state machine.
-                   It is used to prefix some classes or other code elements.
-                   If it is not set, the name defined in the graph file is used.
-                   When both are not defined, an error is displayed and code
-                   generation is aborted.
+       -name <name> sets the name of the state machine.
+             It is used to prefix some classes or other code elements.
+             If it is not set, the name defined in the graph file is used.
+             When both are not defined, an error is displayed and code
+             generation is aborted.
 
-           -out    <folder> sets the output folder where code is generated.
-                   If it is not set, the output folder is the folder where the graph
-                   file is located.
+        -out <folder> sets the output folder where code is generated.
+             If it is not set, the output folder is the folder where the graph
+             file is located.
 
-        -fromwd    If -out parameter is set, then:
-                       If <folder> is absolute, the flag -fromwd is ignored.
-                       If <folder> is relative, then:
-                           If -fromwd flag is not set, then <folder> is relative to the graph file directory.
-                           If -fromwd flag is set, then <folder> is relative to the current working directory.
-                   If -out parameter is not set, then:
-                       If -fromwd flag is set, then the output folder is the current working directory.
-                       If -fromwd flag is not set, then the output folder is the graph file directory.
+     -fromwd If -out parameter is used, then:
+                 If <folder> is absolute, the flag -fromwd is ignored.
+                 If <folder> is relative, then:
+                     If -fromwd flag is not set, then <folder> is relative to
+                       the graph file directory.
+             If -out parameter is not used, then:
+                 If -fromwd flag is set, then the output folder is the
+                   current working directory.
+                 If -fromwd flag is not set, then the output folder is the
+                   graph file directory.
 
-          -init    <state> generates the SetInitialState(<state>) call.
-                   If not set, the IsInitialState flag from the .graphml file is used, if any.
+       -init <state> generates the SetInitialState(<state>) call.
+             If not set, the IsInitialState flag from
+             the .graphml file is used, if any.
 
-     -statebase    Make all generated state classes to inherit from
-                   Bitcraft.StateMachine.StateBase class instead of from
-                   <name>StateBase, where <name> is given by -name option.
+  -statebase Makes all generated state classes to inherit from
+             Bitcraft.StateMachine.StateBase class instead of from
+             <name>StateBase.
 
-      -internal    Makes all exposed types internal instead of public.
+   -internal Makes all exposed types internal instead of public
 
-Only the **-file** argument is mandatory, all others are optional.
+     -custom <key>=<value> creates a custom key/value pair.
+             Custom key/values are transmitted as is to source code generators
+             for them to decide to ignore them or interpret them as they want.
+```
 
-- If the *-name* argument is provided, it overrides the name of the state machine set in the graph file.
-- If the *-statebase* argument is provided, it tells the generator that you do not want an intermediate state class for each states of the state machine.
+Only the `-file` argument is mandatory, all others are optional.
 
-All the default values are set to what people should need in most of cases, so that allow you to simply drag and drop you graph file on the tool executable to get your code generated.
+- If the `-name` argument is provided, it overrides the name of the state machine set in the graph file.
+- If the `-statebase` argument is provided, it tells the generator that you do not want an intermediate state class for each states of the state machine.
 
-Maybe only the *-ns* parameter can be a problem, because in most of cases you want a namespace, but it is impossible for the tool to guess the good default value for you.
-If like me you feel lazy, you can patch the code to force the *-ns* value to what you want so you can still get the code you want with a simple drag and drop.
+All the default values are set to what people should need in most of cases, so that allows you to simply drag and drop you graph file on the tool executable to get your code generated.
+
+Maybe only the `-ns` parameter can be a problem, because in most cases, you want a namespace, but it is impossible for the tool to guess the good default value for you.
+If like me you feel lazy, you can patch the code to force the `-ns` value to what you want so you can still get the code you want with a simple drag and drop.
 
 ## Annex
 
@@ -526,27 +563,35 @@ If like me you feel lazy, you can patch the code to force the *-ns* value to wha
 At the end of the `stateManager.js` file, remove the `module.exports = fsm;` statement if you run the code in a browser or embedded JavaScript engine.
 Keep the code as is if you run it in NodeJS.
 
-A sample is provided in the folder `Runtime\JavaScript\Tester` and can be run with NodeJS with the following command:
+A sample is provided in the folder `Runtime/JavaScript/Tester` and can be run with NodeJS with the following command:
 
-    > node app.js
+```sh
+> node app.js
+```
 
 #### Token
 
-The namespace of the JavaScript runtime is `fsm`, and there is only an `ACTION\_RESULT\_TYPE` enum and the `StateManager` class.
+The namespace of the JavaScript runtime is `fsm`, and there is only an `ACTION_RESULT_TYPE` enum and the `StateManager` class.
 
-In the JavaScript runtime, there is no base classes such as `Token` or `StateBase`, so the way to describe a `token` is to create an `object` with a `number` member named `id` and a `string` member named `name`.
+In the JavaScript runtime, there is no base classes such as `Token` or `StateBase`, so the way to describe a `token` is to create an object with a `number` member named `id` and a `string` member named `name`.
 
-    var stateToken1 = { id: 3, name: 'My State' }; // state token
-    var actionToken1 = { id: 51, name: 'My Action' }; // action token
+```js
+let stateToken1 = { id: 3, name: 'My State' }; // state token
+let actionToken1 = { id: 51, name: 'My Action' }; // action token
+```
 
 You can use helper functions such as `fsm.StateManager.nextId()` to get the next unique identifier.
 
-    var stateToken2 = { id: fsm.StateManager.nextId(), name: 'Another State' };
+```js
+let stateToken2 = { id: fsm.StateManager.nextId(), name: 'Another State' };
+```
 
 Or you can even directly create a token using the `fsm.StateManager.makeToken()` helper function.
 
-    var stateToken3 = fsm.StateManager.makeToken('Yet Another State');
-    var actionToken2 = fsm.StateManager.makeToken('Yet Another Action');
+```js
+let stateToken3 = fsm.StateManager.makeToken('Yet Another State');
+let actionToken2 = fsm.StateManager.makeToken('Yet Another Action');
+```
 
 The latter is recommended because you should not try to control the value of the `id` by yourself, it is for state machine internal usage only.
 
@@ -565,27 +610,30 @@ In an action handler function of a state where you receive the data and the deci
 
 Let's see with simple examples:
 
-    onNext: function (data, cb) {
-        'use strict';
-        cb(StateTokens.UPDATE);
-    }
+```js
+onNext: function (data, cb) {
+    cb(StateTokens.UPDATE);
+}
+```
 
 The way the callback is used means the state machine transition to the `UPDATE` state.
 The fact you do not provide data does not mean `null` or `undefined` is passed, it means the given custom data is passed through to the next state automatically.
 
-    onNext: function (data, cb) {
-        'use strict';
-        cb(StateTokens.UPDATE, 51);
-    }
+```js
+onNext: function (data, cb) {
+    cb(StateTokens.UPDATE, 51);
+}
+```
 
-The way the callback is used in this case means the state machine transition to the `UPDATE` state, and the new 51 custom data is given to the next state.
+The way the callback is used in this case means the state machine transition to the `UPDATE` state, and the new `51` custom data (numeric value) is given to the next state.
 
 If you have no data to provide but you do not want the previous custom data to flow through, then you have to explicitly pass `null` or `undefined`, like this:
 
-    onNext: function (data, cb) {
-        'use strict';
-        cb(StateTokens.UPDATE, null);
-    }
+```js
+onNext: function (data, cb) {
+    cb(StateTokens.UPDATE, null);
+}
+```
 
 ### C++ runtime
 
@@ -594,37 +642,21 @@ If you have no data to provide but you do not want the previous custom data to f
 For language reason, the C++ runtime cannot delay state transition decision.
 The transition to the next state must be decided in the action handler.
 
-When you declare an action handler, you have to provide a non class member static function, as follow:
+### Generate C++ code
 
-    static void OnGotoState1(StateBase* self, StateData* data, TransitionInfo* result)
+When generating C++ code with the code generation tool, you need to provide custom arguments via the `-custom` option:
 
-And register it this way:
+- `ProjectRelativePathPrefix`: This is a relative path prefixed to all `#include` statements generated to find the state machine runtime headers.
+- `GeneratedCodeRelativePathPrefix`: This is a relative path prefixed to all `#include` statements generated to find generated header files.
 
-    RegisterActionHandler(TestActionTokens::GoToState1Action, OnGotoState1);
+You can also provide an optional custom option `StateMachineRelativePathPrefix` if you want to prefix include of the state machine header files.
 
-The state machine automatically provides an instance of the current state to the function when it calls it, so you can make it look like it was a member method.
+If it is not clear to you which values to path, have a try something that sounds pertinent to you, run the tool and see what's produced, and then adjust accordingly and retry.
 
-So in the handler, you have to cast *self* into the type of your state, not a big deal.
-You can still access the non public members if the function is declared into the class.
+Example of usage of the `-custom` option
 
-    class TestState3 : public StateBase
-    {
-    public:
-
-        void OnInitialize() override
-        {
-            RegisterActionHandler(TestActionTokens::GoToState1Action, OnGotoState1);
-        }
-
-        static void OnGotoState1(StateBase* self, StateData* data, TransitionInfo* result)
-        {
-            TestState3* that = (TestState3*)self;
-            that->test = 1; // <- access allowed
-
-            result->TargetStateToken = TestStateTokens::StateToken1;
-        }
-
-    private:
-
-        int test = 0;
-    };
+```
+<tool> ... \
+    -custom ProjectRelativePathPrefix=MyProject/XxxStateMachine \
+    -custom GeneratedCodeRelativePathPrefix=MyProject/XxxStateMachine/Generated
+```

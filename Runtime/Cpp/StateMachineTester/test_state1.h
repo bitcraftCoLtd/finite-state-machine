@@ -17,14 +17,16 @@ public:
         _alreadyPassed = false;
     }
 
-    void OnInitialize() override
+    void OnInitialized() override
     {
-        RegisterActionHandler(TestActionTokens::GoToState2Action, OnGoToState2);
+        RegisterActionHandler(TestActionTokens::GoToState2Action, [this](StateData* data, TransitionInfo* result) {
+            this->OnGoToState2(data, result);
+        });
     }
 
     void OnEnter(StateEnterEventArgs* e) override
     {
-        StateToken* from = e->GetFrom();
+        const StateToken* const from = e->GetFrom();
 
         printf("State '%S': OnEnter(from '%S')\n", GetToken()->ToString(), from != NULL ? from->ToString() : L"(null)");
 
@@ -34,7 +36,7 @@ public:
         _alreadyPassed = true;
     }
 
-    static void OnGoToState2(StateBase* self, StateData* data, TransitionInfo* result)
+    void OnGoToState2(StateData* data, TransitionInfo* result)
     {
         result->TargetStateToken = TestStateTokens::StateToken2;
     }

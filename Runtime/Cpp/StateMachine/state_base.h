@@ -1,15 +1,15 @@
 #ifndef __BITCRAFT_STATEMACHINE_STATE_BASE_H__
 #define __BITCRAFT_STATEMACHINE_STATE_BASE_H__
 
+#include <functional>
 #include <map>
+
 #include "state_token.h"
 #include "state_data.h"
 #include "state_enter_event_args.h"
 #include "action_token.h"
 #include "transition_info.h"
 #include "state_manager.h"
-
-using namespace std;
 
 namespace Bitcraft
 {
@@ -18,7 +18,7 @@ namespace Bitcraft
         class StateBase;
 
         // action handler
-        typedef void(*StateHandler)(StateBase*, StateData*, TransitionInfo*);
+        using StateHandler = std::function<void(StateData*, TransitionInfo*)>;
 
         /// <summary>
         /// Represent a state of the state machine.
@@ -38,7 +38,7 @@ namespace Bitcraft
                 }
             };
 
-            map<ActionToken*, StateHandler, ActionTokenComparer> _handlers;
+            std::map<ActionToken*, StateHandler, ActionTokenComparer> _handlers;
 
             StateManager* _stateManager;
             StateToken* _token;
@@ -73,7 +73,7 @@ namespace Bitcraft
             /// <summary>
             /// Called when the state machine is initialized.
             /// </summary>
-            virtual void OnInitialize();
+            virtual void OnInitialized();
 
             /// <summary>
             /// Registers a handler where the state transitions to the next one for a given action.
@@ -92,7 +92,7 @@ namespace Bitcraft
             /// <summary>
             /// Gets the token that identifies the current state.
             /// </summary>
-            StateToken* GetToken();
+            const StateToken* const StateBase::GetToken() const;
 
             /// <summary>
             /// Gets the state manager in which the current state is registered.

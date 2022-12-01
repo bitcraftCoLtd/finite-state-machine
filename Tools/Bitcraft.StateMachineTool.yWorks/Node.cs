@@ -1,89 +1,83 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using Bitcraft.StateMachineTool.Core;
 
-namespace Bitcraft.StateMachineTool.yWorks
+namespace Bitcraft.StateMachineTool.yWorks;
+
+public class NodeStub : INode
 {
-    public class NodeStub : INode
+    public string Semantic { get; }
+    public bool IsFinal { get; }
+
+    public NodeStub(string semantic)
+        : this(semantic, false)
     {
-        public bool IsFinal { get; private set; }
-        public string Semantic { get; private set; }
-
-        public NodeStub(string semantic)
-            : this(semantic, false)
-        {
-        }
-
-        public NodeStub(string semantic, bool isFinal)
-        {
-            Semantic = semantic;
-            IsFinal = isFinal;
-        }
-
-        public override string ToString()
-        {
-            return Semantic + (IsFinal ? " [final]" : "");
-        }
     }
 
-    public class Node : GraphObject
+    public NodeStub(string semantic, bool isFinal)
     {
-        public bool IsInitial { get; private set; }
-        public bool IsFinal { get; internal set; }
+        Semantic = semantic;
+        IsFinal = isFinal;
+    }
 
-        public override void Load(XElement element, KeyMapping keyMapping)
-        {
-            base.Load(element, keyMapping);
+    public override string ToString()
+    {
+        return $"{Semantic}{(IsFinal ? " [final]" : string.Empty)}";
+    }
+}
 
-            var dataElements = element
-                .Elements(XName.Get("data", element.GetDefaultNamespace().NamespaceName))
-                .ToArray();
+public class Node : GraphObject
+{
+    public bool IsInitial { get; }
+    public bool IsFinal { get; }
 
-            var initialElem = dataElements
-                .Where(x => (string)x.Attribute("key") == keyMapping.InitialStateId)
-                .FirstOrDefault();
+    protected Node(string identifier, string description, bool isInitial, bool isFinal)
+        : base(identifier, description)
+    {
+        IsInitial = isInitial;
+        IsFinal = isFinal;
+    }
 
-            var finalElem = dataElements
-                .Where(x => (string)x.Attribute("key") == keyMapping.FinalStateId)
-                .FirstOrDefault();
+    public static new Node Load(XElement element, KeyMapping keyMapping)
+    {
+        GraphObject graphObject = GraphObject.Load(element, keyMapping);
 
-            IsInitial = ParsingUtility.ElementContentToBoolean(initialElem, keyMapping.InitialStateDefaultValue);
-            IsFinal = ParsingUtility.ElementContentToBoolean(finalElem, keyMapping.FinalStateDefaultValue);
+        var dataElements = element
+            .Elements(XName.Get("data", element.GetDefaultNamespace().NamespaceName))
+            .ToArray();
 
-            if (IsFinal)
-            {
-                if (Description == null)
-                    Description = "[FINAL]";
-            }
+        XElement? initialElem = dataElements
+            .Where(x => x.Attribute("key")?.Value == keyMapping.InitialStateId)
+            .FirstOrDefault();
 
-            CheckIdProperty(element);
-            CheckDescriptionProperty(element);
-        }
+        XElement? finalElem = dataElements
+            .Where(x => x.Attribute("key")?.Value == keyMapping.FinalStateId)
+            .FirstOrDefault();
 
-        public static Node Create(XElement element, KeyMapping keyMapping)
-        {
-            var node = new Node();
-            node.Load(element, keyMapping);
-            return node;
-        }
+        bool isInitial = ParsingUtility.ElementContentToBoolean(initialElem, keyMapping.InitialStateDefaultValue);
+        bool isFinal = ParsingUtility.ElementContentToBoolean(finalElem, keyMapping.FinalStateDefaultValue);
 
-        public override string ToString()
-        {
-            string flags = string.Empty;
+        string? description = graphObject.Description;
 
-            if (IsInitial && IsFinal)
-                flags = " [initial, final]";
-            else if (IsInitial)
-                flags = " [initial]";
-            else if (IsFinal)
-                flags = " [final]";
+        if (isFinal)
+            description ??= "[FINAL]";
 
-            return base.ToString() + flags;
-        }
+        CheckIdProperty(element, graphObject);
+        CheckDescriptionProperty(element, graphObject);
+
+        return new Node(graphObject.Identifier, graphObject.Description, isInitial, isFinal);
+    }
+
+    public override string ToString()
+    {
+        string flags = string.Empty;
+
+        if (IsInitial && IsFinal)
+            flags = " [initial, final]";
+        else if (IsInitial)
+            flags = " [initial]";
+        else if (IsFinal)
+            flags = " [final]";
+
+        return base.ToString() + flags;
     }
 }

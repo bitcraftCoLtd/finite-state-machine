@@ -1,79 +1,27 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{794F456B-7DED-49BB-81CA-6F5164C79E3E}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Bitcraft.StateMachineTool</RootNamespace>
-    <AssemblyName>Bitcraft.StateMachineTool</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>gear.ico</ApplicationIcon>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CommandArguments.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Bitcraft.StateMachineTool.CodeGenerators\Bitcraft.StateMachineTool.CodeGenerators.csproj">
-      <Project>{83f3e723-811a-46ab-b48a-540f6e0ac263}</Project>
-      <Name>Bitcraft.StateMachineTool.CodeGenerators</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Bitcraft.StateMachineTool.yWorks\Bitcraft.StateMachineTool.yWorks.csproj">
-      <Project>{0aa9b9f7-01c2-4493-8877-424d203b5c1c}</Project>
-      <Name>Bitcraft.StateMachineTool.yWorks</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Bitcraft.StateMachineTool.Core\Bitcraft.StateMachineTool.Core.csproj">
-      <Project>{0b04f94e-08f3-416c-bd97-dd7943ed15e1}</Project>
-      <Name>Bitcraft.StateMachineTool.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Bitcraft.ToolKit.CodeGeneration\Bitcraft.ToolKit.CodeGeneration.csproj">
-      <Project>{e7bd071a-2441-4213-b427-ffa7aecb7df6}</Project>
-      <Name>Bitcraft.ToolKit.CodeGeneration</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="gear.ico" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <WarningLevel>9999</WarningLevel>
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+
+    <PropertyGroup>
+        <Description>Tool that can generate source code from a diagram file.</Description>
+        <Company>bitcraft Corporation</Company>
+        <Copyright>Copyright © bitcraft Corporation 2014 - 2022</Copyright>
+        <Version>0.3.0.0</Version>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Bitcraft.StateMachineTool.CodeGenerators\Bitcraft.StateMachineTool.CodeGenerators.csproj" />
+        <ProjectReference Include="..\Bitcraft.StateMachineTool.Core\Bitcraft.StateMachineTool.Core.csproj" />
+        <ProjectReference Include="..\Bitcraft.StateMachineTool.yWorks\Bitcraft.StateMachineTool.yWorks.csproj" />
+        <ProjectReference Include="..\Bitcraft.ToolKit.CodeGeneration\Bitcraft.ToolKit.CodeGeneration.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -1,89 +1,105 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Linq;
 
-namespace Bitcraft.StateMachineTool.yWorks
+namespace Bitcraft.StateMachineTool.yWorks;
+
+public interface IGraphObject
 {
-    public abstract class GraphObject
+    string Identifier { get; }
+    string Description { get; }
+}
+
+public class GraphObject : IGraphObject
+{
+    public string Identifier { get; }
+    public string Description { get; internal set; }
+
+    protected GraphObject(string identifier, string description)
     {
-        public string Identifier { get; private set; }
-        //public string Text { get; protected set; }
-        public string Description { get; protected set; }
+        Identifier = identifier;
+        Description = description;
+    }
 
-        protected GraphObject()
+    public static GraphObject Load(XElement element, KeyMapping keyMapping)
+    {
+        if (element == null)
+            throw new ArgumentNullException(nameof(element));
+        if (keyMapping == null)
+            throw new ArgumentNullException(nameof(keyMapping));
+
+        string? identifier = element.Attribute("id")?.Value;
+
+        if (identifier == null)
+            throw new InvalidDataException($"An XML node doesn't have an 'id' attribute. [{element}]");
+
+        identifier = identifier.Trim();
+
+        var dataElements = element
+            .Elements(XName.Get("data", element.GetDefaultNamespace().NamespaceName));
+
+        XElement? descriptionContent = (from x in dataElements
+                                        let attributeValue = x.Attribute("key")?.Value
+                                        where attributeValue == keyMapping.NodeDescrionId || attributeValue == keyMapping.GraphDescrionId || attributeValue == keyMapping.EdgeDescrionId
+                                        select x).FirstOrDefault();
+
+        string? description = null;
+
+        if (descriptionContent != null && descriptionContent.FirstNode != null)
         {
+            if (descriptionContent.FirstNode.NodeType == XmlNodeType.CDATA)
+                description = ((XCData)descriptionContent.FirstNode).Value;
+            else if (descriptionContent.FirstNode.NodeType == XmlNodeType.Text)
+                description = ((XText)descriptionContent.FirstNode).Value;
         }
 
-        public virtual void Load(XElement element, KeyMapping keyMapping)
-        {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-            if (keyMapping == null)
-                throw new ArgumentNullException(nameof(keyMapping));
+        if (description == null)
+            throw new InvalidDataException($"An XML node with 'id' attribute value '{identifier}' doesn't have content. [{element}]");
 
-            Identifier = (string)element.Attribute("id");
-            if (Identifier != null)
-                Identifier = Identifier.Trim();
+        description = description.Trim();
 
-            var dataElements = element
-                .Elements(XName.Get("data", element.GetDefaultNamespace().NamespaceName));
+        return new GraphObject(identifier, description);
+    }
 
-            var descriptionContent = dataElements
-                .Where(x => (string)x.Attribute("key") == keyMapping.NodeDescrionId || (string)x.Attribute("key") == keyMapping.GraphDescrionId || (string)x.Attribute("key") == keyMapping.EdgeDescrionId)
-                .FirstOrDefault();
+    protected static void CheckIdProperty(IXmlLineInfo element, IGraphObject graphObject)
+    {
+        bool hasId = string.IsNullOrWhiteSpace(graphObject.Identifier) == false;
 
-            if (descriptionContent != null && descriptionContent.FirstNode != null)
-            {
-                if (descriptionContent.FirstNode.NodeType == XmlNodeType.CDATA)
-                    Description = ((XCData)descriptionContent.FirstNode).Value;
-                else if (descriptionContent.FirstNode.NodeType == XmlNodeType.Text)
-                    Description = ((XText)descriptionContent.FirstNode).Value;
-            }
+        if (hasId)
+            return;
 
-            if (Description != null)
-                Description = Description.Trim();
-        }
+        bool hasDescription = string.IsNullOrWhiteSpace(graphObject.Description) == false;
 
-        protected void CheckIdProperty(IXmlLineInfo element)
-        {
-            bool hasId = string.IsNullOrWhiteSpace(Identifier) == false;
-            bool hasDescription = string.IsNullOrWhiteSpace(Description) == false;
+        string msg = string.Format(
+            "The node [description: {0}] at line {1} position {2} is incomplete.",
+            hasDescription ? graphObject.Description : "<missing>",
+            element.LineNumber,
+            element.LinePosition
+        );
 
-            if (hasId == false)
-            {
-                var info = element as IXmlLineInfo;
-                var msg = string.Format(
-                    "The node [description: {0}] at line {1} position {2} is incomplete.",
-                    hasDescription ? Description : "<missing>",
-                    element.LineNumber,
-                    element.LinePosition);
-                throw new FormatException(msg);
-            }
-        }
+        throw new FormatException(msg);
+    }
 
-        protected void CheckDescriptionProperty(IXmlLineInfo element)
-        {
-            bool hasId = string.IsNullOrWhiteSpace(Identifier) == false;
-            bool hasDescription = string.IsNullOrWhiteSpace(Description) == false;
+    protected static void CheckDescriptionProperty(IXmlLineInfo element, IGraphObject graphObject)
+    {
+        bool hasDescription = string.IsNullOrWhiteSpace(graphObject.Description) == false;
 
-            if (hasDescription == false)
-            {
-                var msg = string.Format(
-                    "The node [id: {0}] at line {1} position {2} is incomplete.",
-                    hasId ? Identifier : "<missing>",
-                    element.LineNumber,
-                    element.LinePosition);
-                throw new FormatException(msg);
-            }
-        }
+        if (hasDescription)
+            return;
 
-        public override string ToString()
-        {
-            return string.Format("[{0}] {1}", Identifier, Description);
-        }
+        bool hasId = string.IsNullOrWhiteSpace(graphObject.Identifier) == false;
+
+        string msg = string.Format(
+            "The node [id: {0}] at line {1} position {2} is incomplete.",
+            hasId ? graphObject.Identifier : "<missing>",
+            element.LineNumber,
+            element.LinePosition
+        );
+
+        throw new FormatException(msg);
+    }
+
+    public override string ToString()
+    {
+        return $"[{Identifier}] {Description}";
     }
 }

@@ -1,65 +1,76 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using Bitcraft.StateMachineTool.Core;
 
-namespace Bitcraft.StateMachineTool.yWorks
+namespace Bitcraft.StateMachineTool.yWorks;
+
+public class Parser : IParser
 {
-    public class Parser : IParser
+    public IGraph Parse(Stream stream)
     {
-        public IGraph Parse(Stream stream)
+        var graph = Graph.CreateFromRootXml(XElement.Load(stream, LoadOptions.SetLineInfo));
+
+        CheckNodesMergeability(graph.Nodes);
+
+        var nodes = graph.Nodes
+            .Where(n => n.Description != null)
+            .Select(n => (INode)new NodeStub(n.Description!, n.IsFinal))
+            .Distinct(new NodeEqualityComparer())
+            .ToList();
+
+        int i = 0;
+        var transitions = new ITransition[graph.Transitions.Count];
+
+        foreach (Transition tr in graph.Transitions)
         {
-            var graph = Graph.CreateFromRootXml(XElement.Load(stream, LoadOptions.SetLineInfo));
+            Node sourceState = graph.Nodes.Single(n => n.Identifier == tr.Source);
+            Node targetState = graph.Nodes.Single(n => n.Identifier == tr.Target);
 
-            CheckNodesMergeability(graph.Nodes);
+            INode sourceNode = nodes.Single(n => n.Semantic == sourceState.Description);
+            INode targetNode = nodes.Single(n => n.Semantic == targetState.Description);
 
-            var nodes = graph.Nodes
-                .Select(n => (INode)new NodeStub(n.Description, n.IsFinal))
-                .Distinct(new NodeEqualityComparer())
-                .ToArray();
-
-            int i = 0;
-            var transitions = new ITransition[graph.Transitions.Length];
-
-            foreach (var tr in graph.Transitions)
-            {
-                var sourceState = graph.Nodes.Single(n => n.Identifier == tr.Source);
-                var targetState = graph.Nodes.Single(n => n.Identifier == tr.Target);
-
-                var sourceNode = nodes.Single(n => n.Semantic == sourceState.Description);
-                var targetNode = nodes.Single(n => n.Semantic == targetState.Description);
-
-                transitions[i++] = new TransitionStub(tr.Description, sourceNode, targetNode);
-            }
-
-            INode initialNode = null;
-            if (graph.InitialNode != null)
-            {
-                var initialNodeIndex = Array.FindIndex(graph.Nodes, n => n.Identifier == graph.InitialNode.Identifier);
-                initialNode = nodes[initialNodeIndex];
-            }
-
-            return new GraphStub(initialNode, graph.Description, nodes, transitions);
+            transitions[i++] = new TransitionStub(tr.Description, sourceNode, targetNode);
         }
 
-        private void CheckNodesMergeability(Node[] nodes)
+        INode? initialNode = null;
+
+        if (graph.InitialNode != null)
         {
-            foreach (var group in nodes.GroupBy(n => n.Description))
+            int index = -1;
+            int initialNodeIndex = -1;
+
+            foreach (Node node in graph.Nodes)
             {
-                CheckPropertyMergeability(Constants.IsInitialStatePropertyName, n => n.IsInitial, group);
-                CheckPropertyMergeability(Constants.IsFinalStatePropertyName, n => n.IsFinal, group);
+                index++;
+                if (node.Identifier == graph.InitialNode.Identifier)
+                {
+                    initialNodeIndex = index;
+                    break;
+                }
             }
+
+            initialNode = nodes[initialNodeIndex];
         }
 
-        private void CheckPropertyMergeability<T>(string propertyName, Func<Node, T> getter, IGrouping<string, Node> group)
+        return new GraphStub(initialNode, graph.Description, nodes, transitions);
+    }
+
+    private static void CheckNodesMergeability(IEnumerable<Node> nodes)
+    {
+        foreach (var group in nodes.GroupBy(n => n.Description))
         {
-            var value = getter(group.First());
-            if (group.Any(n => EqualityComparer<T>.Default.Equals(getter(n), value) == false))
-                throw new FormatException(string.Format("Inconsistency in partial state '{0}'. Property '{1}' does not match on all states.", group.Key, propertyName));
+            if (group == null)
+                continue;
+
+            CheckPropertyMergeability(Constants.IsInitialStatePropertyName, n => n?.IsInitial ?? false, group);
+            CheckPropertyMergeability(Constants.IsFinalStatePropertyName, n => n?.IsFinal ?? false, group);
         }
+    }
+
+    private static void CheckPropertyMergeability<T>(string propertyName, Func<Node?, T?> getter, IGrouping<string?, Node?> group)
+    {
+        T? value = getter(group.First());
+
+        if (group.Any(n => EqualityComparer<T>.Default.Equals(getter(n), value) == false))
+            throw new FormatException($"Inconsistency in partial state '{group.Key}'. Property '{propertyName}' does not match on all states.");
     }
 }

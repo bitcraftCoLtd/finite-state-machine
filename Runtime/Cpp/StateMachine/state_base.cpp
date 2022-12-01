@@ -1,6 +1,8 @@
 #include "state_base.h"
 #include "exceptions.h"
 
+using namespace std;
+
 namespace Bitcraft
 {
     namespace StateMachine
@@ -14,7 +16,7 @@ namespace Bitcraft
             _token = token;
         }
 
-        StateToken* StateBase::GetToken()
+        const StateToken* const StateBase::GetToken() const
         {
             return _token;
         }
@@ -35,10 +37,10 @@ namespace Bitcraft
         void StateBase::Initialize(StateManager* parent)
         {
             _stateManager = parent;
-            OnInitialize();
+            OnInitialized();
         }
 
-        void StateBase::OnInitialize() { }
+        void StateBase::OnInitialized() { }
 
         void StateBase::OnEnter(StateEnterEventArgs* e) { }
         void StateBase::OnExit() { }
@@ -58,7 +60,7 @@ namespace Bitcraft
 
             map<ActionToken*, StateHandler>::iterator it = _handlers.find(action);
             if (it != _handlers.end())
-                it->second(this, data, result);
+                it->second(data, result);
             else
                 throw new UnknownActionException(action, GetToken());
         }
