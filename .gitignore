@@ -44,3 +44,6 @@ Runtime/TypeScript/Tester/bin/
 Runtime/TypeScript/Tester/obj/
 *.opensdf
 Runtime/JavaScript/StateMachine/obj/
+
+.vs/
+.vscode/
