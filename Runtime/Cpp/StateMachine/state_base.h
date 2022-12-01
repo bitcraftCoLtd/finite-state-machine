@@ -7,6 +7,7 @@
 #include "state_token.h"
 #include "state_data.h"
 #include "state_enter_event_args.h"
+#include "state_exit_event_args.h"
 #include "action_token.h"
 #include "transition_info.h"
 #include "state_manager.h"
@@ -67,7 +68,8 @@ namespace Bitcraft
             /// <summary>
             /// Called when the state machine exits the current state.
             /// </summary>
-            virtual void OnExit();
+            /// <param name="e">Custem event arguments.</param>
+            virtual void OnExit(StateExitEventArgs* e);
 
         protected:
             /// <summary>

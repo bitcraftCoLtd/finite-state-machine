@@ -51,7 +51,8 @@ namespace Bitcraft
             if (_currentState != NULL)
             {
                 _isPerformActionLocked = true;
-                _currentState->OnExit();
+                StateExitEventArgs stateExitEventArgs = StateExitEventArgs(NULL, data);
+                _currentState->OnExit(&stateExitEventArgs);
                 _isPerformActionLocked = false;
             }
 
@@ -87,7 +88,8 @@ namespace Bitcraft
             if (_currentState != NULL)
             {
                 _isPerformActionLocked = true;
-                _currentState->OnExit();
+                StateExitEventArgs stateExitEventArgs = StateExitEventArgs(stateToken, data);
+                _currentState->OnExit(&stateExitEventArgs);
                 _isPerformActionLocked = false;
             }
 

@@ -32,7 +32,7 @@ public:
 
         printf("State '%S': OnEnter(from '%S')\n", GetToken()->ToString(), from != NULL ? from->ToString() : L"(null)");
     }
- 
+
     void OnGoBackToState1(StateData* data, TransitionInfo* result)
     {
         result->TargetStateToken = TestStateTokens::StateToken1;
@@ -42,10 +42,12 @@ public:
     {
         result->TargetStateToken = TestStateTokens::StateToken3;
     }
-    
-    void OnExit() override
+
+    void OnExit(StateExitEventArgs* e) override
     {
-        printf("State '%S': OnExit()\n", GetToken()->ToString());
+        const StateToken* const to = e->GetTo();
+
+        printf("State '%S': OnExit(to '%S')\n", GetToken()->ToString(), to != NULL ? to->ToString() : L"(null)");
     }
 };
 

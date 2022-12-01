@@ -14,7 +14,7 @@ namespace Bitcraft
         class StateExitEventArgs
         {
         private:
-            StateToken* _to;
+            const StateToken* const _to;
             StateData* _data;
 
         public:
@@ -23,12 +23,12 @@ namespace Bitcraft
             /// </summary>
             /// <param name="to">The target state of the transition.</param>
             /// <param name="data">The data provided to the target state.</param>
-            StateExitEventArgs(StateToken* to, StateData* data);
+            StateExitEventArgs(const StateToken* const to, StateData* data);
 
             /// <summary>
             /// Gets the target state token.
             /// </summary>
-            StateToken* GetTo();
+            const StateToken* const GetTo() const;
 
             /// <summary>
             /// Gets the data provided to the target.

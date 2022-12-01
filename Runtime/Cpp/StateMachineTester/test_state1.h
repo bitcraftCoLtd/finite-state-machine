@@ -41,9 +41,11 @@ public:
         result->TargetStateToken = TestStateTokens::StateToken2;
     }
 
-    void OnExit() override
+    void OnExit(StateExitEventArgs* e) override
     {
-        printf("State '%S': OnExit()\n", GetToken()->ToString());
+        const StateToken* const to = e->GetTo();
+
+        printf("State '%S': OnExit(to '%S')\n", GetToken()->ToString(), to != NULL ? to->ToString() : L"(null)");
     }
 
 private:

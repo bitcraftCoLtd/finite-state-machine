@@ -5,13 +5,13 @@ namespace Bitcraft
 {
     namespace StateMachine
     {
-        StateExitEventArgs::StateExitEventArgs(StateToken* to, StateData* data)
+        StateExitEventArgs::StateExitEventArgs(const StateToken* const to, StateData* data)
+            : _to(to)
         {
-            _to = to;
             _data = data;
         }
 
-        StateToken* StateExitEventArgs::GetTo()
+        const StateToken* const StateExitEventArgs::GetTo() const
         {
             return _to;
         }

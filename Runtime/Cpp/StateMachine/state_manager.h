@@ -3,6 +3,8 @@
 
 #include <list>
 #include "state_changed_event_args.h"
+#include "state_enter_event_args.h"
+#include "state_exit_event_args.h"
 #include "state_base.h"
 #include "state_token.h"
 #include "state_data.h"

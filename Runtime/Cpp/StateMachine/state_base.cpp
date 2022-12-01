@@ -43,7 +43,7 @@ namespace Bitcraft
         void StateBase::OnInitialized() { }
 
         void StateBase::OnEnter(StateEnterEventArgs* e) { }
-        void StateBase::OnExit() { }
+        void StateBase::OnExit(StateExitEventArgs* e) { }
 
         void StateBase::RegisterActionHandler(ActionToken* action, StateHandler handler)
         {
