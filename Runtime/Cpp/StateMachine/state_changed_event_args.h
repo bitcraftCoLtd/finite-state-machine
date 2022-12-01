@@ -15,6 +15,7 @@ namespace Bitcraft
         class StateChangedEventArgs
         {
         private:
+            const ActionToken* const _triggeringAction;
             StateBase* _oldState;
             StateBase* _newState;
 
@@ -22,9 +23,15 @@ namespace Bitcraft
             /// <summary>
             /// Initializes the StateChangedEventArgs instance.
             /// </summary>
+            /// <param name="triggeringAction">The action token of the action that triggered the transition.</param>
             /// <param name="oldState">Old state.</param>
             /// <param name="newState">New state.</param>
-            StateChangedEventArgs(StateBase* oldState, StateBase* newState);
+            StateChangedEventArgs(const ActionToken* const triggeringAction, StateBase* oldState, StateBase* newState);
+
+            /// <summary>
+            /// Gets the action token of the action that triggered the transition.
+            /// </summary>
+            const ActionToken* const GetTriggeringAction() const;
 
             /// <summary>
             /// Gets the previous state. (the state before transition)

@@ -376,7 +376,7 @@ From your point of view as the implementer, you should see calls in the followin
 
 When you need to change state to another state from within the `OnEnter()` method call, you cannot call `PerformAction()`.
 
-Instead, you have to tell the state machine to directly redirect to a given state by setting the `TargetStateToken` property of the `Redirect` property of the event given as parameter.
+Instead, you have to tell the state machine to directly redirect to a given state by setting the `TargetState` property of the `Redirect` property of the event given as parameter.
 Hereafter is an example.
 
 ```cs
@@ -396,6 +396,7 @@ public class PaymentBasketState : BasketStateBase
         if (isFastBuyOptionActivated)
         {
             e.Redirect.TargetStateToken = BasketStateTokens.ThankYouScreen;
+            // e.Redirect.TriggeringAction = ... you can also optionally change the action that triggered the transition
             // e.Redirect.TargetStateData = ... you can also optionally set a data to be forwarded
         }
     }

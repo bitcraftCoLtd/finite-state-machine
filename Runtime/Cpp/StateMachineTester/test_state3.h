@@ -35,12 +35,12 @@ public:
 
     void OnGotoState1(StateData* data, TransitionInfo* result)
     {
-        result->TargetStateToken = TestStateTokens::StateToken1;
+        result->TargetState = TestStateTokens::StateToken1;
     }
 
     void OnEnd(StateData* data, TransitionInfo* result)
     {
-        // result->TargetStateToken = NULL;
+        // result->TargetState = nullptr;
     }
 
     void OnExit(StateExitEventArgs* e) override

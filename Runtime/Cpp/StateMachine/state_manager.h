@@ -32,8 +32,8 @@ namespace Bitcraft
 
         private:
             void InternalInitialization(void* context);
-            void PerformTransitionTo(const StateToken* stateToken, StateData* data);
-            TransitionInfo* TransitionTo(const StateToken* const stateToken, StateData* data);
+            void PerformTransitionTo(const ActionToken* actionToken, const StateToken* stateToken, StateData* data);
+            TransitionInfo* TransitionTo(const ActionToken* actionToken, const StateToken* const stateToken, StateData* data);
             StateBase* FindState(const StateToken* const token);
             bool StateExists(StateBase* state);
 
@@ -81,7 +81,7 @@ namespace Bitcraft
             /// </summary>
             /// <param name="initialState">The initial state.</param>
             /// <param name="data">The data to be provided to the initial state.</param>
-            void SetInitialState(StateToken* initialState, StateData* data);
+            void SetInitialState(const StateToken* const initialState, StateData* data);
 
             /// <summary>
             /// Inform the state machine that an external action occured.

@@ -67,7 +67,7 @@ export class StateBase {
         } else if (typeof result === 'StateToken') {
             var ti = new transitionInfo.TransitionInfo();
             ti.targetStateData = data;
-            ti.targetStateToken = result;
+            ti.targetState = result;
             return ti;
         } else {
             throw new Error('Invalid handler result');

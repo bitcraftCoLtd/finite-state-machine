@@ -8,6 +8,11 @@ namespace Bitcraft.StateMachine
     public class StateEnterEventArgs : EventArgs
     {
         /// <summary>
+        /// Gets the action token of the action that triggered the transition.
+        /// </summary>
+        public ActionToken TriggeringAction { get; }
+
+        /// <summary>
         /// Gets the source state token.
         /// </summary>
         public StateToken From { get; }
@@ -25,13 +30,15 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Initializes the StateEnterEventArgs instance.
         /// </summary>
+        /// <param name="triggeringAction">The action token of the action that triggered the transition.</param>
         /// <param name="from">The source state of the transition.</param>
         /// <param name="data">The data provided from the source state, for the target state.</param>
-        public StateEnterEventArgs(StateToken from, object data)
+        public StateEnterEventArgs(ActionToken triggeringAction, StateToken from, object data)
         {
-            Redirect = new TransitionInfo();
+            TriggeringAction = triggeringAction;
             From = from;
             Data = data;
+            Redirect = new TransitionInfo();
         }
     }
 
@@ -40,6 +47,11 @@ namespace Bitcraft.StateMachine
     /// </summary>
     public class StateExitEventArgs : EventArgs
     {
+        /// <summary>
+        /// Gets the action token of the action that triggered the transition.
+        /// </summary>
+        public ActionToken TriggeringAction { get; }
+
         /// <summary>
         /// Gets the target state token.
         /// </summary>
@@ -53,10 +65,12 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Initializes the StateExitEventArgs instance.
         /// </summary>
+        /// <param name="triggeringAction">The action token of the action that triggered the transition.</param>
         /// <param name="to">The target state of the transition.</param>
         /// <param name="data">The data provided to the target state.</param>
-        public StateExitEventArgs(StateToken to, object data)
+        public StateExitEventArgs(ActionToken triggeringAction, StateToken to, object data)
         {
+            TriggeringAction = triggeringAction;
             To = to;
             Data = data;
         }
@@ -67,6 +81,11 @@ namespace Bitcraft.StateMachine
     /// </summary>
     public class StateChangedEventArgs : EventArgs
     {
+        /// <summary>
+        /// Gets the action token of the action that triggered the transition.
+        /// </summary>
+        public ActionToken TriggeringAction { get; }
+
         /// <summary>
         /// Gets the previous state. (the state before transition)
         /// </summary>
@@ -80,10 +99,12 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Initializes the StateChangedEventArgs instance.
         /// </summary>
-        /// <param name="oldState">Old state.</param>
-        /// <param name="newState">New state.</param>
-        public StateChangedEventArgs(StateBase oldState, StateBase newState)
+        /// <param name="triggeringAction">The action token of the action that triggered the transition.</param>
+        /// <param name="oldState">The state the state machine was in prior to the transition.</param>
+        /// <param name="newState">The state the state machine currently is at the beginning of the transition.</param>
+        public StateChangedEventArgs(ActionToken triggeringAction, StateBase oldState, StateBase newState)
         {
+            TriggeringAction = triggeringAction;
             OldState = oldState;
             NewState = newState;
         }

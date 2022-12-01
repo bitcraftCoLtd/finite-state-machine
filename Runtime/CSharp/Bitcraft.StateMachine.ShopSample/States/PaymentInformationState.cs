@@ -43,7 +43,7 @@ namespace Bitcraft.StateMachine.ShopSample.States
             if (sm.IsFastBuyActive)
             {
                 sm.PaymentMean = ShopStateMachine.DefaultPaymentMean;
-                e.Redirect.TargetStateToken = ShopStateTokens.ThankYou;
+                e.Redirect.TargetState = ShopStateTokens.ThankYou;
             }
         }
 

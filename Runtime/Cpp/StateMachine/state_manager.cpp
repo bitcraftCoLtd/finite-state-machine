@@ -43,7 +43,7 @@ namespace Bitcraft
             _isPerformActionLocked = false;
         }
 
-        void StateManager::SetInitialState(StateToken* initialState, StateData* data)
+        void StateManager::SetInitialState(const StateToken* const initialState, StateData* data)
         {
             if (initialState == NULL)
                 throw new invalid_argument("Invalid 'initialState' argument.");
@@ -51,32 +51,34 @@ namespace Bitcraft
             if (_currentState != NULL)
             {
                 _isPerformActionLocked = true;
-                StateExitEventArgs stateExitEventArgs = StateExitEventArgs(NULL, data);
+                StateExitEventArgs stateExitEventArgs = StateExitEventArgs(NULL, initialState, data);
                 _currentState->OnExit(&stateExitEventArgs);
                 _isPerformActionLocked = false;
             }
 
             _currentState = NULL;
-            PerformTransitionTo(initialState, data);
+            PerformTransitionTo(nullptr, initialState, data);
         }
 
-        void StateManager::PerformTransitionTo(const StateToken* stateToken, StateData* data)
+        void StateManager::PerformTransitionTo(const ActionToken* actionToken, const StateToken* stateToken, StateData* data)
         {
+            const ActionToken* triggeringActionToken = actionToken;
             const StateToken* targetStateToken = stateToken;
             StateData* targetData = data;
 
             while (true)
             {
-                TransitionInfo* transition = TransitionTo(targetStateToken, targetData);
-                if (transition->TargetStateToken == NULL)
+                TransitionInfo* transition = TransitionTo(triggeringActionToken, targetStateToken, targetData);
+                if (transition->TargetState == NULL)
                     break;
 
-                targetStateToken = transition->TargetStateToken;
+                triggeringActionToken = transition->TriggeringAction;
+                targetStateToken = transition->TargetState;
                 targetData = transition->TargetStateData;
             }
         }
 
-        TransitionInfo* StateManager::TransitionTo(const StateToken* const stateToken, StateData* data)
+        TransitionInfo* StateManager::TransitionTo(const ActionToken* actionToken, const StateToken* const stateToken, StateData* data)
         {
             if (stateToken == NULL)
                 throw new invalid_argument("Invalid 'stateToken' argument.");
@@ -88,7 +90,7 @@ namespace Bitcraft
             if (_currentState != NULL)
             {
                 _isPerformActionLocked = true;
-                StateExitEventArgs stateExitEventArgs = StateExitEventArgs(stateToken, data);
+                StateExitEventArgs stateExitEventArgs = StateExitEventArgs(actionToken, stateToken, data);
                 _currentState->OnExit(&stateExitEventArgs);
                 _isPerformActionLocked = false;
             }
@@ -98,10 +100,10 @@ namespace Bitcraft
 
             _isPerformActionLocked = true;
 
-            StateChangedEventArgs stateChangedEventArgs = StateChangedEventArgs(oldState, _currentState);
+            StateChangedEventArgs stateChangedEventArgs = StateChangedEventArgs(actionToken, oldState, _currentState);
             OnStateChanged(&stateChangedEventArgs);
 
-            StateEnterEventArgs stateEnterEventArgs = StateEnterEventArgs(oldState != NULL ? oldState->GetToken() : NULL, data);
+            StateEnterEventArgs stateEnterEventArgs = StateEnterEventArgs(actionToken, oldState != NULL ? oldState->GetToken() : NULL, data);
             _currentState->OnEnter(&stateEnterEventArgs);
 
             _isPerformActionLocked = false;
@@ -160,11 +162,11 @@ namespace Bitcraft
                 return; // not that good :/
 
             TransitionInfo transitionInfo;
-            transitionInfo.TargetStateToken = NULL;
+            transitionInfo.TargetState = NULL;
             transitionInfo.TargetStateData = data;
 
             _currentState->Handle(action, data, &transitionInfo);
-            if (transitionInfo.TargetStateToken == NULL)
+            if (transitionInfo.TargetState == NULL)
             {
                 _currentState = NULL;
                 _isPerformActionLocked = true;
@@ -173,8 +175,8 @@ namespace Bitcraft
                 return;
             }
 
-            if (_currentState->GetToken() != transitionInfo.TargetStateToken)
-                PerformTransitionTo(transitionInfo.TargetStateToken, transitionInfo.TargetStateData);
+            if (_currentState->GetToken() != transitionInfo.TargetState)
+                PerformTransitionTo(action, transitionInfo.TargetState, transitionInfo.TargetStateData);
         }
 
         void StateManager::RegisterState(StateBase* state)
