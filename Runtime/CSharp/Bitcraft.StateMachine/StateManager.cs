@@ -87,11 +87,11 @@ namespace Bitcraft.StateMachine
             while (true)
             {
                 TransitionInfo transition = TransitionTo(triggeringActionToken, targetStateToken, targetData);
-                if (transition.TargetStateToken == null)
+                if (transition.TargetState == null)
                     break;
 
                 triggeringActionToken = transition.TriggeringAction;
-                targetStateToken = transition.TargetStateToken;
+                targetStateToken = transition.TargetState;
                 targetData = transition.TargetStateData;
             }
         }

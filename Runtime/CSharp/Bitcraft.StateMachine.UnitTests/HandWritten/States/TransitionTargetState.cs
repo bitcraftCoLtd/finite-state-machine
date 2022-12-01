@@ -24,7 +24,7 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
         {
             (Context as StateMachineTestContext).TestStatus++;
 
-            e.Redirect.TargetStateToken = HandWrittenStateTokens.TransitionStateToken;
+            e.Redirect.TargetState = HandWrittenStateTokens.TransitionStateToken;
             e.Redirect.TriggeringAction = HandWrittenActionTokens.InitDoneAction;
         }
     }

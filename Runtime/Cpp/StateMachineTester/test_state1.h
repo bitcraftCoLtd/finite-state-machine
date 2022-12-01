@@ -31,14 +31,14 @@ public:
         printf("State '%S': OnEnter(from '%S')\n", GetToken()->ToString(), from != NULL ? from->ToString() : L"(null)");
 
         if (_alreadyPassed)
-            e->GetRedirect()->TargetStateToken = TestStateTokens::StateToken3;
+            e->GetRedirect()->TargetState = TestStateTokens::StateToken3;
 
         _alreadyPassed = true;
     }
 
     void OnGoToState2(StateData* data, TransitionInfo* result)
     {
-        result->TargetStateToken = TestStateTokens::StateToken2;
+        result->TargetState = TestStateTokens::StateToken2;
     }
 
     void OnExit(StateExitEventArgs* e) override

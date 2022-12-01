@@ -123,7 +123,7 @@ sm.registerState({
 
         if (eventArg.triggeringActionToken !== ActionTokens.NEXT) {
             eventArg.redirect.triggeringActionToken = ActionTokens.PREV;
-            eventArg.redirect.targetStateToken = StateTokens.TRANSITION_TARGET;
+            eventArg.redirect.targetState = StateTokens.TRANSITION_TARGET;
         }
     },
     onNext: function (data, cb) {
@@ -153,7 +153,7 @@ sm.registerState({
         console.log('TRANSITION_TARGET STATE');
 
         eventArg.redirect.triggeringActionToken = ActionTokens.NEXT;
-        eventArg.redirect.targetStateToken = StateTokens.TRANSITION;
+        eventArg.redirect.targetState = StateTokens.TRANSITION;
     },
     onExit: function () {
         'use strict';

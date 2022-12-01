@@ -34,7 +34,7 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
 
             if (e.TriggeringAction != HandWrittenActionTokens.InitDoneAction)
             {
-                e.Redirect.TargetStateToken = HandWrittenStateTokens.TransitionTargetStateToken;
+                e.Redirect.TargetState = HandWrittenStateTokens.TransitionTargetStateToken;
                 e.Redirect.TriggeringAction = HandWrittenActionTokens.UpdateAction;
             }
         }

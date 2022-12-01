@@ -15,7 +15,7 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Gets or sets the target state token. (state active after transition)
         /// </summary>
-        public StateToken TargetStateToken { get; set; }
+        public StateToken TargetState { get; set; }
 
         /// <summary>
         /// Gets or sets the data to transfer from the current state to the target state.

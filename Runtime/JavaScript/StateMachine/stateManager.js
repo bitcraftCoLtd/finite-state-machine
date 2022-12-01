@@ -19,7 +19,7 @@ fsm = fsm || {};
  * Transition information container
  * @typedef {Object} TransitionInfo
  * @property {Token} triggeringActionToken
- * @property {Token} targetStateToken
+ * @property {Token} targetState
  * @property {*} targetStateData
  */
 
@@ -257,7 +257,7 @@ fsm.StateManager.prototype._transitionTo = function (actionToken, stateToken, da
         data: data,
         redirect: {
             triggeringActionToken: null,
-            targetStateToken: null,
+            targetState: null,
             targetStateData: null
         }
     };
@@ -348,14 +348,14 @@ fsm.StateManager.prototype._performTransitionTo = function (actionToken, stateTo
     while (true) {
         // transition to the requested state, and check for a possible redirection
         transition = this._transitionTo(triggeringActionToken, targetStateToken, targetData);
-        if (!transition || !transition.targetStateToken) {
+        if (!transition || !transition.targetState) {
             // no redirection any more
             break;
         }
 
         // chain the ction token, state token and data for the next iteration
         triggeringActionToken = transition.triggeringActionToken;
-        targetStateToken = transition.targetStateToken;
+        targetStateToken = transition.targetState;
         targetData = transition.targetStateData;
     }
 };

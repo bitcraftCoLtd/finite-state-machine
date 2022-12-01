@@ -16,13 +16,13 @@ namespace Bitcraft
             TransitionInfo()
             {
                 TargetStateData = NULL;
-                TargetStateToken = NULL;
+                TargetState = NULL;
             }
 
             /// <summary>
             /// Gets the target state token. (state active before transition)
             /// </summary>
-            const StateToken* TargetStateToken;
+            const StateToken* TargetState;
 
             /// <summary>
             /// Gets the data provided from the target state, for the source state.

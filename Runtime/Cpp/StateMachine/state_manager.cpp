@@ -68,10 +68,10 @@ namespace Bitcraft
             while (true)
             {
                 TransitionInfo* transition = TransitionTo(targetStateToken, targetData);
-                if (transition->TargetStateToken == NULL)
+                if (transition->TargetState == NULL)
                     break;
 
-                targetStateToken = transition->TargetStateToken;
+                targetStateToken = transition->TargetState;
                 targetData = transition->TargetStateData;
             }
         }
@@ -160,11 +160,11 @@ namespace Bitcraft
                 return; // not that good :/
 
             TransitionInfo transitionInfo;
-            transitionInfo.TargetStateToken = NULL;
+            transitionInfo.TargetState = NULL;
             transitionInfo.TargetStateData = data;
 
             _currentState->Handle(action, data, &transitionInfo);
-            if (transitionInfo.TargetStateToken == NULL)
+            if (transitionInfo.TargetState == NULL)
             {
                 _currentState = NULL;
                 _isPerformActionLocked = true;
@@ -173,8 +173,8 @@ namespace Bitcraft
                 return;
             }
 
-            if (_currentState->GetToken() != transitionInfo.TargetStateToken)
-                PerformTransitionTo(transitionInfo.TargetStateToken, transitionInfo.TargetStateData);
+            if (_currentState->GetToken() != transitionInfo.TargetState)
+                PerformTransitionTo(transitionInfo.TargetState, transitionInfo.TargetStateData);
         }
 
         void StateManager::RegisterState(StateBase* state)

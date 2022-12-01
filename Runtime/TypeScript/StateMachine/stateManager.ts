@@ -45,11 +45,11 @@ export class StateManager {
 
         while (true) {
             var transition = this.transitionTo(targetStateToken, targetData);
-            if (!transition.targetStateToken) {
+            if (!transition.targetState) {
                 break;
             }
 
-            targetStateToken = transition.targetStateToken;
+            targetStateToken = transition.targetState;
             targetData = transition.targetStateData;
         }
     }
@@ -111,7 +111,7 @@ export class StateManager {
 
         var transitionInfo = this._currentState.__handle(action, data);
 
-        if (!transitionInfo || !transitionInfo.targetStateToken) {
+        if (!transitionInfo || !transitionInfo.targetState) {
             this._currentState = null;
             this._isPerformActionLocked = true;
             try {
@@ -119,8 +119,8 @@ export class StateManager {
             } finally {
                 this._isPerformActionLocked = false;
             }
-        } else if (this._currentState.getToken().equals(transitionInfo.targetStateToken) == false) {
-            this.performTransitionTo(transitionInfo.targetStateToken, transitionInfo.targetStateData);
+        } else if (this._currentState.getToken().equals(transitionInfo.targetState) == false) {
+            this.performTransitionTo(transitionInfo.targetState, transitionInfo.targetStateData);
         }
     }
 

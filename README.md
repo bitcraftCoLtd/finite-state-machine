@@ -376,7 +376,7 @@ From your point of view as the implementer, you should see calls in the followin
 
 When you need to change state to another state from within the `OnEnter()` method call, you cannot call `PerformAction()`.
 
-Instead, you have to tell the state machine to directly redirect to a given state by setting the `TargetStateToken` property of the `Redirect` property of the event given as parameter.
+Instead, you have to tell the state machine to directly redirect to a given state by setting the `TargetState` property of the `Redirect` property of the event given as parameter.
 Hereafter is an example.
 
 ```cs

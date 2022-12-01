@@ -35,12 +35,12 @@ public:
 
     void OnGoBackToState1(StateData* data, TransitionInfo* result)
     {
-        result->TargetStateToken = TestStateTokens::StateToken1;
+        result->TargetState = TestStateTokens::StateToken1;
     }
 
     void OnGoToState3(StateData* data, TransitionInfo* result)
     {
-        result->TargetStateToken = TestStateTokens::StateToken3;
+        result->TargetState = TestStateTokens::StateToken3;
     }
 
     void OnExit(StateExitEventArgs* e) override
