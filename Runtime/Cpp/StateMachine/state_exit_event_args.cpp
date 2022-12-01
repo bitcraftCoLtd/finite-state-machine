@@ -11,7 +11,7 @@ namespace Bitcraft
             _data = data;
         }
 
-        const ActionToken* const StateEnterEventArgs::GetTriggeringAction() const
+        const ActionToken* const StateExitEventArgs::GetTriggeringAction() const
         {
             return _triggeringAction;
         }

@@ -81,7 +81,7 @@ namespace Bitcraft
             /// </summary>
             /// <param name="initialState">The initial state.</param>
             /// <param name="data">The data to be provided to the initial state.</param>
-            void SetInitialState(StateToken* initialState, StateData* data);
+            void SetInitialState(const StateToken* const initialState, StateData* data);
 
             /// <summary>
             /// Inform the state machine that an external action occured.

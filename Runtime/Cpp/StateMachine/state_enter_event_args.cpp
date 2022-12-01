@@ -5,12 +5,11 @@ namespace Bitcraft
 {
     namespace StateMachine
     {
-        StateEnterEventArgs::StateEnterEventArgs(const ActionToken* const triggeringAction, const StateToken* const from, StateData* data):
-            _triggeringAction(triggeringAction), _from(from)
+        StateEnterEventArgs::StateEnterEventArgs(const ActionToken* const triggeringAction, const StateToken* const from, StateData* data)
+            : _triggeringAction(triggeringAction), _from(from)
         {
             _data = data;
         }
-
 
         const ActionToken* const StateEnterEventArgs::GetTriggeringAction() const
         {

@@ -1,6 +1,7 @@
 #ifndef __BITCRAFT_STATEMACHINE_STATE_ENTER_EVENT_ARGS_H__
 #define __BITCRAFT_STATEMACHINE_STATE_ENTER_EVENT_ARGS_H__
 
+#include "action_token.h"
 #include "state_token.h"
 #include "state_data.h"
 #include "transition_info.h"

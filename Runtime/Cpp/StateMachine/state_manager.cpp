@@ -43,7 +43,7 @@ namespace Bitcraft
             _isPerformActionLocked = false;
         }
 
-        void StateManager::SetInitialState(StateToken* initialState, StateData* data)
+        void StateManager::SetInitialState(const StateToken* const initialState, StateData* data)
         {
             if (initialState == NULL)
                 throw new invalid_argument("Invalid 'initialState' argument.");
@@ -51,7 +51,7 @@ namespace Bitcraft
             if (_currentState != NULL)
             {
                 _isPerformActionLocked = true;
-                StateExitEventArgs stateExitEventArgs = StateExitEventArgs(NULL, data);
+                StateExitEventArgs stateExitEventArgs = StateExitEventArgs(NULL, initialState, data);
                 _currentState->OnExit(&stateExitEventArgs);
                 _isPerformActionLocked = false;
             }
@@ -90,7 +90,7 @@ namespace Bitcraft
             if (_currentState != NULL)
             {
                 _isPerformActionLocked = true;
-                StateExitEventArgs stateExitEventArgs = StateExitEventArgs(stateToken, data);
+                StateExitEventArgs stateExitEventArgs = StateExitEventArgs(actionToken, stateToken, data);
                 _currentState->OnExit(&stateExitEventArgs);
                 _isPerformActionLocked = false;
             }
