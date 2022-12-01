@@ -119,7 +119,7 @@ sm.registerState({
         var data = eventArg.data || '(null)';
         console.log(format('onEnter({0}) [from: {1}, data: {2}]', this.token.name, fromState, data));
 
-        console.log('TRANSITION STATE:', (eventArg.triggeringActionToken || {}).name);
+        console.log('TRANSITION STATE:', eventArg.triggeringActionToken ? eventArg.triggeringActionToken.name : '(null)');
 
         if (eventArg.triggeringActionToken !== ActionTokens.NEXT) {
             eventArg.redirect.triggeringActionToken = ActionTokens.PREV;

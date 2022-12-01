@@ -19,11 +19,11 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
 
             RegisterActionHandler(HandWrittenActionTokens.TerminateAction, (d, cb) =>
             {
-                var testContext = (Context as StateMachineTestContext);
+                var testContext = GetContext<StateMachineTestContext>();
 
                 Assert.AreEqual(5, testContext.TestStatus);
 
-                --testContext.TestStatus;
+                testContext.TestStatus--;
                 cb(HandWrittenStateTokens.EndStateToken);
             });
         }

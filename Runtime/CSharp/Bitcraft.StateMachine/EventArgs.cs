@@ -30,7 +30,7 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Initializes the StateEnterEventArgs instance.
         /// </summary>
-        /// <param name="triggeringAction">Action token of the action that triggered the transition.</param>
+        /// <param name="triggeringAction">The action token of the action that triggered the transition.</param>
         /// <param name="from">The source state of the transition.</param>
         /// <param name="data">The data provided from the source state, for the target state.</param>
         public StateEnterEventArgs(ActionToken triggeringAction, StateToken from, object data)
@@ -65,7 +65,7 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Initializes the StateExitEventArgs instance.
         /// </summary>
-        /// <param name="triggeringAction">Action token of the action that triggered the transition.</param>
+        /// <param name="triggeringAction">The action token of the action that triggered the transition.</param>
         /// <param name="to">The target state of the transition.</param>
         /// <param name="data">The data provided to the target state.</param>
         public StateExitEventArgs(ActionToken triggeringAction, StateToken to, object data)
@@ -99,9 +99,9 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Initializes the StateChangedEventArgs instance.
         /// </summary>
-        /// <param name="triggeringAction">Action token of the action that triggered the transition.</param>
-        /// <param name="oldState">Old state.</param>
-        /// <param name="newState">New state.</param>
+        /// <param name="triggeringAction">The action token of the action that triggered the transition.</param>
+        /// <param name="oldState">The state the state machine was in prior to the transition.</param>
+        /// <param name="newState">The state the state machine currently is at the beginning of the transition.</param>
         public StateChangedEventArgs(ActionToken triggeringAction, StateBase oldState, StateBase newState)
         {
             TriggeringAction = triggeringAction;

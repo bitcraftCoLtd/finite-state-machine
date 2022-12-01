@@ -253,7 +253,7 @@ fsm.StateManager.prototype._transitionTo = function (actionToken, stateToken, da
     // create enter state event argument
     var enterEventArgs = {
         from: oldState ? oldState.token : null,
-        triggeringActionToken: actionToken ? actionToken : null,
+        triggeringActionToken: actionToken || null,
         data: data,
         redirect: {
             triggeringActionToken: null,
@@ -353,7 +353,7 @@ fsm.StateManager.prototype._performTransitionTo = function (actionToken, stateTo
             break;
         }
 
-        // chain the ction token, state token and data for the next iteration
+        // chain the action token, state token and data for the next iteration
         triggeringActionToken = transition.triggeringActionToken;
         targetStateToken = transition.targetState;
         targetData = transition.targetStateData;

@@ -19,10 +19,10 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
 
             RegisterActionHandler(HandWrittenActionTokens.UpdateAction, (d, cb) => cb(HandWrittenStateTokens.TransitionStateToken));
         }
-        
+
         protected override void OnEnter(StateEnterEventArgs e)
         {
-            (Context as StateMachineTestContext).TestStatus++;
+            GetContext<StateMachineTestContext>().TestStatus++;
 
             e.Redirect.TargetState = HandWrittenStateTokens.TransitionStateToken;
             e.Redirect.TriggeringAction = HandWrittenActionTokens.InitDoneAction;
