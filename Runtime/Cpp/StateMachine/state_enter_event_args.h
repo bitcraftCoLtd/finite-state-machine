@@ -15,7 +15,8 @@ namespace Bitcraft
         class StateEnterEventArgs
         {
         private:
-            const StateToken* const  _from;
+            const ActionToken* const _triggeringAction;
+            const StateToken* const _from;
             StateData* _data;
             TransitionInfo _redirect;
 
@@ -23,9 +24,15 @@ namespace Bitcraft
             /// <summary>
             /// Initializes the StateEnterEventArgs instance.
             /// </summary>
+            /// <param name="triggeringAction">The action token of the action that triggered the transition.</param>
             /// <param name="from">The source state of the transition.</param>
             /// <param name="data">The data provided from the source state, for the target state.</param>
-            StateEnterEventArgs(const StateToken* const from, StateData* data);
+            StateEnterEventArgs(const ActionToken* const triggeringAction, const StateToken* const from, StateData* data);
+
+            /// <summary>
+            /// Gets the action token of the action that triggered the transition.
+            /// </summary>
+            const ActionToken* const GetTriggeringAction() const;
 
             /// <summary>
             /// Gets the source state token.

@@ -4,10 +4,16 @@ namespace Bitcraft
 {
     namespace StateMachine
     {
-        StateChangedEventArgs::StateChangedEventArgs(StateBase* oldState, StateBase* newState)
+        StateChangedEventArgs::StateChangedEventArgs(ActionToken* triggeringAction, StateBase* oldState, StateBase* newState)
         {
+            _triggeringAction = triggeringAction;
             _oldState = oldState;
             _newState = newState;
+        }
+
+        ActionToken* StateEnterEventArgs::GetTriggeringAction()
+        {
+            return _triggeringAction;
         }
 
         StateBase* StateChangedEventArgs::GetOldState()

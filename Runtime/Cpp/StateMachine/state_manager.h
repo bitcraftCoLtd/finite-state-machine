@@ -32,8 +32,8 @@ namespace Bitcraft
 
         private:
             void InternalInitialization(void* context);
-            void PerformTransitionTo(const StateToken* stateToken, StateData* data);
-            TransitionInfo* TransitionTo(const StateToken* const stateToken, StateData* data);
+            void PerformTransitionTo(const ActionToken* actionToken, const StateToken* stateToken, StateData* data);
+            TransitionInfo* TransitionTo(const ActionToken* actionToken, const StateToken* const stateToken, StateData* data);
             StateBase* FindState(const StateToken* const token);
             bool StateExists(StateBase* state);
 
