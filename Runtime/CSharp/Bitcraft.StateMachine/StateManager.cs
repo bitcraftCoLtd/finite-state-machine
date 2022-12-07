@@ -73,7 +73,7 @@ namespace Bitcraft.StateMachine
             if (initialState == null)
                 throw new ArgumentNullException(nameof(initialState));
 
-            RaiseOnExitEvent(null, null);
+            RaiseOnExitEvent(null, initialState, data);
 
             CurrentState = null;
 
@@ -107,7 +107,7 @@ namespace Bitcraft.StateMachine
             if (state == null)
                 throw new UnknownStateException(CurrentStateToken, stateToken);
 
-            RaiseOnExitEvent(stateToken, data);
+            RaiseOnExitEvent(actionToken, stateToken, data);
 
             StateBase oldState = CurrentState;
             CurrentState = state;
@@ -130,22 +130,22 @@ namespace Bitcraft.StateMachine
             return stateEnterEventArgs.Redirect;
         }
 
-        private void RaiseOnExitEvent(StateToken stateToken, object data)
+        private void RaiseOnExitEvent(ActionToken triggeringAction, StateToken stateToken, object data)
         {
-            if (CurrentState != null)
+            if (CurrentState == null)
+                return;
+
+            var stateExitEventArgs = new StateExitEventArgs(triggeringAction, stateToken, data);
+
+            isPerformActionLocked = true;
+
+            try
             {
-                var stateExitEventArgs = new StateExitEventArgs(null, stateToken, data);
-
-                isPerformActionLocked = true;
-
-                try
-                {
-                    CurrentState.OnExit(stateExitEventArgs);
-                }
-                finally
-                {
-                    isPerformActionLocked = false;
-                }
+                CurrentState.OnExit(stateExitEventArgs);
+            }
+            finally
+            {
+                isPerformActionLocked = false;
             }
         }
 
@@ -203,7 +203,7 @@ namespace Bitcraft.StateMachine
 
             if (internalActionHandler.State == null)
             {
-                CurrentState.OnExit(new StateExitEventArgs(null, null, internalActionHandler.Data));
+                RaiseOnExitEvent(action, CurrentState.Token, internalActionHandler.Data);
                 CurrentState = null;
                 OnCompleted(internalActionHandler.Data);
             }
