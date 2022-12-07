@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Bitcraft.StateMachine.ShopSample
+﻿namespace Bitcraft.StateMachine.ShopSample
 {
     public static class ShopStateTokens
     {

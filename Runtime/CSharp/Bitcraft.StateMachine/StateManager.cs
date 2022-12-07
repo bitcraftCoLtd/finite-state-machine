@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Bitcraft.StateMachine
 {
@@ -29,9 +30,9 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Gets the registered states.
         /// </summary>
-        public ReadOnlyCollection<StateBase> States { get; }
+        public IReadOnlyCollection<StateBase> States { get; }
 
-        private List<StateBase> states = new List<StateBase>();
+        private readonly List<StateBase> states = new List<StateBase>();
 
         private bool isPerformActionLocked;
 
@@ -39,7 +40,7 @@ namespace Bitcraft.StateMachine
         /// Initializes the StateManager instance without context.
         /// </summary>
         public StateManager()
-            : this(null)
+            : this(default)
         {
         }
 
@@ -75,6 +76,7 @@ namespace Bitcraft.StateMachine
             RaiseOnExitEvent(null, null);
 
             CurrentState = null;
+
             PerformTransitionTo(null, initialState, data);
         }
 
@@ -113,6 +115,7 @@ namespace Bitcraft.StateMachine
             var stateEnterEventArgs = new StateEnterEventArgs(actionToken, oldState?.Token, data);
 
             isPerformActionLocked = true;
+
             try
             {
                 OnStateChanged(new StateChangedEventArgs(actionToken, oldState, CurrentState));
@@ -134,6 +137,7 @@ namespace Bitcraft.StateMachine
                 var stateExitEventArgs = new StateExitEventArgs(null, stateToken, data);
 
                 isPerformActionLocked = true;
+
                 try
                 {
                     CurrentState.OnExit(stateExitEventArgs);
@@ -169,9 +173,9 @@ namespace Bitcraft.StateMachine
         /// </summary>
         /// <param name="action">The action done that may change the state machine internal state.</param>
         /// <returns>Returns false if it is already processing an asynchronous action, true otherwise.</returns>
-        public ActionResultType PerformAction(ActionToken action)
+        public async Task<ActionResultType> PerformAction(ActionToken action)
         {
-            return PerformAction(action, null);
+            return await PerformAction(action, null);
         }
 
         /// <summary>
@@ -181,7 +185,7 @@ namespace Bitcraft.StateMachine
         /// <param name="action">The action done that may change the state machine internal state.</param>
         /// <param name="data">A custom data related to the action performed.</param>
         /// <returns>Returns false if it is already processing an asynchronous action, true otherwise.</returns>
-        public ActionResultType PerformAction(ActionToken action, object data)
+        public async Task<ActionResultType> PerformAction(ActionToken action, object data)
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
@@ -192,18 +196,21 @@ namespace Bitcraft.StateMachine
             if (isPerformActionLocked)
                 return ActionResultType.ErrorForbiddenFromSpecialEvents;
 
-            return CurrentState.Handle(action, data, (st, d) =>
-            {
-                if (st == null)
-                {
-                    CurrentState = null;
-                    OnCompleted();
-                    return;
-                }
+            StateBase.InternalHandlerResult internalActionHandler = await CurrentState.Handle(action, data);
 
-                if (CurrentState.Token != st)
-                    PerformTransitionTo(action, st, d);
-            });
+            if (internalActionHandler.ResultType != ActionResultType.Success)
+                return internalActionHandler.ResultType;
+
+            if (internalActionHandler.State == null)
+            {
+                CurrentState.OnExit(new StateExitEventArgs(null, null, internalActionHandler.Data));
+                CurrentState = null;
+                OnCompleted(internalActionHandler.Data);
+            }
+            else if (CurrentState.Token != internalActionHandler.State)
+                PerformTransitionTo(action, internalActionHandler.State, internalActionHandler.Data);
+
+            return ActionResultType.Success;
         }
 
         /// <summary>
@@ -228,7 +235,7 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Called when the state machine has reached its final state.
         /// </summary>
-        protected virtual void OnCompleted()
+        protected virtual void OnCompleted(object data)
         {
             Completed?.Invoke(this, EventArgs.Empty);
         }

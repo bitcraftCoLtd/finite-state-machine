@@ -1,16 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Bitcraft.StateMachine
 {
+    public readonly struct HandlerResult
+    {
+        public readonly StateToken State;
+        public readonly object Data;
+
+        public HandlerResult(StateToken state)
+            : this(state, null)
+        {
+        }
+
+        public HandlerResult(StateToken state, object data)
+        {
+            State = state;
+            Data = data;
+        }
+    }
+
+    public delegate Task<HandlerResult> StateActionHandler(object data);
+
     /// <summary>
     /// Represent a state of the state machine.
     /// A state is also a sub state machine in order to allow building a hierarchical state machine.
     /// </summary>
     public abstract class StateBase
     {
-        private Dictionary<ActionToken, Action<object, Action<StateToken>>> handlers = new Dictionary<ActionToken, Action<object, Action<StateToken>>>();
-        private Dictionary<ActionToken, Action<object, Action<StateToken, object>>> dataHandlers = new Dictionary<ActionToken, Action<object, Action<StateToken, object>>>();
+        private readonly Dictionary<ActionToken, StateActionHandler> handlers = new Dictionary<ActionToken, StateActionHandler>();
 
         /// <summary>
         /// Gets the token that identifies the current state.
@@ -31,8 +50,6 @@ namespace Bitcraft.StateMachine
             {
                 foreach (var handler in handlers)
                     yield return handler.Key;
-                foreach (var handler in dataHandlers)
-                    yield return handler.Key;
             }
         }
 
@@ -43,10 +60,7 @@ namespace Bitcraft.StateMachine
         {
             get
             {
-                if (StateManager == null)
-                    return null;
-
-                return StateManager.Context;
+                return StateManager?.Context;
             }
         }
 
@@ -104,16 +118,12 @@ namespace Bitcraft.StateMachine
         protected T GetContext<T>()
         {
             if (Context == null)
-                return default(T);
+                return default;
 
-            if (Context is T)
-                return (T)Context;
+            if (Context is T typedContext)
+                return typedContext;
 
-            string message = string.Format(
-                "Context is of type '{0}', impossible to cast it to '{1}'",
-                Context.GetType().FullName,
-                typeof(T).FullName);
-
+            string message = $"Context is of type '{Context.GetType().FullName}', impossible to cast it to '{typeof(T).FullName}'";
             throw new InvalidOperationException(message);
         }
 
@@ -144,9 +154,9 @@ namespace Bitcraft.StateMachine
             RegisterActionHandler(action, NoopHandler);
         }
 
-        private void NoopHandler(object data, Action<StateToken, object> callback)
+        private Task<HandlerResult> NoopHandler(object data)
         {
-            callback(this.Token, data);
+            return Task.FromResult(default(HandlerResult));
         }
 
         /// <summary>
@@ -154,25 +164,12 @@ namespace Bitcraft.StateMachine
         /// </summary>
         /// <param name="action">The action that makes the handler to be evaluated.</param>
         /// <param name="handler">The handler that evaluate and possibly performs the state transition.</param>
-        protected void RegisterActionHandler(ActionToken action, Action<object, Action<StateToken>> handler)
+        protected void RegisterActionHandler(ActionToken action, StateActionHandler handler)
         {
-            if (dataHandlers.ContainsKey(action))
+            if (handlers.ContainsKey(action))
                 throw new InvalidOperationException(string.Format("Action '{0}' already registered.", action));
 
             handlers.Add(action, handler);
-        }
-
-        /// <summary>
-        /// Registers a handler where the state transitions to another one for a given action.
-        /// </summary>
-        /// <param name="action">The action that makes the handler to be evaluated.</param>
-        /// <param name="handler">The handler that evaluate and possibly performs the state transition.</param>
-        protected void RegisterActionHandler(ActionToken action, Action<object, Action<StateToken, object>> handler)
-        {
-            if (dataHandlers.ContainsKey(action))
-                throw new InvalidOperationException(string.Format("Action '{0}' already registered.", action));
-
-            dataHandlers.Add(action, handler);
         }
 
         private bool isHandlingAsync;
@@ -182,79 +179,67 @@ namespace Bitcraft.StateMachine
         /// </summary>
         internal bool IsHandlingAsync => isHandlingAsync;
 
+        internal readonly struct InternalHandlerResult
+        {
+            public readonly ActionResultType ResultType;
+            public readonly StateToken State;
+            public readonly object Data;
+
+            public static readonly InternalHandlerResult ErrorUnknownAction = new InternalHandlerResult(ActionResultType.ErrorUnknownAction);
+            public static readonly InternalHandlerResult ErrorAlreadyPerformingAction = new InternalHandlerResult(ActionResultType.ErrorAlreadyPerformingAction);
+            public static readonly InternalHandlerResult ErrorForbiddenFromSpecialEvents = new InternalHandlerResult(ActionResultType.ErrorForbiddenFromSpecialEvents);
+
+            private InternalHandlerResult(ActionResultType resultType)
+            {
+                ResultType = resultType;
+                State = null;
+                Data = null;
+            }
+
+            public InternalHandlerResult(StateToken state, object data)
+            {
+                ResultType = ActionResultType.Success;
+                State = state;
+                Data = data;
+            }
+        }
+
         /// <summary>
         /// Evaluates a handler that decides transition to the next state for a given action.
         /// </summary>
         /// <param name="action">The action that makes the handler to be evaluated.</param>
         /// <param name="data">A custom data related to the action performed.</param>
         /// <param name="callback">When called, performs the state transition.</param>
-        internal ActionResultType Handle(ActionToken action, object data, Action<StateToken, object> callback)
+        internal async Task<InternalHandlerResult> Handle(ActionToken action, object data)
         {
             if (isHandlingAsync)
-                return ActionResultType.ErrorAlreadyPerformingAction;
+                return InternalHandlerResult.ErrorAlreadyPerformingAction;
 
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
 
-            Action<object, Action<StateToken>> handler1 = null;
-            Action<object, Action<StateToken, object>> handler2 = null;
-
-            if (handlers.TryGetValue(action, out handler1) || dataHandlers.TryGetValue(action, out handler2))
+            if (handlers.TryGetValue(action, out StateActionHandler handler) == false)
             {
-                isHandlingAsync = true;
-
-                try
-                {
-                    bool callFlag = false;
-
-                    if (handler1 != null)
-                    {
-                        handler1(data, st =>
-                            {
-                                if (callFlag)
-                                    return;
-                                RunCallback(callback, st, data);
-                                callFlag = true;
-                            });
-                        return ActionResultType.Success;
-                    }
-                    else if (handler2 != null)
-                    {
-                        handler2(data, (st, d) =>
-                            {
-                                if (callFlag)
-                                    return;
-                                RunCallback(callback, st, d);
-                                callFlag = true;
-                            });
-                        return ActionResultType.Success;
-                    }
-                    else
-                        isHandlingAsync = false;
-                }
-                catch
-                {
-                    isHandlingAsync = false;
-                    throw;
-                }
-
-                // action found but handler is null (should never happen because handler nullity is checked at the origin)
-                throw new IllegalActionException(action, Token, "No handler definded for the current action.");
+                // No action found.
+                return InternalHandlerResult.ErrorUnknownAction;
             }
 
-            // no action found
-            return ActionResultType.ErrorUnknownAction;
-        }
+            if (handler == null)
+            {
+                // Action found but handler is null (should never happen because handler nullity is checked at the origin).
+                throw new IllegalActionException(action, Token, $"No handler definded for the current action ({action}).");
+            }
 
-        private void RunCallback(Action<StateToken, object> callback, StateToken stateToken, object data)
-        {
+            isHandlingAsync = true;
+
             try
             {
-                callback(stateToken, data);
+                HandlerResult handlerResult = await handler(data);
+
+                return new InternalHandlerResult(handlerResult.State, handlerResult.Data);
             }
             finally
             {
-                // ensure isHandlingAsync flag is properly restored
                 isHandlingAsync = false;
             }
         }

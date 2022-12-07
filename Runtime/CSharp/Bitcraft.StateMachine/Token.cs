@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Bitcraft.StateMachine
 {
@@ -10,15 +11,8 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Initializes the StateToken instance.
         /// </summary>
-        public StateToken()
-        {
-        }
-
-        /// <summary>
-        /// Initializes the StateToken instance.
-        /// </summary>
         /// <param name="name">Name of the state token.</param>
-        public StateToken(string name)
+        public StateToken([CallerMemberName]string name = null)
             : base(name)
         {
         }
@@ -32,15 +26,8 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Initializes the ActionToken instance.
         /// </summary>
-        public ActionToken()
-        {
-        }
-
-        /// <summary>
-        /// Initializes the ActionToken instance.
-        /// </summary>
         /// <param name="name">Name of the action token.</param>
-        public ActionToken(string name)
+        public ActionToken([CallerMemberName] string name = null)
             : base(name)
         {
         }
@@ -51,8 +38,8 @@ namespace Bitcraft.StateMachine
     /// </summary>
     public abstract class Token : IEquatable<Token>
     {
-        private Guid id;
-        private string name;
+        private readonly Guid id;
+        private readonly string name;
 
         /// <summary>
         /// Initializes the Token instance.
@@ -66,7 +53,7 @@ namespace Bitcraft.StateMachine
         /// Initializes the Token instance.
         /// </summary>
         /// <param name="name">Name of the token.</param>
-        protected Token(string name)
+        protected Token([CallerMemberName] string name = null)
             : this()
         {
             if (name == null)
@@ -93,7 +80,7 @@ namespace Bitcraft.StateMachine
         /// <returns>Returns true if both tokens are the same, false otherwise.</returns>
         public bool Equals(Token other)
         {
-            if ((object)other == null)
+            if (other is null)
                 return false;
 
             return id == other.id;
@@ -129,10 +116,10 @@ namespace Bitcraft.StateMachine
         /// <returns>Returns true if both tokens are the same, false otherwise.</returns>
         public static bool operator ==(Token a, Token b)
         {
-            if (object.ReferenceEquals(a, b))
+            if (ReferenceEquals(a, b))
                 return true;
 
-            if ((object)a == null || (object)b == null)
+            if (a is null || b is null)
                 return false;
 
             return a.Equals(b);

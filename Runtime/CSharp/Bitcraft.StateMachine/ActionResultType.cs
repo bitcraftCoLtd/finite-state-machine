@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Bitcraft.StateMachine
+﻿namespace Bitcraft.StateMachine
 {
     /// <summary>
     /// Represents the response to performing an action on the state machine.

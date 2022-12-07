@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Threading.Tasks;
 
 namespace Bitcraft.StateMachine.ShopSample.States
 {
@@ -16,11 +13,11 @@ namespace Bitcraft.StateMachine.ShopSample.States
         {
             base.OnInitialized();
 
-            // no Back support on Thank You screen
+            // No Back support on Thank You screen.
             RegisterActionHandler(ShopActionTokens.Next, OnNext);
         }
 
-        private void OnNext(object data, Action<StateToken> cb)
+        private Task<HandlerResult> OnNext(object _)
         {
             var basket = GetContext<Basket>();
             basket.Clear();
@@ -28,7 +25,7 @@ namespace Bitcraft.StateMachine.ShopSample.States
             var sm = (ShopStateMachine)StateManager;
             sm.PaymentMean = PaymentMeans.Undefined;
 
-            cb(ShopStateTokens.ProductList);
+            return Task.FromResult(new HandlerResult(ShopStateTokens.ProductList));
         }
     }
 }

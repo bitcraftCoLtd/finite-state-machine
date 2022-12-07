@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Bitcraft.StateMachine
+﻿namespace Bitcraft.StateMachine
 {
     /// <summary>
     /// Represents information of a state machine transition.

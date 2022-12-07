@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Bitcraft.StateMachine;
+﻿using System.Threading.Tasks;
+using Bitcraft.StateMachine.UnitTests.HandWritten;
 using Bitcraft.StateMachine.UnitTests.HandWritten.States;
+using Xunit;
 
-namespace Bitcraft.StateMachine.UnitTests.HandWritten
+namespace Bitcraft.StateMachine.UnitTests
 {
-    [TestClass]
     public class HandWrittenStateMachineUnitTests
     {
-        [TestMethod]
-        public void TestMethod01()
+        [Fact]
+        public async Task TestMethod01()
         {
             var context = new StateMachineTestContext();
 
@@ -27,23 +23,23 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten
 
             sm.SetInitialState(HandWrittenStateTokens.BeginStateToken);
 
-            sm.PerformAction(HandWrittenActionTokens.InitDoneAction);
-            sm.PerformAction(HandWrittenActionTokens.UpdateAction);
-            sm.PerformAction(HandWrittenActionTokens.UpdateAction);
-            sm.PerformAction(HandWrittenActionTokens.UpdateAction);
-            sm.PerformAction(HandWrittenActionTokens.UpdateAction);
-            sm.PerformAction(HandWrittenActionTokens.UpdateAction);
-            sm.PerformAction(HandWrittenActionTokens.TerminateAction);
+            await sm.PerformAction(HandWrittenActionTokens.InitDoneAction);
+            await sm.PerformAction(HandWrittenActionTokens.UpdateAction);
+            await sm.PerformAction(HandWrittenActionTokens.UpdateAction);
+            await sm.PerformAction(HandWrittenActionTokens.UpdateAction);
+            await sm.PerformAction(HandWrittenActionTokens.UpdateAction);
+            await sm.PerformAction(HandWrittenActionTokens.UpdateAction);
+            await sm.PerformAction(HandWrittenActionTokens.TerminateAction);
 
-            Assert.AreEqual(5, context.TestStatus);
+            Assert.Equal(5, context.TestStatus);
 
-            sm.PerformAction(HandWrittenActionTokens.FinalizeAction);
+            await sm.PerformAction(HandWrittenActionTokens.FinalizeAction);
 
-            Assert.AreEqual(6, context.TestStatus);
+            Assert.Equal(6, context.TestStatus);
         }
 
-        [TestMethod]
-        public void TestMethod02()
+        [Fact]
+        public async Task TestMethod02()
         {
             var context = new StateMachineTestContext();
 
@@ -61,12 +57,12 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten
             sm.RegisterState(endState);
 
             sm.SetInitialState(HandWrittenStateTokens.BeginStateToken);
-            sm.PerformAction(HandWrittenActionTokens.InitDoneAction);
-            sm.PerformAction(HandWrittenActionTokens.UpdateAction);
-            sm.PerformAction(HandWrittenActionTokens.TransitionAction);
-            sm.PerformAction(HandWrittenActionTokens.TerminateAction);
+            await sm.PerformAction(HandWrittenActionTokens.InitDoneAction);
+            await sm.PerformAction(HandWrittenActionTokens.UpdateAction);
+            await sm.PerformAction(HandWrittenActionTokens.TransitionAction);
+            await sm.PerformAction(HandWrittenActionTokens.TerminateAction);
 
-            Assert.AreEqual(endState, sm.CurrentState);
+            Assert.Equal(endState, sm.CurrentState);
         }
     }
 }

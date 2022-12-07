@@ -1,20 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Bitcraft.StateMachine.ShopSample
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main()
         {
-            new Program().Run();
+            await new Program().Run();
         }
 
-        private void Run()
+        private async Task Run()
         {
             var basket = new Basket();
 
@@ -28,14 +24,14 @@ namespace Bitcraft.StateMachine.ShopSample
                 var key = Console.ReadKey(true);
 
                 if (key.Key == ConsoleKey.Escape)
-                    sm.PerformAction(ShopActionTokens.Back);
+                    await sm.PerformAction(ShopActionTokens.Back);
                 else if (key.Key == ConsoleKey.Enter)
-                    sm.PerformAction(ShopActionTokens.Next);
+                    await sm.PerformAction(ShopActionTokens.Next);
                 else
                 {
                     var input = GetNumber(key.Key);
                     if (input > -1)
-                        sm.PerformAction(ShopActionTokens.Input, new InputInfo { Number = input, Modifier = key.Modifiers });
+                        await sm.PerformAction(ShopActionTokens.Input, new InputInfo { Number = input, Modifier = key.Modifiers });
                 }
             }
         }

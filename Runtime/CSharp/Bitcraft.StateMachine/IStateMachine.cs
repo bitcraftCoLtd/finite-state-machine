@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Bitcraft.StateMachine
 {
@@ -26,7 +27,7 @@ namespace Bitcraft.StateMachine
         /// <summary>
         /// Gets the registered states.
         /// </summary>
-        ReadOnlyCollection<StateBase> States { get; }
+        IReadOnlyCollection<StateBase> States { get; }
 
         /// <summary>
         /// Sets the initial state of the current state machine, and resets its internal state.
@@ -53,7 +54,7 @@ namespace Bitcraft.StateMachine
         /// </summary>
         /// <param name="action">The action done that may change the state machine internal state.</param>
         /// <returns>Returns an ActionResultType explaining if performing action succeeded or not.</returns>
-        ActionResultType PerformAction(ActionToken action);
+        Task<ActionResultType> PerformAction(ActionToken action);
 
         /// <summary>
         /// Tells the state machine that an external action occured.
@@ -62,7 +63,7 @@ namespace Bitcraft.StateMachine
         /// <param name="action">The action done that may change the state machine internal state.</param>
         /// <param name="data">A custom data related to the action performed.</param>
         /// <returns>Returns an ActionResultType explaining if performing action succeeded or not.</returns>
-        ActionResultType PerformAction(ActionToken action, object data);
+        Task<ActionResultType> PerformAction(ActionToken action, object data);
 
         /// <summary>
         /// Raised when the state machine transitions from a state to another.
