@@ -21,7 +21,8 @@ namespace Bitcraft.StateMachine
         }
     }
 
-    public delegate Task<HandlerResult> StateActionHandler(object data);
+    public delegate Task<HandlerResult> ActionHandler();
+    public delegate Task<HandlerResult> DataActionHandler(object data);
 
     /// <summary>
     /// Represent a state of the state machine.
@@ -29,7 +30,8 @@ namespace Bitcraft.StateMachine
     /// </summary>
     public abstract class StateBase
     {
-        private readonly Dictionary<ActionToken, StateActionHandler> handlers = new Dictionary<ActionToken, StateActionHandler>();
+        private readonly Dictionary<ActionToken, ActionHandler> handlers = new Dictionary<ActionToken, ActionHandler>();
+        private readonly Dictionary<ActionToken, DataActionHandler> dataHandlers = new Dictionary<ActionToken, DataActionHandler>();
 
         /// <summary>
         /// Gets the token that identifies the current state.
@@ -50,6 +52,8 @@ namespace Bitcraft.StateMachine
             {
                 foreach (var handler in handlers)
                     yield return handler.Key;
+                foreach (var dataHandler in dataHandlers)
+                    yield return dataHandler.Key;
             }
         }
 
@@ -154,7 +158,7 @@ namespace Bitcraft.StateMachine
             RegisterActionHandler(action, NoopHandler);
         }
 
-        private Task<HandlerResult> NoopHandler(object data)
+        private Task<HandlerResult> NoopHandler()
         {
             return Task.FromResult(default(HandlerResult));
         }
@@ -164,12 +168,25 @@ namespace Bitcraft.StateMachine
         /// </summary>
         /// <param name="action">The action that makes the handler to be evaluated.</param>
         /// <param name="handler">The handler that evaluate and possibly performs the state transition.</param>
-        protected void RegisterActionHandler(ActionToken action, StateActionHandler handler)
+        protected void RegisterActionHandler(ActionToken action, ActionHandler handler)
         {
-            if (handlers.ContainsKey(action))
-                throw new InvalidOperationException(string.Format("Action '{0}' already registered.", action));
+            if (handlers.ContainsKey(action) || dataHandlers.ContainsKey(action))
+                throw new InvalidOperationException($"Action '{action}' already registered.");
 
             handlers.Add(action, handler);
+        }
+
+        /// <summary>
+        /// Registers a handler where the state transitions to another one for a given action.
+        /// </summary>
+        /// <param name="action">The action that makes the handler to be evaluated.</param>
+        /// <param name="handler">The handler that evaluate and possibly performs the state transition.</param>
+        protected void RegisterActionHandler(ActionToken action, DataActionHandler handler)
+        {
+            if (handlers.ContainsKey(action) || dataHandlers.ContainsKey(action))
+                throw new InvalidOperationException($"Action '{action}' already registered.");
+
+            dataHandlers.Add(action, handler);
         }
 
         private bool isHandlingAsync;
@@ -218,23 +235,38 @@ namespace Bitcraft.StateMachine
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
 
-            if (handlers.TryGetValue(action, out StateActionHandler handler) == false)
+            bool hasHandler = handlers.TryGetValue(action, out ActionHandler handler);
+            bool hasDataHandler = dataHandlers.TryGetValue(action, out DataActionHandler dataHandler);
+
+            if (hasHandler == false && hasDataHandler == false)
             {
                 // No action found.
                 return InternalHandlerResult.ErrorUnknownAction;
             }
+            else if (hasHandler && hasDataHandler)
+            {
+                // That means there is a bug in the code somewhere else.
+                throw new IllegalActionException(action, Token, $"Both handle and data handler registered for the same action ({action}).");
+            }
 
-            if (handler == null)
+            if (handler == null && dataHandler == null)
             {
                 // Action found but handler is null (should never happen because handler nullity is checked at the origin).
                 throw new IllegalActionException(action, Token, $"No handler definded for the current action ({action}).");
             }
 
+            // Here it is strictly impossible that both handler and dataHandler are non-null.
+
             isHandlingAsync = true;
 
             try
             {
-                HandlerResult handlerResult = await handler(data);
+                HandlerResult handlerResult;
+
+                if (handler != null)
+                    handlerResult = await handler();
+                else
+                    handlerResult = await dataHandler(data);
 
                 return new InternalHandlerResult(handlerResult.State, handlerResult.Data);
             }

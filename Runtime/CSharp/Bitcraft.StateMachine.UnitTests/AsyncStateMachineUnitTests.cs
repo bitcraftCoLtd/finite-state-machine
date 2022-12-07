@@ -43,7 +43,7 @@ namespace Bitcraft.StateMachine.UnitTests
                 OnEnterStatusUpdate(GetContext<StringBuilder>());
             }
 
-            private async Task<HandlerResult> OnMoveOn(object data)
+            private async Task<HandlerResult> OnMoveOn()
             {
                 OnMoveOnStatusUpdate(GetContext<StringBuilder>());
 
@@ -84,7 +84,7 @@ namespace Bitcraft.StateMachine.UnitTests
                 OnEnterStatusUpdate(GetContext<StringBuilder>());
             }
 
-            private async Task<HandlerResult> OnMoveOn(object data)
+            private async Task<HandlerResult> OnMoveOn()
             {
                 OnMoveOnStatusUpdate(GetContext<StringBuilder>());
 
@@ -93,7 +93,7 @@ namespace Bitcraft.StateMachine.UnitTests
                 return new HandlerResult(States.End);
             }
 
-            private async Task<HandlerResult> OnUpdate(object data)
+            private async Task<HandlerResult> OnUpdate()
             {
                 OnUpdateStatusUpdate(GetContext<StringBuilder>());
 
@@ -133,7 +133,7 @@ namespace Bitcraft.StateMachine.UnitTests
                 OnEnterStatusUpdate(GetContext<StringBuilder>());
             }
 
-            private async Task<HandlerResult> OnFinalize(object data)
+            private async Task<HandlerResult> OnFinalize()
             {
                 OnFinalizeStatusUpdate(GetContext<StringBuilder>());
 
