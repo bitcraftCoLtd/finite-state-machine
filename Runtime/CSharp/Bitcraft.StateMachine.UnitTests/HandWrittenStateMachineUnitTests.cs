@@ -14,7 +14,7 @@ namespace Bitcraft.StateMachine.UnitTests
 
             var sm = new StateManager(context);
 
-            sm.StateChanged += (ss, ee) => System.Diagnostics.Debug.WriteLine(string.Format("State changed from '{0}' to '{1}'", ee.OldState, ee.NewState));
+            sm.StateChanged += (ss, ee) => System.Diagnostics.Debug.WriteLine($"State changed from '{ee.OldState}' to '{ee.NewState}'");
             sm.Completed += (ss, ee) =>
             {
                 Assert.Equal(6, context.TestStatus);
@@ -49,7 +49,7 @@ namespace Bitcraft.StateMachine.UnitTests
 
             var sm = new StateManager(context);
 
-            sm.StateChanged += (ss, ee) => System.Diagnostics.Debug.WriteLine(string.Format("State changed from '{0}' to '{1}'", ee.OldState, ee.NewState));
+            sm.StateChanged += (ss, ee) => System.Diagnostics.Debug.WriteLine($"State changed from '{ee.OldState}' to '{ee.NewState}'");
             sm.Completed += (ss, ee) => ((StateMachineTestContext)sm.Context).TestStatus++;
 
             sm.RegisterState(new BeginState());
