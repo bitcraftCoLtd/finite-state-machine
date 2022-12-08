@@ -10,7 +10,7 @@ namespace Bitcraft.StateMachine
     /// Represents a finite state machine.
     /// The state machine manages the states and the transtions.
     /// </summary>
-    public class StateManager : IStateMachine
+    public class StateManager
     {
         /// <summary>
         /// Gets the context of the current state machine.
