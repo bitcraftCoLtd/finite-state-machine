@@ -47,3 +47,4 @@ Runtime/JavaScript/StateMachine/obj/
 
 .vs/
 .vscode/
+/Runtime/Cpp/**/x64/
