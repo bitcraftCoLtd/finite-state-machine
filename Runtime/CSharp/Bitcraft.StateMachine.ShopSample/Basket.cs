@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bitcraft.StateMachine.ShopSample
 {
@@ -31,13 +28,13 @@ namespace Bitcraft.StateMachine.ShopSample
         public void Print(TextWriter w)
         {
             if (IsEmpty)
-                Console.WriteLine("Your basket is empty.");
+                w.WriteLine("Your basket is empty.");
             else
             {
-                Console.WriteLine("Content of your basket:");
-                Console.WriteLine();
+                w.WriteLine("Content of your basket:");
+                w.WriteLine();
                 foreach (var key in Keys.Where(k => this[k] > 0))
-                    Console.WriteLine("   {0} x{1}", key, this[key]);
+                    w.WriteLine($"   {key} x{this[key]}");
             }
         }
     }

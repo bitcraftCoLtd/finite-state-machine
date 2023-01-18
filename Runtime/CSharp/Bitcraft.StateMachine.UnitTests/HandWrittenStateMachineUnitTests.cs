@@ -1,25 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Bitcraft.StateMachine;
+﻿using System.Threading.Tasks;
+using Bitcraft.StateMachine.UnitTests.HandWritten;
 using Bitcraft.StateMachine.UnitTests.HandWritten.States;
+using Xunit;
 
-namespace Bitcraft.StateMachine.UnitTests.HandWritten
+namespace Bitcraft.StateMachine.UnitTests
 {
-    [TestClass]
     public class HandWrittenStateMachineUnitTests
     {
-        [TestMethod]
-        public void TestMethod01()
+        [Fact]
+        public async Task TestMethod01()
         {
             var context = new StateMachineTestContext();
 
             var sm = new StateManager(context);
 
-            sm.StateChanged += (ss, ee) => System.Diagnostics.Debug.WriteLine(string.Format("State changed from '{0}' to '{1}'", ee.OldState, ee.NewState));
-            sm.Completed += (ss, ee) => ((StateMachineTestContext)sm.Context).TestStatus++;
+            sm.StateChanged += (ss, ee) => System.Diagnostics.Debug.WriteLine($"State changed from '{ee.OldState}' to '{ee.NewState}'");
+            sm.Completed += (ss, ee) =>
+            {
+                Assert.Equal(6, context.TestStatus);
+                ((StateMachineTestContext)sm.Context).TestStatus++;
+            };
 
             sm.RegisterState(new BeginState());
             sm.RegisterState(new UpdateState());
@@ -27,29 +27,29 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten
 
             sm.SetInitialState(HandWrittenStateTokens.BeginStateToken);
 
-            sm.PerformAction(HandWrittenActionTokens.InitDoneAction);
-            sm.PerformAction(HandWrittenActionTokens.UpdateAction);
-            sm.PerformAction(HandWrittenActionTokens.UpdateAction);
-            sm.PerformAction(HandWrittenActionTokens.UpdateAction);
-            sm.PerformAction(HandWrittenActionTokens.UpdateAction);
-            sm.PerformAction(HandWrittenActionTokens.UpdateAction);
-            sm.PerformAction(HandWrittenActionTokens.TerminateAction);
+            await sm.PerformAction(HandWrittenActionTokens.InitDoneAction);
+            await sm.PerformAction(HandWrittenActionTokens.UpdateAction);
+            await sm.PerformAction(HandWrittenActionTokens.UpdateAction);
+            await sm.PerformAction(HandWrittenActionTokens.UpdateAction);
+            await sm.PerformAction(HandWrittenActionTokens.UpdateAction);
+            await sm.PerformAction(HandWrittenActionTokens.UpdateAction);
+            await sm.PerformAction(HandWrittenActionTokens.TerminateAction);
 
-            Assert.AreEqual(5, context.TestStatus);
+            Assert.Equal(5, context.TestStatus);
 
-            sm.PerformAction(HandWrittenActionTokens.FinalizeAction);
+            await sm.PerformAction(HandWrittenActionTokens.FinalizeAction);
 
-            Assert.AreEqual(6, context.TestStatus);
+            Assert.Equal(7, context.TestStatus);
         }
 
-        [TestMethod]
-        public void TestMethod02()
+        [Fact]
+        public async Task TestMethod02()
         {
             var context = new StateMachineTestContext();
 
             var sm = new StateManager(context);
 
-            sm.StateChanged += (ss, ee) => System.Diagnostics.Debug.WriteLine(string.Format("State changed from '{0}' to '{1}'", ee.OldState, ee.NewState));
+            sm.StateChanged += (ss, ee) => System.Diagnostics.Debug.WriteLine($"State changed from '{ee.OldState}' to '{ee.NewState}'");
             sm.Completed += (ss, ee) => ((StateMachineTestContext)sm.Context).TestStatus++;
 
             sm.RegisterState(new BeginState());
@@ -61,12 +61,12 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten
             sm.RegisterState(endState);
 
             sm.SetInitialState(HandWrittenStateTokens.BeginStateToken);
-            sm.PerformAction(HandWrittenActionTokens.InitDoneAction);
-            sm.PerformAction(HandWrittenActionTokens.UpdateAction);
-            sm.PerformAction(HandWrittenActionTokens.TransitionAction);
-            sm.PerformAction(HandWrittenActionTokens.TerminateAction);
+            await sm.PerformAction(HandWrittenActionTokens.InitDoneAction);
+            await sm.PerformAction(HandWrittenActionTokens.UpdateAction);
+            await sm.PerformAction(HandWrittenActionTokens.TransitionAction);
+            await sm.PerformAction(HandWrittenActionTokens.TerminateAction);
 
-            Assert.AreEqual(endState, sm.CurrentState);
+            Assert.Equal(endState, sm.CurrentState);
         }
     }
 }

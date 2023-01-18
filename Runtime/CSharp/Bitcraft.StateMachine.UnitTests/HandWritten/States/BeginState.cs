@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
+using Xunit;
 
 namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
 {
@@ -16,7 +13,12 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            RegisterActionHandler(HandWrittenActionTokens.InitDoneAction, (d, cb) => cb(HandWrittenStateTokens.UpdateStateToken));
+            RegisterActionHandler(HandWrittenActionTokens.InitDoneAction, OnInitDone);
+        }
+
+        private Task<HandlerResult> OnInitDone(object data)
+        {
+            return Task.FromResult(new HandlerResult(HandWrittenStateTokens.UpdateStateToken, data));
         }
 
         protected override void OnEnter(StateEnterEventArgs e)
@@ -25,7 +27,7 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
 
             var context = (StateMachineTestContext)Context;
 
-            Assert.AreEqual(0, context.TestStatus);
+            Assert.Equal(0, context.TestStatus);
             context.TestStatus++;
         }
 
@@ -35,7 +37,7 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
 
             var context = (StateMachineTestContext)Context;
 
-            Assert.AreEqual(1, context.TestStatus);
+            Assert.Equal(1, context.TestStatus);
             context.TestStatus++;
         }
     }

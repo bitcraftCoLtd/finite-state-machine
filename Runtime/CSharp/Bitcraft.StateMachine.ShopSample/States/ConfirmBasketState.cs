@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Bitcraft.StateMachine.ShopSample.States
 {
@@ -14,19 +13,19 @@ namespace Bitcraft.StateMachine.ShopSample.States
             RegisterActionHandler(ShopActionTokens.Next, OnNext);
         }
 
-        private void OnBack(object data, Action<StateToken> cb)
+        private Task<HandlerResult> OnBack(object _)
         {
-            cb(ShopStateTokens.ProductList);
+            return Task.FromResult(new HandlerResult(ShopStateTokens.ProductList));
         }
 
-        private void OnNext(object data, Action<StateToken> cb)
+        private Task<HandlerResult> OnNext(object _)
         {
             var basket = GetContext<Basket>();
 
             if (basket.IsEmpty)
-                cb(Token); // remain on the same state
+                return Task.FromResult(new HandlerResult(Token)); // Remain on the same state.
             else
-                cb(ShopStateTokens.PaymentInformation);
+                return Task.FromResult(new HandlerResult(ShopStateTokens.PaymentInformation));
         }
 
         protected override void PrintMenu()

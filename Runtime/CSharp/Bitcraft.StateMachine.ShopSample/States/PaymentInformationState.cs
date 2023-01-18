@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace Bitcraft.StateMachine.ShopSample.States
 {
@@ -15,7 +14,7 @@ namespace Bitcraft.StateMachine.ShopSample.States
 
     public class PaymentInformationState : ShopStateBase
     {
-        private PaymentMeans[] paymentValues;
+        private readonly PaymentMeans[] paymentValues;
 
         public PaymentInformationState()
             : base(ShopStateTokens.PaymentInformation)
@@ -47,12 +46,12 @@ namespace Bitcraft.StateMachine.ShopSample.States
             }
         }
 
-        private void OnBack(object data, Action<StateToken> cb)
+        private Task<HandlerResult> OnBack(object _)
         {
-            cb(ShopStateTokens.ConfirmBasket);
+            return Task.FromResult(new HandlerResult(ShopStateTokens.ConfirmBasket));
         }
 
-        private void OnInput(object data, Action<StateToken> cb)
+        private Task<HandlerResult> OnInput(object data)
         {
             var inputData = (InputInfo)data;
 
@@ -63,10 +62,10 @@ namespace Bitcraft.StateMachine.ShopSample.States
                 PrintMenu();
             }
 
-            cb(Token); // remain on the same state
+            return Task.FromResult(new HandlerResult(Token)); // Remain on the same state.
         }
 
-        private void OnNext(object data, Action<StateToken> cb)
+        private Task<HandlerResult> OnNext(object _)
         {
             var sm = (ShopStateMachine)StateManager;
 
@@ -76,12 +75,10 @@ namespace Bitcraft.StateMachine.ShopSample.States
                 Console.WriteLine();
                 Console.WriteLine("You must select a valid payment mean.");
 
-                cb(Token); // remain on the same state
-
-                return;
+                return Task.FromResult(new HandlerResult(Token)); // Remain on the same state.
             }
 
-            cb(ShopStateTokens.OrderConfirmation);
+            return Task.FromResult(new HandlerResult(ShopStateTokens.OrderConfirmation));
         }
 
         protected override void PrintMenu()
@@ -90,11 +87,13 @@ namespace Bitcraft.StateMachine.ShopSample.States
 
             var sm = (ShopStateMachine)StateManager;
 
-            Console.WriteLine("Select your payment mean: (current: {0})", sm.PaymentMean == PaymentMeans.Undefined ? "-" : sm.PaymentMean.ToString());
+            string paymentMean = sm.PaymentMean == PaymentMeans.Undefined ? "-" : sm.PaymentMean.ToString();
+
+            Console.WriteLine($"Select your payment mean: (current: {paymentMean})");
             Console.WriteLine();
 
             for (int i = 0; i < paymentValues.Length; i++)
-                Console.WriteLine("   {0}. {1}", i + 1, paymentValues[i]);
+                Console.WriteLine($"   {i + 1}. {paymentValues[i]}");
         }
     }
 }

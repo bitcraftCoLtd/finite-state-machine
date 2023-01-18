@@ -1,13 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Windows Desktop
-VisualStudioVersion = 12.0.30723.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcraft.StateMachine", "Bitcraft.StateMachine\Bitcraft.StateMachine.csproj", "{4EE2C26D-8EDD-47DB-8FBA-3D22FA477280}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitcraft.StateMachine", "Bitcraft.StateMachine\Bitcraft.StateMachine.csproj", "{4EE2C26D-8EDD-47DB-8FBA-3D22FA477280}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcraft.StateMachine.UnitTests", "Bitcraft.StateMachine.UnitTests\Bitcraft.StateMachine.UnitTests.csproj", "{E50E6EBD-D85A-4784-B1BF-E91A8320E325}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitcraft.StateMachine.UnitTests", "Bitcraft.StateMachine.UnitTests\Bitcraft.StateMachine.UnitTests.csproj", "{E50E6EBD-D85A-4784-B1BF-E91A8320E325}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcraft.StateMachine.ShopSample", "Bitcraft.StateMachine.ShopSample\Bitcraft.StateMachine.ShopSample.csproj", "{369E45CF-0A06-47B4-B110-0AEB9484120F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitcraft.StateMachine.ShopSample", "Bitcraft.StateMachine.ShopSample\Bitcraft.StateMachine.ShopSample.csproj", "{369E45CF-0A06-47B4-B110-0AEB9484120F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1563DFD0-BB6A-4249-9E8B-91D0788BF4AC}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,5 +35,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3CC74239-20F2-46B6-9EBA-F3E4E92FDE9D}
 	EndGlobalSection
 EndGlobal

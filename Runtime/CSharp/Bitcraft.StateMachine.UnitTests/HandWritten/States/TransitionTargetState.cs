@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
 
 namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
 {
@@ -17,7 +13,12 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
         {
             base.OnInitialized();
 
-            RegisterActionHandler(HandWrittenActionTokens.UpdateAction, (d, cb) => cb(HandWrittenStateTokens.TransitionStateToken));
+            RegisterActionHandler(HandWrittenActionTokens.UpdateAction, OnUpdate);
+        }
+
+        private Task<HandlerResult> OnUpdate(object _)
+        {
+            return Task.FromResult(new HandlerResult(HandWrittenStateTokens.TransitionStateToken, null));
         }
 
         protected override void OnEnter(StateEnterEventArgs e)

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
+using Xunit;
 
 namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
 {
@@ -17,9 +14,24 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
         {
             base.OnInitialized();
 
-            RegisterActionHandler(HandWrittenActionTokens.UpdateAction, (d, cb) => cb(HandWrittenStateTokens.UpdateStateToken));
-            RegisterActionHandler(HandWrittenActionTokens.TransitionAction, (d, cb) => cb(HandWrittenStateTokens.TransitionStateToken));
-            RegisterActionHandler(HandWrittenActionTokens.TerminateAction, (d, cb) => cb(HandWrittenStateTokens.EndStateToken));
+            RegisterActionHandler(HandWrittenActionTokens.UpdateAction, OnUpdate);
+            RegisterActionHandler(HandWrittenActionTokens.TransitionAction, OnTransition);
+            RegisterActionHandler(HandWrittenActionTokens.TerminateAction, OnTerminate);
+        }
+
+        private Task<HandlerResult> OnUpdate(object _)
+        {
+            return Task.FromResult(new HandlerResult(HandWrittenStateTokens.UpdateStateToken));
+        }
+
+        private Task<HandlerResult> OnTransition(object _)
+        {
+            return Task.FromResult(new HandlerResult(HandWrittenStateTokens.TransitionStateToken));
+        }
+
+        private Task<HandlerResult> OnTerminate(object _)
+        {
+            return Task.FromResult(new HandlerResult(HandWrittenStateTokens.EndStateToken));
         }
 
         protected override void OnEnter(StateEnterEventArgs e)
@@ -28,7 +40,7 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
 
             var context = (StateMachineTestContext)Context;
 
-            Assert.AreEqual(2, context.TestStatus);
+            Assert.Equal(2, context.TestStatus);
             context.TestStatus++;
         }
 
@@ -38,7 +50,7 @@ namespace Bitcraft.StateMachine.UnitTests.HandWritten.States
 
             var context = (StateMachineTestContext)Context;
 
-            Assert.AreEqual(3, context.TestStatus);
+            Assert.Equal(3, context.TestStatus);
             context.TestStatus++;
         }
     }

@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace Bitcraft.StateMachine.ShopSample.States
 {
@@ -21,12 +20,12 @@ namespace Bitcraft.StateMachine.ShopSample.States
             RegisterActionHandler(ShopActionTokens.Next, OnNext);
         }
 
-        private void OnBack(object data, Action<StateToken> cb)
+        private Task<HandlerResult> OnBack(object _)
         {
-            cb(null); // move to terminal state
+            return Task.FromResult(new HandlerResult(null)); // Move to terminal state.
         }
 
-        private void OnInput(object data, Action<StateToken> cb)
+        private Task<HandlerResult> OnInput(object data)
         {
             var inputData = (InputInfo)data;
             int num = inputData.Number;
@@ -58,12 +57,12 @@ namespace Bitcraft.StateMachine.ShopSample.States
                 PrintMenu();
             }
 
-            cb(Token); // remain on the same state
+            return Task.FromResult(new HandlerResult(Token)); // Remain on the same state.
         }
 
-        private void OnNext(object data, Action<StateToken> cb)
+        private Task<HandlerResult> OnNext(object _)
         {
-            cb(ShopStateTokens.ConfirmBasket);
+            return Task.FromResult(new HandlerResult(ShopStateTokens.ConfirmBasket));
         }
 
         protected override void PrintMenu()
@@ -74,15 +73,16 @@ namespace Bitcraft.StateMachine.ShopSample.States
 
             var values = Enum.GetValues(typeof(AvailableItems)).Cast<AvailableItems>().ToArray();
 
+            string activePrefix = ((ShopStateMachine)StateManager).IsFastBuyActive ? string.Empty : "in";
+
             Console.WriteLine("Selection: (Ctrl + key to decrase)");
             Console.WriteLine();
-            Console.WriteLine("   0. Toggle fast buy (currently {0}active)", ((ShopStateMachine)StateManager).IsFastBuyActive ? "" : "in");
+            Console.WriteLine($"   0. Toggle fast buy (currently {activePrefix}active)");
             Console.WriteLine();
             for (int i = 0; i < values.Length; i++)
             {
-                int amount;
-                basket.TryGetValue(values[i], out amount);
-                Console.WriteLine("   {0}. {1} (amount: {2})", i + 1, values[i], amount);
+                basket.TryGetValue(values[i], out int amount);
+                Console.WriteLine($"   {i + 1}. {values[i]} (amount: {amount})");
             }
         }
     }
