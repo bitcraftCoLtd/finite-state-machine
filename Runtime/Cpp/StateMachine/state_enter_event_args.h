@@ -1,12 +1,10 @@
-#ifndef __BITCRAFT_STATEMACHINE_STATE_ENTER_EVENT_ARGS_H__
-#define __BITCRAFT_STATEMACHINE_STATE_ENTER_EVENT_ARGS_H__
-
+#pragma once
 #include "action_token.h"
 #include "state_token.h"
 #include "state_data.h"
 #include "transition_info.h"
 
-namespace Bitcraft
+namespace AX
 {
     namespace StateMachine
     {
@@ -52,5 +50,3 @@ namespace Bitcraft
         };
     }
 }
-
-#endif // __BITCRAFT_STATEMACHINE_STATE_ENTER_EVENT_ARGS_H__

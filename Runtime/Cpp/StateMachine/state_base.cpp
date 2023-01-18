@@ -3,7 +3,7 @@
 
 using namespace std;
 
-namespace Bitcraft
+namespace AX
 {
     namespace StateMachine
     {

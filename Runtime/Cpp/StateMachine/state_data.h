@@ -1,7 +1,6 @@
-#ifndef __BITCRAFT_STATEMACHINE_STATE_DATA_H__
-#define __BITCRAFT_STATEMACHINE_STATE_DATA_H__
+#pragma once
 
-namespace Bitcraft
+namespace AX
 {
     namespace StateMachine
     {
@@ -14,5 +13,3 @@ namespace Bitcraft
         };
     }
 }
-
-#endif // __BITCRAFT_STATEMACHINE_STATE_DATA_H__

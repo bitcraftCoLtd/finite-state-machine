@@ -1,5 +1,4 @@
-#ifndef __BITCRAFT_STATEMACHINE_EXCEPTIONS_H__
-#define __BITCRAFT_STATEMACHINE_EXCEPTIONS_H__
+#pragma once
 
 #include <exception>
 #include <stdexcept>
@@ -7,7 +6,7 @@
 #include "action_token.h"
 #include "state_token.h"
 
-namespace Bitcraft
+namespace AX
 {
     namespace StateMachine
     {
@@ -112,5 +111,3 @@ namespace Bitcraft
         };
     }
 }
-
-#endif // __BITCRAFT_STATEMACHINE_EXCEPTIONS_H__

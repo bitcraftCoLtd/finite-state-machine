@@ -1,11 +1,10 @@
-#ifndef __TEST_STATE2_H__
-#define __TEST_STATE2_H__
+#pragma once
 
 #include <stdio.h>
 #include "state_machine.h"
 #include "test_action_tokens.h"
 
-using namespace Bitcraft::StateMachine;
+using namespace AX::StateMachine;
 
 class TestState2 : public StateBase
 {
@@ -50,5 +49,3 @@ public:
         printf("State '%S': OnExit(to '%S')\n", GetToken()->ToString(), to != NULL ? to->ToString() : L"(null)");
     }
 };
-
-#endif // __TEST_STATE_H__

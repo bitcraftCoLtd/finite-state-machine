@@ -1,5 +1,4 @@
-#ifndef __TEST_STATE_MACHINE_H__
-#define __TEST_STATE_MACHINE_H__
+#pragma once
 
 #include <stdio.h>
 #include "state_machine.h"
@@ -7,7 +6,7 @@
 #include "test_state2.h"
 #include "test_state3.h"
 
-using namespace Bitcraft::StateMachine;
+using namespace AX::StateMachine;
 
 class TestStateMachine : public StateManager
 {
@@ -35,5 +34,3 @@ public:
         printf("TestStateMachine: OnCompleted\n");
     }
 };
-
-#endif // __TEST_STATE_MACHINE_H__

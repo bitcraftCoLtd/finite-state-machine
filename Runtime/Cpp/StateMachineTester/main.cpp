@@ -7,7 +7,7 @@
 #include "test_state2.h"
 #include "test_state3.h"
 
-using namespace Bitcraft::StateMachine;
+using namespace AX::StateMachine;
 
 int main(int argc, char* argv[])
 {

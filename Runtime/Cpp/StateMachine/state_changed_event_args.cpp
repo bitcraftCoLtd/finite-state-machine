@@ -1,6 +1,6 @@
 #include "state_changed_event_args.h"
 
-namespace Bitcraft
+namespace AX
 {
     namespace StateMachine
     {

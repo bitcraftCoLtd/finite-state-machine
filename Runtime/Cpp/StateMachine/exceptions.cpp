@@ -1,6 +1,6 @@
 #include "exceptions.h"
 
-namespace Bitcraft
+namespace AX
 {
     namespace StateMachine
     {

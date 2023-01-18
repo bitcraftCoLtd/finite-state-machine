@@ -1,9 +1,8 @@
-#ifndef __BITCRAF_STATEMACHINE_TOKEN_H__
-#define __BITCRAF_STATEMACHINE_TOKEN_H__
+#pragma once
 
 #include <stdint.h>
 
-namespace Bitcraft
+namespace AX
 {
     namespace StateMachine
     {
@@ -54,5 +53,3 @@ namespace Bitcraft
         };
     }
 }
-
-#endif // __BITCRAF_STATEMACHINE_TOKEN_H__

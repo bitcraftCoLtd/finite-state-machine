@@ -1,9 +1,8 @@
-#ifndef __BITCRAFT_STATEMACHINE_STATE_CHANGED_EVENT_ARGS_H__
-#define __BITCRAFT_STATEMACHINE_STATE_CHANGED_EVENT_ARGS_H__
+#pragma once
 
 #include "state_base.h"
 
-namespace Bitcraft
+namespace AX
 {
     namespace StateMachine
     {
@@ -45,5 +44,3 @@ namespace Bitcraft
         };
     }
 }
-
-#endif // __BITCRAFT_STATEMACHINE_STATE_CHANGED_EVENT_ARGS_H__

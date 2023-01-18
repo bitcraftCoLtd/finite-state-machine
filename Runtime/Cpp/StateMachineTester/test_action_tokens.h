@@ -1,9 +1,8 @@
-#ifndef __TEST_ACTION_TOKENS_H__
-#define __TEST_ACTION_TOKENS_H__
+#pragma once
 
 #include "state_machine.h"
 
-using namespace Bitcraft::StateMachine;
+using namespace AX::StateMachine;
 
 namespace TestActionTokens
 {
@@ -12,5 +11,3 @@ namespace TestActionTokens
     ActionToken* GoToState3Action = new ActionToken(L"Go To State 3");
     ActionToken* EndAction = new ActionToken(L"End of state machine");
 }
-
-#endif // __TEST_ACTION_TOKENS_H__

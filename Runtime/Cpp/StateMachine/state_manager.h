@@ -1,5 +1,4 @@
-#ifndef __BITCRAFT_STATEMACHINE_STATE_MANAGER_H__
-#define __BITCRAFT_STATEMACHINE_STATE_MANAGER_H__
+#pragma once
 
 #include <list>
 #include "state_changed_event_args.h"
@@ -11,7 +10,7 @@
 #include "transition_info.h"
 #include "action_token.h"
 
-namespace Bitcraft
+namespace AX
 {
     namespace StateMachine
     {
@@ -106,5 +105,3 @@ namespace Bitcraft
         };
     }
 }
-
-#endif // __BITCRAFT_STATEMACHINE_STATE_MANAGER_H__

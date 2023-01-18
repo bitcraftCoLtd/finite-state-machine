@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "state_machine.h"
 
-namespace Bitcraft
+namespace AX
 {
     namespace StateMachine
     {

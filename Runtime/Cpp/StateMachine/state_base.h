@@ -1,6 +1,4 @@
-#ifndef __BITCRAFT_STATEMACHINE_STATE_BASE_H__
-#define __BITCRAFT_STATEMACHINE_STATE_BASE_H__
-
+#pragma once
 #include <functional>
 #include <map>
 
@@ -12,7 +10,7 @@
 #include "transition_info.h"
 #include "state_manager.h"
 
-namespace Bitcraft
+namespace AX
 {
     namespace StateMachine
     {
@@ -108,5 +106,3 @@ namespace Bitcraft
         };
     }
 }
-
-#endif // __BITCRAFT_STATEMACHINE_STATE_BASE_H__

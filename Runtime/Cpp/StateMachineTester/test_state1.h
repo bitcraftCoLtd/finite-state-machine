@@ -1,11 +1,10 @@
-#ifndef __TEST_STATE1_H__
-#define __TEST_STATE1_H__
+#pragma once
 
 #include <stdio.h>
 #include "state_machine.h"
 #include "test_action_tokens.h"
 
-using namespace Bitcraft::StateMachine;
+using namespace AX::StateMachine;
 
 class TestState1 : public StateBase
 {
@@ -51,5 +50,3 @@ public:
 private:
     bool _alreadyPassed;
 };
-
-#endif // __TEST_STATE_H__

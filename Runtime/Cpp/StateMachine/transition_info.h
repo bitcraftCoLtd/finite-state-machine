@@ -1,11 +1,10 @@
-#ifndef __BITCRAFT_STATEMACHINE_TRANSITION_INFO_H__
-#define __BITCRAFT_STATEMACHINE_TRANSITION_INFO_H__
+#pragma once
 
 #include "action_token.h"
 #include "state_token.h"
 #include "state_data.h"
 
-namespace Bitcraft
+namespace AX
 {
     namespace StateMachine
     {
@@ -38,5 +37,3 @@ namespace Bitcraft
         };
     }
 }
-
-#endif // __BITCRAFT_STATEMACHINE_TRANSITION_INFO_H__
