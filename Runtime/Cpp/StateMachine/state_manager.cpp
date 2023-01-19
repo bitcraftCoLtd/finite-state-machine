@@ -29,12 +29,12 @@ namespace ax { namespace fsm
 
     const StateToken* const StateManager::GetCurrentStateToken() const
     {
-        return _currentState != NULL ? _currentState->GetToken() : NULL;
+        return _currentState != nullptr ? _currentState->GetToken() : nullptr;
     }
 
     StateManager::StateManager()
     {
-        InternalInitialization(NULL);
+        InternalInitialization(nullptr);
     }
 
     StateManager::StateManager(void* context)
@@ -45,24 +45,24 @@ namespace ax { namespace fsm
     void StateManager::InternalInitialization(void* context)
     {
         _context = context;
-        _currentState = NULL;
+        _currentState = nullptr;
         _isPerformActionLocked = false;
     }
 
     void StateManager::SetInitialState(const StateToken* const initialState, StateData* data)
     {
-        if (initialState == NULL)
+        if (initialState == nullptr)
             throw new invalid_argument("Invalid 'initialState' argument.");
 
-        if (_currentState != NULL)
+        if (_currentState != nullptr)
         {
             _isPerformActionLocked = true;
-            StateExitEventArgs stateExitEventArgs = StateExitEventArgs(NULL, initialState, data);
+            StateExitEventArgs stateExitEventArgs = StateExitEventArgs(nullptr, initialState, data);
             _currentState->OnExit(&stateExitEventArgs);
             _isPerformActionLocked = false;
         }
 
-        _currentState = NULL;
+        _currentState = nullptr;
         PerformTransitionTo(nullptr, initialState, data);
     }
 
@@ -75,7 +75,7 @@ namespace ax { namespace fsm
         while (true)
         {
             TransitionInfo* transition = TransitionTo(triggeringActionToken, targetStateToken, targetData);
-            if (transition->TargetState == NULL)
+            if (transition->TargetState == nullptr)
                 break;
 
             triggeringActionToken = transition->TriggeringAction;
@@ -86,14 +86,14 @@ namespace ax { namespace fsm
 
     TransitionInfo* StateManager::TransitionTo(const ActionToken* actionToken, const StateToken* const stateToken, StateData* data)
     {
-        if (stateToken == NULL)
+        if (stateToken == nullptr)
             throw new invalid_argument("Invalid 'stateToken' argument.");
 
         StateBase* state = FindState(stateToken);
-        if (state == NULL)
+        if (state == nullptr)
             throw new UnknownStateException(GetCurrentStateToken(), stateToken);
 
-        if (_currentState != NULL)
+        if (_currentState != nullptr)
         {
             _isPerformActionLocked = true;
             StateExitEventArgs stateExitEventArgs = StateExitEventArgs(actionToken, stateToken, data);
@@ -109,7 +109,7 @@ namespace ax { namespace fsm
         StateChangedEventArgs stateChangedEventArgs = StateChangedEventArgs(actionToken, oldState, _currentState);
         OnStateChanged(&stateChangedEventArgs);
 
-        StateEnterEventArgs stateEnterEventArgs = StateEnterEventArgs(actionToken, oldState != NULL ? oldState->GetToken() : NULL, data);
+        StateEnterEventArgs stateEnterEventArgs = StateEnterEventArgs(actionToken, oldState != nullptr ? oldState->GetToken() : nullptr, data);
         _currentState->OnEnter(&stateEnterEventArgs);
 
         _isPerformActionLocked = false;
@@ -119,7 +119,7 @@ namespace ax { namespace fsm
 
     StateBase* StateManager::FindState(const StateToken* const token)
     {
-        if (token == NULL)
+        if (token == nullptr)
             throw new invalid_argument("Invalid 'stateToken' argument.");
 
         for (list<StateBase*>::const_iterator it = _states.begin(), end = _states.end(); it != end; it++)
@@ -127,19 +127,19 @@ namespace ax { namespace fsm
             StateBase* currentState = *it;
 
             const StateToken* const currentToken = currentState->GetToken();
-            if (currentToken == NULL)
+            if (currentToken == nullptr)
                 continue;
 
             if (currentToken->Equals(token))
                 return currentState;
         }
 
-        return NULL;
+        return nullptr;
     }
 
     bool StateManager::StateExists(StateBase* state)
     {
-        if (state == NULL)
+        if (state == nullptr)
             return false;
 
         for (list<StateBase*>::const_iterator it = _states.begin(), end = _states.end(); it != end; it++)
@@ -153,28 +153,28 @@ namespace ax { namespace fsm
 
     void StateManager::PerformAction(ActionToken* action)
     {
-        PerformAction(action, NULL);
+        PerformAction(action, nullptr);
     }
 
     void StateManager::PerformAction(ActionToken* action, StateData* data)
     {
-        if (action == NULL)
+        if (action == nullptr)
             throw new invalid_argument("Invalid 'action' argument.");
 
-        if (_currentState == NULL)
+        if (_currentState == nullptr)
             throw new exception("State machine not yet initialized or has reached its final state.");
 
         if (_isPerformActionLocked)
             return; // not that good :/
 
         TransitionInfo transitionInfo;
-        transitionInfo.TargetState = NULL;
+        transitionInfo.TargetState = nullptr;
         transitionInfo.TargetStateData = data;
 
         _currentState->Handle(action, data, &transitionInfo);
-        if (transitionInfo.TargetState == NULL)
+        if (transitionInfo.TargetState == nullptr)
         {
-            _currentState = NULL;
+            _currentState = nullptr;
             _isPerformActionLocked = true;
             OnCompleted();
             _isPerformActionLocked = false;
@@ -187,7 +187,7 @@ namespace ax { namespace fsm
 
     void StateManager::RegisterState(StateBase* state)
     {
-        if (state == NULL)
+        if (state == nullptr)
             throw new invalid_argument("Invalid 'state' argument.");
 
         if (StateExists(state))

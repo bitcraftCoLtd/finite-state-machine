@@ -15,9 +15,9 @@ namespace ax { namespace fsm
     {
         TransitionInfo()
         {
-            TriggeringAction = NULL;
-            TargetStateData = NULL;
-            TargetState = NULL;
+            TriggeringAction = nullptr;
+            TargetStateData = nullptr;
+            TargetState = nullptr;
         }
 
         /// <summary>

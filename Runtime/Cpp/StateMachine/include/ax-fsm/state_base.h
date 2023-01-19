@@ -30,7 +30,7 @@ namespace ax { namespace fsm
 
         struct ActionTokenComparer {
             bool operator()(ActionToken* a, ActionToken* b) const {
-                if (a == NULL || b == NULL)
+                if (a == nullptr || b == nullptr)
                     return false;
                 return a->_id < b->_id;
             }

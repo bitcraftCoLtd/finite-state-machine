@@ -12,7 +12,7 @@ using namespace ax::fsm;
 int main(int argc, char* argv[])
 {
     TestStateMachine stateMachine;
-    stateMachine.SetInitialState(TestStateTokens::StateToken1, NULL);
+    stateMachine.SetInitialState(TestStateTokens::StateToken1, nullptr);
 
     stateMachine.PerformAction(TestActionTokens::GoToState2Action);
     stateMachine.PerformAction(TestActionTokens::GoToState3Action);

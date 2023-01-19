@@ -29,8 +29,8 @@ public:
         StateBase* newState = e->GetNewState();
 
         printf("TestStateMachine: OnStateChanged (from '%S' to '%S')\n",
-            oldState != NULL ? oldState->GetToken()->ToString() : L"(null)",
-            newState != NULL ? newState->GetToken()->ToString() : L"(null)");
+            oldState != nullptr ? oldState->GetToken()->ToString() : L"(null)",
+            newState != nullptr ? newState->GetToken()->ToString() : L"(null)");
     }
 
     void OnCompleted() override

@@ -9,10 +9,10 @@ namespace ax { namespace fsm
 {
     StateBase::StateBase(StateToken* token)
     {
-        if (token == NULL)
+        if (token == nullptr)
             throw new invalid_argument("Invalid 'token' argument.");
 
-        _stateManager = NULL;
+        _stateManager = nullptr;
         _token = token;
     }
 
@@ -28,8 +28,8 @@ namespace ax { namespace fsm
 
     void* StateBase::GetContext()
     {
-        if (_stateManager == NULL)
-            return NULL;
+        if (_stateManager == nullptr)
+            return nullptr;
 
         return _stateManager->GetContext();
     }
@@ -55,7 +55,7 @@ namespace ax { namespace fsm
 
     void StateBase::Handle(ActionToken* action, StateData* data, TransitionInfo* result)
     {
-        if (action == NULL)
+        if (action == nullptr)
             throw new invalid_argument("Invalid 'action' argument.");
 
         map<ActionToken*, StateHandler>::iterator it = _handlers.find(action);

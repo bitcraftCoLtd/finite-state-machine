@@ -17,7 +17,7 @@ namespace ax { namespace fsm
     }
 
     ActionExceptionBase::ActionExceptionBase(const ActionToken* const actionToken, const StateToken* const stateToken)
-        : exception(NULL), _actionToken(actionToken), _stateToken(stateToken)
+        : exception(nullptr), _actionToken(actionToken), _stateToken(stateToken)
     {
     }
 

@@ -34,7 +34,7 @@ public:
     {
         const StateToken* const from = e->GetFrom();
 
-        printf("State '%S': OnEnter(from '%S')\n", GetToken()->ToString(), from != NULL ? from->ToString() : L"(null)");
+        printf("State '%S': OnEnter(from '%S')\n", GetToken()->ToString(), from != nullptr ? from->ToString() : L"(null)");
 
         if (_alreadyPassed)
             e->GetRedirect()->TargetState = TestStateTokens::StateToken3;
@@ -51,7 +51,7 @@ public:
     {
         const StateToken* const to = e->GetTo();
 
-        printf("State '%S': OnExit(to '%S')\n", GetToken()->ToString(), to != NULL ? to->ToString() : L"(null)");
+        printf("State '%S': OnExit(to '%S')\n", GetToken()->ToString(), to != nullptr ? to->ToString() : L"(null)");
     }
 
 private:

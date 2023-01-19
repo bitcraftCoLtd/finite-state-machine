@@ -8,7 +8,7 @@ namespace ax { namespace fsm
 
     Token::Token()
     {
-        Initialization(NULL);
+        Initialization(nullptr);
     }
 
     Token::Token(const wchar_t* name)
@@ -24,12 +24,12 @@ namespace ax { namespace fsm
 
     const wchar_t* Token::ToString() const
     {
-        return _name == NULL ? L"(no name)" : _name;
+        return _name == nullptr ? L"(no name)" : _name;
     }
 
     bool Token::Equals(const Token* const other) const
     {
-        if (other == NULL)
+        if (other == nullptr)
             return false;
 
         return _id == other->_id;
