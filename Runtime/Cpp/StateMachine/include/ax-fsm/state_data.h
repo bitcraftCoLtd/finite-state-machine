@@ -1,15 +1,12 @@
 #pragma once
 
-namespace AX
+namespace AX { namespace StateMachine
 {
-    namespace StateMachine
+    /// <summary>
+    /// Represents a state data.
+    /// This class provides strong typing only, no implementation.
+    /// </summary>
+    class StateData
     {
-        /// <summary>
-        /// Represents a state data.
-        /// This class provides strong typing only, no implementation.
-        /// </summary>
-        class StateData
-        {
-        };
-    }
-}
+    };
+} }
