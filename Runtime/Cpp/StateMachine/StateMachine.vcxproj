@@ -19,18 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="action_token.h" />
-    <ClInclude Include="exceptions.h" />
-    <ClInclude Include="state_base.h" />
-    <ClInclude Include="state_changed_event_args.h" />
-    <ClInclude Include="state_data.h" />
-    <ClInclude Include="state_enter_event_args.h" />
-    <ClInclude Include="state_exit_event_args.h" />
-    <ClInclude Include="state_machine.h" />
-    <ClInclude Include="state_manager.h" />
-    <ClInclude Include="state_token.h" />
-    <ClInclude Include="token.h" />
-    <ClInclude Include="transition_info.h" />
+    <ClInclude Include="include\ax-fsm\action_token.h" />
+    <ClInclude Include="include\ax-fsm\exceptions.h" />
+    <ClInclude Include="include\ax-fsm\state_base.h" />
+    <ClInclude Include="include\ax-fsm\state_changed_event_args.h" />
+    <ClInclude Include="include\ax-fsm\state_data.h" />
+    <ClInclude Include="include\ax-fsm\state_enter_event_args.h" />
+    <ClInclude Include="include\ax-fsm\state_exit_event_args.h" />
+    <ClInclude Include="include\ax-fsm\state_manager.h" />
+    <ClInclude Include="include\ax-fsm\state_token.h" />
+    <ClInclude Include="include\ax-fsm\token.h" />
+    <ClInclude Include="include\ax-fsm\transition_info.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="exceptions.cpp" />
@@ -117,6 +116,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -150,6 +150,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

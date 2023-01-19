@@ -1,8 +1,9 @@
 #pragma once
-#include "action_token.h"
-#include "state_token.h"
-#include "state_data.h"
-#include "transition_info.h"
+
+#include "ax-fsm/action_token.h"
+#include "ax-fsm/state_token.h"
+#include "ax-fsm/state_data.h"
+#include "ax-fsm/transition_info.h"
 
 namespace AX
 {

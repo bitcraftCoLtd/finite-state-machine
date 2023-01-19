@@ -1,6 +1,6 @@
 #include <Windows.h>
 #include <stdio.h>
-#include "state_machine.h"
+
 #include "test_state_tokens.h"
 #include "test_state_machine.h"
 #include "test_state1.h"

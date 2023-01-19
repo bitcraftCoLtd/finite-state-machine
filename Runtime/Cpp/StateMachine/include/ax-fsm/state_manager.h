@@ -1,14 +1,15 @@
 #pragma once
 
 #include <list>
-#include "state_changed_event_args.h"
-#include "state_enter_event_args.h"
-#include "state_exit_event_args.h"
-#include "state_base.h"
-#include "state_token.h"
-#include "state_data.h"
-#include "transition_info.h"
-#include "action_token.h"
+
+#include "ax-fsm/state_changed_event_args.h"
+#include "ax-fsm/state_enter_event_args.h"
+#include "ax-fsm/state_exit_event_args.h"
+#include "ax-fsm/state_base.h"
+#include "ax-fsm/state_token.h"
+#include "ax-fsm/state_data.h"
+#include "ax-fsm/transition_info.h"
+#include "ax-fsm/action_token.h"
 
 namespace AX
 {

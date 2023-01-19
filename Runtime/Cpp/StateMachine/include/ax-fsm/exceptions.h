@@ -3,8 +3,8 @@
 #include <exception>
 #include <stdexcept>
 
-#include "action_token.h"
-#include "state_token.h"
+#include "ax-fsm/action_token.h"
+#include "ax-fsm/state_token.h"
 
 namespace AX
 {

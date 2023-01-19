@@ -1,7 +1,11 @@
 #pragma once
 
 #include <stdio.h>
-#include "state_machine.h"
+
+#include "ax-fsm/state_manager.h"
+#include "ax-fsm/state_base.h"
+#include "ax-fsm/state_changed_event_args.h"
+
 #include "test_state1.h"
 #include "test_state2.h"
 #include "test_state3.h"

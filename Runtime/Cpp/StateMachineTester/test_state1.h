@@ -1,7 +1,14 @@
 #pragma once
 
 #include <stdio.h>
-#include "state_machine.h"
+
+#include "ax-fsm/state_base.h"
+#include "ax-fsm/state_data.h"
+#include "ax-fsm/state_token.h"
+#include "ax-fsm/transition_info.h"
+#include "ax-fsm/state_enter_event_args.h"
+#include "ax-fsm/state_exit_event_args.h"
+
 #include "test_action_tokens.h"
 
 using namespace AX::StateMachine;

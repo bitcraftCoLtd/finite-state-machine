@@ -15,40 +15,37 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="token.h">
+    <ClInclude Include="include\ax-fsm\action_token.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="action_token.h">
+    <ClInclude Include="include\ax-fsm\exceptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="state_data.h">
+    <ClInclude Include="include\ax-fsm\state_base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="state_token.h">
+    <ClInclude Include="include\ax-fsm\state_changed_event_args.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="transition_info.h">
+    <ClInclude Include="include\ax-fsm\state_data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="state_enter_event_args.h">
+    <ClInclude Include="include\ax-fsm\state_enter_event_args.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="state_changed_event_args.h">
+    <ClInclude Include="include\ax-fsm\state_exit_event_args.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="state_manager.h">
+    <ClInclude Include="include\ax-fsm\state_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="state_base.h">
+    <ClInclude Include="include\ax-fsm\state_token.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="state_machine.h">
+    <ClInclude Include="include\ax-fsm\token.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="exceptions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="state_exit_event_args.h">
+    <ClInclude Include="include\ax-fsm\transition_info.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

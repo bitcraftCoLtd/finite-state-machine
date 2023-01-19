@@ -1,21 +1,20 @@
 #pragma once
+
 #include <functional>
 #include <map>
 
-#include "state_token.h"
-#include "state_data.h"
-#include "state_enter_event_args.h"
-#include "state_exit_event_args.h"
-#include "action_token.h"
-#include "transition_info.h"
-#include "state_manager.h"
+#include "ax-fsm/state_token.h"
+#include "ax-fsm/state_data.h"
+#include "ax-fsm/state_enter_event_args.h"
+#include "ax-fsm/state_exit_event_args.h"
+#include "ax-fsm/action_token.h"
+#include "ax-fsm/transition_info.h"
+#include "ax-fsm/state_manager.h"
 
 namespace AX
 {
     namespace StateMachine
     {
-        class StateBase;
-
         // action handler
         using StateHandler = std::function<void(StateData*, TransitionInfo*)>;
 

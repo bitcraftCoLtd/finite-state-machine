@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include "state_machine.h"
+#include "ax-fsm/token.h"
 
 namespace AX
 {

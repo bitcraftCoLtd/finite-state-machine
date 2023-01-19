@@ -2,10 +2,14 @@
 
 #include <stdint.h>
 
+// DO NOT INCLUDE "ax-fsm/state_base.h" HERE OR EVERYTHING BLOW UP !!!
+
 namespace AX
 {
     namespace StateMachine
     {
+        class StateBase;
+
         /// <summary>
         /// Represents a uniquely identifiable entity.
         /// </summary>

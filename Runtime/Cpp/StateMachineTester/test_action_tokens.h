@@ -1,6 +1,6 @@
 #pragma once
 
-#include "state_machine.h"
+#include "ax-fsm/action_token.h"
 
 using namespace AX::StateMachine;
 

@@ -1,5 +1,8 @@
-#include <stdio.h>
-#include "state_machine.h"
+#include "ax-fsm/state_enter_event_args.h"
+#include "ax-fsm/action_token.h"
+#include "ax-fsm/state_token.h"
+#include "ax-fsm/state_data.h"
+#include "ax-fsm/transition_info.h"
 
 namespace AX
 {
