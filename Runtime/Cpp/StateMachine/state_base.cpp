@@ -1,3 +1,5 @@
+// Copyright AX, Inc. All Rights Reserved.
+
 #include "ax-fsm/state_base.h"
 #include "ax-fsm/exceptions.h"
 

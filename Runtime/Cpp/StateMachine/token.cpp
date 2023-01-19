@@ -1,3 +1,5 @@
+// Copyright AX, Inc. All Rights Reserved.
+
 #include "ax-fsm/token.h"
 
 namespace AX

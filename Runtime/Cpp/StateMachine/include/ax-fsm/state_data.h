@@ -1,3 +1,5 @@
+// Copyright AX, Inc. All Rights Reserved.
+
 #pragma once
 
 namespace AX { namespace StateMachine

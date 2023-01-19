@@ -1,3 +1,5 @@
+// Copyright AX, Inc. All Rights Reserved.
+
 #include <stdio.h>
 
 #include "ax-fsm/state_manager.h"

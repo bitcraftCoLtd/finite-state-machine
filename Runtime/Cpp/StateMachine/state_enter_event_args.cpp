@@ -1,3 +1,5 @@
+// Copyright AX, Inc. All Rights Reserved.
+
 #include "ax-fsm/state_enter_event_args.h"
 #include "ax-fsm/action_token.h"
 #include "ax-fsm/state_token.h"
