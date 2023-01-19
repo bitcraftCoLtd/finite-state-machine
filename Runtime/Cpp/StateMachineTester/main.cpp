@@ -7,7 +7,7 @@
 #include "test_state2.h"
 #include "test_state3.h"
 
-using namespace AX::StateMachine;
+using namespace ax::fsm;
 
 int main(int argc, char* argv[])
 {

@@ -1,4 +1,4 @@
-// Copyright AX, Inc. All Rights Reserved.
+// Copyright ax, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -6,7 +6,7 @@
 
 // DO NOT INCLUDE "ax-fsm/state_base.h" HERE OR EVERYTHING BLOW UP !!!
 
-namespace AX { namespace StateMachine
+namespace ax { namespace fsm
 {
     class StateBase;
 

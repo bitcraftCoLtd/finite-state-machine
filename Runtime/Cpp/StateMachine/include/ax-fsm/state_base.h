@@ -1,4 +1,4 @@
-// Copyright AX, Inc. All Rights Reserved.
+// Copyright ax, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -13,7 +13,7 @@
 #include "ax-fsm/transition_info.h"
 #include "ax-fsm/state_manager.h"
 
-namespace AX { namespace StateMachine
+namespace ax { namespace fsm
 {
     // action handler
     using StateHandler = std::function<void(StateData*, TransitionInfo*)>;

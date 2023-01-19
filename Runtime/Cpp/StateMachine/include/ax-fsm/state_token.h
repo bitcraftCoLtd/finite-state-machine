@@ -1,10 +1,10 @@
-// Copyright AX, Inc. All Rights Reserved.
+// Copyright ax, Inc. All Rights Reserved.
 
 #pragma once
 
 #include "ax-fsm/token.h"
 
-namespace AX { namespace StateMachine
+namespace ax { namespace fsm
 {
     /// <summary>
     /// Represents a state machine state.

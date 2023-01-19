@@ -11,7 +11,7 @@
 
 #include "test_action_tokens.h"
 
-using namespace AX::StateMachine;
+using namespace ax::fsm;
 
 class TestState3 : public StateBase
 {

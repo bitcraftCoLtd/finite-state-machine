@@ -1,4 +1,4 @@
-// Copyright AX, Inc. All Rights Reserved.
+// Copyright ax, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "ax-fsm/state_token.h"
 #include "ax-fsm/state_data.h"
 
-namespace AX { namespace StateMachine
+namespace ax { namespace fsm
 {
     /// <summary>
     /// Represents event arguments when exiting a state.

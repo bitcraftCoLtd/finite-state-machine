@@ -1,8 +1,8 @@
-// Copyright AX, Inc. All Rights Reserved.
+// Copyright ax, Inc. All Rights Reserved.
 
 #pragma once
 
-namespace AX { namespace StateMachine
+namespace ax { namespace fsm
 {
     /// <summary>
     /// Represents a state data.

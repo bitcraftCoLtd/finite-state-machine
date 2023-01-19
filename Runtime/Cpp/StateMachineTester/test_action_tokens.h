@@ -2,7 +2,7 @@
 
 #include "ax-fsm/action_token.h"
 
-using namespace AX::StateMachine;
+using namespace ax::fsm;
 
 namespace TestActionTokens
 {

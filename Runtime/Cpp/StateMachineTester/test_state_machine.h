@@ -10,7 +10,7 @@
 #include "test_state2.h"
 #include "test_state3.h"
 
-using namespace AX::StateMachine;
+using namespace ax::fsm;
 
 class TestStateMachine : public StateManager
 {

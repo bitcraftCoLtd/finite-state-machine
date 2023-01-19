@@ -1,11 +1,11 @@
-// Copyright AX, Inc. All Rights Reserved.
+// Copyright ax, Inc. All Rights Reserved.
 
 #pragma once
 
 #include "ax-fsm/action_token.h"
 #include "ax-fsm/state_base.h"
 
-namespace AX { namespace StateMachine
+namespace ax { namespace fsm
 {
     class StateBase;
 
