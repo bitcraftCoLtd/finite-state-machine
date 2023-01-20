@@ -39,6 +39,11 @@ public class CppStateMachineCodeGenerator : CodeGeneratorBase
 
         WriteFileHeader(writer);
 
+        string prefix = string.Empty;
+
+        if (stateMachineRelativePathPrefix != null)
+            prefix = $"{stateMachineRelativePathPrefix}/";
+
         if (cppFileType == CppFileType.Source)
         {
             writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{stateMachineName}{Constants.StateMachineSuffix}.autogen.h\"");
@@ -46,19 +51,9 @@ public class CppStateMachineCodeGenerator : CodeGeneratorBase
             writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{Constants.StatesFolder}/{stateMachineName}{Constants.StatesFolder}.autogen.h\"");
             if (useStateBase == false)
                 writer.AppendLine($"#include \"{projectRelativePathPrefix}/{stateMachineName}{Constants.StateBaseType}.h\"");
+        }
 
-            if (stateMachineRelativePathPrefix != null)
-                writer.AppendLine($"#include \"{stateMachineRelativePathPrefix}/StateMachine/state_machine.h\"");
-            else
-                writer.AppendLine("#include \"StateMachine/state_machine.h\"");
-        }
-        else if (cppFileType == CppFileType.Header)
-        {
-            if (stateMachineRelativePathPrefix != "")
-                writer.AppendLine($"#include \"{stateMachineRelativePathPrefix}/StateMachine/state_manager.h\"");
-            else
-                writer.AppendLine("#include \"StateMachine/state_manager.h\"");
-        }
+        writer.AppendLine($"#include \"{prefix}ax-fsm/state_manager.h\"");
 
         writer.AppendLine();
 

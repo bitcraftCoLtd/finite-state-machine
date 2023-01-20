@@ -33,21 +33,15 @@ public class CppStateTokensCodeGenerator : CodeGeneratorBase
 
         WriteFileHeader(writer);
 
+        string prefix = string.Empty;
+
+        if (stateMachineRelativePathPrefix != null)
+            prefix = $"{stateMachineRelativePathPrefix}/";
+
         if (cppFileType == CppFileType.Source)
-        {
             writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{stateMachineName}{Constants.StateTokensClass}.autogen.h\"");
-            if (stateMachineRelativePathPrefix != null)
-                writer.AppendLine($"#include \"{stateMachineRelativePathPrefix}/StateMachine/state_machine.h\"");
-            else
-                writer.AppendLine($"#include \"StateMachine/state_machine.h\"");
-        }
-        else if (cppFileType == CppFileType.Header)
-        {
-            if (stateMachineRelativePathPrefix != null)
-                writer.AppendLine($"#include \"{stateMachineRelativePathPrefix}/StateMachine/state_token.h\"");
-            else
-                writer.AppendLine($"#include \"StateMachine/state_token.h\"");
-        }
+
+        writer.AppendLine($"#include \"{prefix}ax-fsm/state_token.h\"");
 
         writer.AppendLine();
 

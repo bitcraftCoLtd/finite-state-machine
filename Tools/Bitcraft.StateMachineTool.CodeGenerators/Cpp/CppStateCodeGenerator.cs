@@ -43,15 +43,20 @@ public class CppStateCodeGenerator : CodeGeneratorBase
 
         WriteFileHeader(writer);
 
+        string prefix = string.Empty;
+
+        if (stateMachineRelativePathPrefix != null)
+            prefix = $"{stateMachineRelativePathPrefix}/";
+
         if (cppFileType == CppFileType.Source)
         {
+            writer.AppendLine($"#include <functional>");
+            writer.AppendLine();
             writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{Constants.StatesFolder}/{stateMachineName}{stateName}{Constants.StateSuffix}.autogen.h\"");
             writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{stateMachineName}{Constants.StateTokensClass}.autogen.h\"");
             writer.AppendLine($"#include \"{generatedCodeRelativePathPrefix}/{stateMachineName}{Constants.ActionTokensClass}.autogen.h\"");
-                if (stateMachineRelativePathPrefix != null)
-                    writer.AppendLine($"#include \"{stateMachineRelativePathPrefix}/StateMachine/state_machine.h\"");
-                else
-                    writer.AppendLine($"#include \"StateMachine/state_machine.h\"");
+            writer.AppendLine($"#include \"{prefix}ax-fsm/state_data.h\"");
+            writer.AppendLine($"#include \"{prefix}ax-fsm/transition_info.h\"");
         }
         else if (cppFileType == CppFileType.Header)
         {

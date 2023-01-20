@@ -2,5 +2,5 @@
 
 public static class CppConstants
 {
-    public static readonly string StateMachineNamespace = "Bitcraft::StateMachine";
+    public static readonly string StateMachineNamespace = "ax::fsm";
 }
