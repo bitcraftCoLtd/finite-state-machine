@@ -15,12 +15,12 @@ namespace ax { namespace fsm
         /// <summary>
         /// Initializes the StateToken instance.
         /// </summary>
-        StateToken::StateToken() : Token() { }
+        StateToken() : Token() { }
 
         /// <summary>
         /// Initializes the StateToken instance.
         /// </summary>
         /// <param name="name">Name of the state token.</param>
-        StateToken::StateToken(wchar_t* name) : Token(name) { }
+        StateToken(wchar_t* name) : Token(name) { }
     };
 } }

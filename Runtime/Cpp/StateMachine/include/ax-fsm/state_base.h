@@ -91,7 +91,7 @@ namespace ax { namespace fsm
         /// <summary>
         /// Gets the token that identifies the current state.
         /// </summary>
-        const StateToken* const StateBase::GetToken() const;
+        const StateToken* const GetToken() const;
 
         /// <summary>
         /// Gets the state manager in which the current state is registered.
